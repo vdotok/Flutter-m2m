@@ -1,7 +1,12 @@
 PODS:
+  - battery (0.0.1):
+    - Flutter
   - device_info (0.0.1):
     - Flutter
   - Flutter (1.0.0)
+  - flutter_ip (0.0.1):
+    - Flutter
+    - Ipify
   - flutter_ringtone_player (0.0.1):
     - Flutter
   - flutter_statusbarcolor (0.0.1):
@@ -11,6 +16,7 @@ PODS:
     - GoogleWebRTC (= 1.1.31999)
     - Libyuv (= 1703)
   - GoogleWebRTC (1.1.31999)
+  - Ipify (2.1.0)
   - Libyuv (1703)
   - path_provider (0.0.1):
     - Flutter
@@ -22,10 +28,14 @@ PODS:
     - Flutter
   - vibration (1.7.3):
     - Flutter
+  - wifi_info_flutter (0.0.1):
+    - Flutter
 
 DEPENDENCIES:
+  - battery (from `.symlinks/plugins/battery/ios`)
   - device_info (from `.symlinks/plugins/device_info/ios`)
   - Flutter (from `Flutter`)
+  - flutter_ip (from `.symlinks/plugins/flutter_ip/ios`)
   - flutter_ringtone_player (from `.symlinks/plugins/flutter_ringtone_player/ios`)
   - flutter_statusbarcolor (from `.symlinks/plugins/flutter_statusbarcolor/ios`)
   - flutter_webrtc (from `.symlinks/plugins/flutter_webrtc/ios`)
@@ -34,17 +44,23 @@ DEPENDENCIES:
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
   - vdotok_stream (from `.symlinks/plugins/vdotok_stream/ios`)
   - vibration (from `.symlinks/plugins/vibration/ios`)
+  - wifi_info_flutter (from `.symlinks/plugins/wifi_info_flutter/ios`)
 
 SPEC REPOS:
   trunk:
     - GoogleWebRTC
+    - Ipify
     - Libyuv
 
 EXTERNAL SOURCES:
+  battery:
+    :path: ".symlinks/plugins/battery/ios"
   device_info:
     :path: ".symlinks/plugins/device_info/ios"
   Flutter:
     :path: Flutter
+  flutter_ip:
+    :path: ".symlinks/plugins/flutter_ip/ios"
   flutter_ringtone_player:
     :path: ".symlinks/plugins/flutter_ringtone_player/ios"
   flutter_statusbarcolor:
@@ -61,21 +77,27 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/vdotok_stream/ios"
   vibration:
     :path: ".symlinks/plugins/vibration/ios"
+  wifi_info_flutter:
+    :path: ".symlinks/plugins/wifi_info_flutter/ios"
 
 SPEC CHECKSUMS:
+  battery: 6b19dafdbba590f03b1f0cd2f1224e3ffedadbe6
   device_info: d7d233b645a32c40dfdc212de5cf646ca482f175
   Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
+  flutter_ip: e14e6919c04e61ac27d7e7af4dd4f209cbc29b9a
   flutter_ringtone_player: 15eba85187230b87b2512f0e1b92225618bc03e7
   flutter_statusbarcolor: 8afb1071ed8c58be929f1e32b36c629771fd2259
   flutter_webrtc: 39898454258b54ba51996850d5da8d5d53bf1524
   GoogleWebRTC: b39a78c4f5cc6b0323415b9233db03a2faa7b0f0
+  Ipify: 814952650290001bee4542db6fba63df128f77c2
   Libyuv: 5f79ced0ee66e60a612ca97de1e6ccacd187a437
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
   replay_kit_launcher: e2b85653d7ee455d067abc1a74c4feb8574087d4
   shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
   vdotok_stream: 744471973756a2efce891fd0c79d2fb7d068c7ef
   vibration: b5a33e764c3f609a975b9dca73dce20fdde627dc
+  wifi_info_flutter: 55d4c2469034f5b5c38063ccefa62f708a503a2b
 
 PODFILE CHECKSUM: fe0e1ee7f3d1f7d00b11b474b62dd62134535aea
 
-COCOAPODS: 1.10.1
+COCOAPODS: 1.10.2

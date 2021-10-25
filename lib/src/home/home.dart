@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -31,8 +32,8 @@ import '../core/providers/contact_provider.dart';
 import '../home/streams/remoteStream.dart';
 
 class Home extends StatefulWidget {
-  // User user;
-  // Home({this.user});
+  final state;
+  Home({this.state});
   @override
   _HomeState createState() => _HomeState();
 }
@@ -41,12 +42,26 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   bool notmatched = false;
   bool groupnotmatched = false;
   List<Contact> _selectedContacts = [];
+  bool isDeviceConnected = false;
+  bool isdev = true;
   DateTime _time;
   Timer _ticker;
   String _pressDuration = "";
+  DateTime _callTime;
+  bool iscalloneto1 = false;
+  bool inCall = false;
+  bool isPushed = false;
+  bool iscallReConnected=false;
+  double upstream;
+  double downstream;
   void _updateTimer() {
-    final duration = DateTime.now().difference(_time);
+    var duration;
+   
+      duration= DateTime.now().difference(_time);
+  
     final newDuration = _formatDuration(duration);
+    
+    print("TYHISSDDDDDDDDJFN $_callTime");
     setState(() {
       _pressDuration = newDuration;
     });
@@ -94,9 +109,12 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   bool secondRemoteVideo = false;
   String callTo = "";
   List _filteredList = [];
+  var number;
   List _groupfilteredList = [];
   final _searchController = new TextEditingController();
   final _GroupListsearchController = new TextEditingController();
+  bool sockett = true;
+  bool isSocketregis = false;
   List<int> vibrationList = [
     500,
     1000,
@@ -188,6 +206,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     // TODO: implement initState
     super.initState();
     // initRenderers(_localRenderer);
+    checkConnectivity();
 
     WidgetsBinding.instance.addObserver(this);
     _auth = Provider.of<AuthProvider>(context, listen: false);
@@ -198,21 +217,36 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     _contactProvider.getContacts(_auth.getUser.auth_token);
     _groupListProvider.getGroupList(_auth.getUser.auth_token);
 
-    signalingClient.connect(auth_token, project_id);
+    signalingClient.connect(project_id, _auth.completeAddress);
     signalingClient.onConnect = (res) {
       print("onConnect $res");
+      if (res == "connected") {
+        sockett = true;
+      }
+
       signalingClient.register(_auth.getUser.toJson(), project_id);
       // signalingClient.register(user);
     };
     signalingClient.onError = (code, res) {
-      print("onConnect $code $res");
+      print("onConnect erorrrrrrbf $code $res");
       print("hey i am here");
       // _callProvider.initial();
       var snackBar;
-      if (code == 1002) {
-        snackBar = SnackBar(content: Text("Socket Disconnected"));
+      if (code == 1002 || code == 1001) {
+        sockett = false;
+        isSocketregis = false;
+        isPushed = false;
+        isdev = false;
+        //  snackBar = SnackBar(content: Text("Socket Disconnected"));
       } else {
-        snackBar = SnackBar(content: Text(res));
+        print("ffgfffff $res");
+        // snackBar = SnackBar(content: Text(res));
+      }
+      if (code == 1005) {
+        sockett = false;
+        isSocketregis = false;
+        isPushed = false;
+        isdev = false;
       }
 
 // Find the Scaffold in the widget tree and use it to show a SnackBar.
@@ -266,7 +300,17 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       await initRenderers(temp["rtcVideoRenderer"]);
       setState(() {
         temp["rtcVideoRenderer"].srcObject = stream;
-        _time = DateTime.now();
+        if(iscallReConnected==false){
+          print("this is  time in reconnected false $_time..... $_callTime");
+            _time = DateTime.now();
+            _callTime= DateTime.now();
+        }
+        else{
+            print("this is  time in reconnected true $_time..... $_callTime");
+          _time=_callTime;
+          iscallReConnected=false;
+        }
+        //_time = DateTime.now();
         _updateTimer();
         _ticker = Timer.periodic(Duration(seconds: 1), (_) => _updateTimer());
       });
@@ -276,10 +320,12 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         });
       }
       setState(() {
+        print("this is on remote stream BEFORE ADD${rendererListWithRefID.length}");
         rendererListWithRefID.add(temp);
         forLargStream = temp;
         onRemoteStream = true;
       });
+       print("this is on remote stream after ADD${rendererListWithRefID.length}");
       // setState(() {
 
       // });
@@ -287,13 +333,18 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       // _callProvider.callStart();
     };
 
-    signalingClient.onReceiveCallFromUser = (receivefrom, type) async {
+    signalingClient.onReceiveCallFromUser =
+        (receivefrom, type, isonetone) async {
       print("call callback on call Received incomming");
 
       startRinging();
-
+      inCall = true;
+      iscalloneto1 = isonetone;
       setState(() {
         onRemoteStream = false;
+        _pressDuration="";
+        upstream=0;
+        downstream=0;
         incomingfrom = receivefrom;
         meidaType = type;
         switchMute = true;
@@ -322,14 +373,20 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     };
     signalingClient.onCallAcceptedByUser = () async {
       print("call callback on call Accepted");
-
+      inCall = true;
       //here
       // _callBloc.add(CallStartEvent());
       _callProvider.callStart();
     };
-    signalingClient.onCallHungUpByUser = () {
+    signalingClient.onCallHungUpByUser = (isLocal) {
       print("call callback on call hungUpBy User");
-
+      _ticker.cancel();
+inCall=false;
+setState(() {
+      _pressDuration="";
+      upstream=0;
+      downstream=0;
+   });
       //here
       // _callBloc.add(CallNewEvent());
       _callProvider.initial();
@@ -396,6 +453,30 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     };
   }
 
+  void checkConnectivity() async {
+    isDeviceConnected = false;
+    if (!kIsWeb) {
+      DataConnectionChecker().onStatusChange.listen((status) async {
+        print("this on listener");
+        isDeviceConnected = await DataConnectionChecker().hasConnection;
+        print("this is is connected in $isDeviceConnected");
+        if (isDeviceConnected == true) {
+          setState(() {
+            isdev = true;
+          });
+          // showSnackbar("Internet Connected", whiteColor, Colors.green, false);
+        } else {
+          setState(() {
+            isdev = false;
+          });
+          // showSnackbar(
+          //     "No Internet Connection", whiteColor, primaryColor, true);
+
+        }
+      });
+    }
+  }
+
   disposeAllRenderer() async {
     for (int i = 0; i < rendererListWithRefID.length; i++) {
       if (i == 0) {
@@ -418,10 +499,14 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       GroupModel to, String mtype, String callType, String sessionType) async {
     setState(() {
       switchMute = true;
+      _pressDuration="";
+       upstream=0;
+        downstream=0;
       enableCamera = true;
       onRemoteStream = false;
       switchSpeaker = mtype == MediaType.audio ? true : false;
     });
+    
     List<String> groupRefIDS = [];
     // participantsCalling = to.participants;
     to.participants.forEach((element) {
@@ -437,6 +522,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         mtype == MediaType.video ? 1 : 0;
     // groupRefIDS.add("bba0bcc3174e200139f9881538ff208d");
     print("this is list ${groupRefIDS}");
+    print("this is call type in home $callType");
     signalingClient.startCall(
         from: _auth.getUser.ref_id,
         to: groupRefIDS,
@@ -534,11 +620,19 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   }
 
   stopCall() {
-    signalingClient.stopCall(registerRes["mcToken"], _auth.getUser.ref_id);
+    signalingClient.stopCall(registerRes["mcToken"]);
     //here
     // _callBloc.add(CallNewEvent());
+    isPushed = false;
+    _ticker.cancel();
+   setState(() {
+      _pressDuration="";
+      upstream=0;
+      downstream=0;
+   });
     _callProvider.initial();
-
+inCall=false;
+  disposeAllRenderer();
     if (!kIsWeb) stopRinging();
   }
 
@@ -582,7 +676,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                                                   bottom: 20),
                                               child: Text(
                                                 "Add Attachment",
-                                                style: TextStyle(
+                                                style:TextStyle(
                                                   color: createGroupColor2,
                                                   fontSize: 14,
                                                   fontFamily: searchFontFamily,
@@ -864,6 +958,82 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       statusBarBrightness: Brightness.light, //status bar brigtness
       statusBarIconBrightness: Brightness.dark, //status barIcon Brightness
     ));
+     signalingClient.onCallStatsuploads=(uploadstats){
+    var nummm=uploadstats;
+     String dddi=nummm.toString();
+    print("DFKMDKSDF//MNKSDFMDKS 0000000$dddi");
+   
+double myDouble = double.parse(dddi);
+assert(myDouble is double);
+
+print("dfddfdfdfffffffffffffffff ${myDouble/1024}"); // 123.45
+upstream=  double.parse((myDouble/1024).toStringAsFixed(2)); 
+ };
+  signalingClient.onCallstats=(timeStatsdownloads,timeStatsuploads){
+
+   
+  //setState(() {
+     print("NOT NULL  $timeStatsdownloads");
+    // double d2=double.valueOf(timeStatsdownloads);
+    number=timeStatsdownloads;
+    String ddd=number.toString();
+    print("DFKMDKSDFMNKSDFMDKS $ddd");
+   
+double myDouble = double.parse(ddd);
+assert(myDouble is double);
+
+print("dfddfdfdf ${myDouble/1024}"); // 123.45
+downstream=  double.parse((myDouble/1024).toStringAsFixed(2)); 
+  };
+
+    print("This is widget state $_pressDuration");
+
+    if (isdev == true && sockett == false) {
+      print("i am here in widget build");
+   
+        if(inCall==true){
+        iscallReConnected=true;
+        }
+      if (isSocketregis == false) {
+        isSocketregis = true;
+        print("this iscall time $_callTime..... and press duration $_pressDuration");
+       //  _callTime=_pressDuration;
+        print("IN WIODGET TRUE AND SOCKET FALSE");
+
+        signalingClient.connect(project_id, _auth.completeAddress);
+
+        // if (inCall == true) {
+        print("I am in Re Reregister");
+
+        // signalingClient.onConnect = (res) {
+        //   print("onConnect in widget $res");
+
+        //   if (res == "connected") {
+        //     sockett = true;
+        //   }
+
+        signalingClient.register(_auth.getUser.toJson(), project_id);
+        // };
+        //  }
+
+        isPushed = false;
+
+        signalingClient.onRegister = (res) {
+          print("onRegister after reconnection $res");
+
+          setState(() {
+            registerRes = res;
+          });
+
+// signalingClient.register(user);
+        };
+      }
+
+// signalingClient.reRegister(authProvider.getUser.toJson(), project_id);
+
+// }
+
+    }
 
     if (!ResponsiveWidget.isSmallScreen(context))
       return Scaffold(
@@ -1407,8 +1577,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           if (callProvider.callStatus == CallStatus.CallReceive)
             return callReceive();
 
-          if (callProvider.callStatus == CallStatus.CallStart)
+          if (callProvider.callStatus == CallStatus.CallStart) {
+            // if (isPushed == false) {
+            //   isPushed = true;
+            print("in ispushed false");
             return callStart();
+            // }
+          }
           // return callStartNewDesign();
           if (callProvider.callStatus == CallStatus.CallDial)
             return callDial();
@@ -1430,8 +1605,12 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                         ListStatus.Scussess) {
                       if (groupProvider.groupList.groups.length == 0)
                         return NoContactsScreen(
+                           isConnect: sockett,
+              state: widget.state,
                             refreshList: renderList,
-                            newChatHandler: handleCreateGroup);
+                            groupListProvider: groupProvider,
+                            authProvider: _auth,
+                            newChatHandler: handleGroupState);
                       else
                         return groupList(groupProvider.groupList);
                     } else
@@ -1814,6 +1993,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   }
 
   Scaffold callStart() {
+    print("this is press duration value in widget build  $_pressDuration");
+          print("this is on remote stream in start call ${rendererListWithRefID.length}");
     return Scaffold(
       body: OrientationBuilder(builder: (context, orientation) {
         return Container(
@@ -1822,7 +2003,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             // meidaType == MediaType.video
             //     ?
             onRemoteStream
-                ? rendererListWithRefID.length == 2
+                ?
+                rendererListWithRefID.length==1? Container():
+                rendererListWithRefID.length == 2
                     ?
                     // if video is off then show white screen
                     rendererListWithRefID[1]["remoteVideoFlag"] == 0
@@ -2449,6 +2632,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                                     fontStyle: FontStyle.normal,
                                     fontSize: 24),
                               ),
+                              
                         Text(
                           _pressDuration,
                           style: TextStyle(
@@ -2462,6 +2646,40 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                       ],
                     ),
                   ),
+                   Column(
+                          children: [
+                            // Text(
+                            //   _pressDuration,
+                            //   style: TextStyle(
+                            //       decoration: TextDecoration.none,
+                            //       fontSize: 14,
+                            //       fontFamily: secondaryFontFamily,
+                            //       fontWeight: FontWeight.w400,
+                            //       fontStyle: FontStyle.normal,
+                            //       color: darkBlackColor),
+                            // ),
+                            SizedBox(width:10),
+                          number!=null?   Text(
+                              "DownStream $downstream  UpStream $upstream",
+                              style: TextStyle(
+                                  decoration: TextDecoration.none,
+                                  fontSize: 14,
+                                  fontFamily: secondaryFontFamily,
+                                  fontWeight: FontWeight.w400,
+                                  fontStyle: FontStyle.normal,
+                                  color: darkBlackColor),
+                            ):Text(
+                              "DownStream 0   UpStream 0",
+                              style: TextStyle(
+                                  decoration: TextDecoration.none,
+                                  fontSize: 14,
+                                  fontFamily: secondaryFontFamily,
+                                  fontWeight: FontWeight.w400,
+                                  fontStyle: FontStyle.normal,
+                                  color: darkBlackColor),
+                            ),
+                          ],
+                        ),
                 ],
               ),
             ),
@@ -4077,27 +4295,52 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                         ),
                 ),
               ),
-              Container(
-                padding: EdgeInsets.symmetric(vertical: 8),
-                child: TextButton(
-                  onPressed: () {
-                    signalingClient.unRegister(registerRes["mcToken"]);
-                    _auth.logout();
-                  },
-                  child: Text(
-                    "LOG OUT ${_auth.getUser.full_name}",
-                  ),
-                  style: TextButton.styleFrom(
-                    textStyle: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 14.0,
-                        fontFamily: primaryFontFamily,
-                        fontStyle: FontStyle.normal,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 0.90),
-                  ),
-                ),
-              )
+              Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Column(children: [
+                    Container(
+                      padding: const EdgeInsets.only(top: 20),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+// padding: const EdgeInsets.only(bottom: 30),
+
+                              child: FlatButton(
+                                onPressed: () {
+                                  _auth.logout();
+
+                                  signalingClient
+                                      .unRegister(registerRes["mcToken"]);
+                                },
+                                child: Text(
+                                  "LOG OUT",
+                                  style: TextStyle(
+                                      fontSize: 14.0,
+                                      fontFamily: primaryFontFamily,
+                                      fontStyle: FontStyle.normal,
+                                      fontWeight: FontWeight.w700,
+                                      color: logoutButtonColor,
+                                      letterSpacing: 0.90),
+                                ),
+                              ),
+                            ),
+                            Container(
+                              height: 25,
+                              width: 25,
+                              child: SvgPicture.asset(
+                                'assets/call.svg',
+                                color: sockett && isdev
+                                    ? Colors.green
+                                    : Colors.red,
+                              ),
+                            ),
+                          ]),
+                    ),
+                    Container(
+                        padding: const EdgeInsets.only(bottom: 60),
+                        child: Text(_auth.getUser.full_name))
+                  ]))
             ],
           ),
         ),

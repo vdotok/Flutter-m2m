@@ -1,18 +1,16 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:vdotok_stream/vdotok_stream.dart';
 import 'package:vdotok_stream_example/src/core/providers/call_provider.dart';
 import 'package:vdotok_stream_example/src/core/providers/contact_provider.dart';
 import 'package:vdotok_stream_example/src/core/providers/groupListProvider.dart';
 import 'src/core/providers/auth.dart';
+
 import 'src/home/homeIndex.dart';
 import 'src/login/SignInScreen.dart';
-
 import 'src/routing/routes.dart';
 import 'src/splash/splash.dart';
 import 'package:provider/provider.dart';
-
 import 'constant.dart';
 
 class MyHttpOverrides extends HttpOverrides {
