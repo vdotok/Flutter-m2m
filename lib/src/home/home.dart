@@ -51,16 +51,16 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   bool iscalloneto1 = false;
   bool inCall = false;
   bool isPushed = false;
-  bool iscallReConnected=false;
+  bool iscallReConnected = false;
   double upstream;
   double downstream;
   void _updateTimer() {
     var duration;
-   
-      duration= DateTime.now().difference(_time);
-  
+
+    duration = DateTime.now().difference(_time);
+
     final newDuration = _formatDuration(duration);
-    
+
     print("TYHISSDDDDDDDDJFN $_callTime");
     setState(() {
       _pressDuration = newDuration;
@@ -300,15 +300,14 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       await initRenderers(temp["rtcVideoRenderer"]);
       setState(() {
         temp["rtcVideoRenderer"].srcObject = stream;
-        if(iscallReConnected==false){
+        if (iscallReConnected == false) {
           print("this is  time in reconnected false $_time..... $_callTime");
-            _time = DateTime.now();
-            _callTime= DateTime.now();
-        }
-        else{
-            print("this is  time in reconnected true $_time..... $_callTime");
-          _time=_callTime;
-          iscallReConnected=false;
+          _time = DateTime.now();
+          _callTime = DateTime.now();
+        } else {
+          print("this is  time in reconnected true $_time..... $_callTime");
+          _time = _callTime;
+          iscallReConnected = false;
         }
         //_time = DateTime.now();
         _updateTimer();
@@ -320,12 +319,14 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         });
       }
       setState(() {
-        print("this is on remote stream BEFORE ADD${rendererListWithRefID.length}");
+        print(
+            "this is on remote stream BEFORE ADD${rendererListWithRefID.length}");
         rendererListWithRefID.add(temp);
         forLargStream = temp;
         onRemoteStream = true;
       });
-       print("this is on remote stream after ADD${rendererListWithRefID.length}");
+      print(
+          "this is on remote stream after ADD${rendererListWithRefID.length}");
       // setState(() {
 
       // });
@@ -342,9 +343,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       iscalloneto1 = isonetone;
       setState(() {
         onRemoteStream = false;
-        _pressDuration="";
-        upstream=0;
-        downstream=0;
+        _pressDuration = "";
+        upstream = 0;
+        downstream = 0;
         incomingfrom = receivefrom;
         meidaType = type;
         switchMute = true;
@@ -381,12 +382,12 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     signalingClient.onCallHungUpByUser = (isLocal) {
       print("call callback on call hungUpBy User");
       _ticker.cancel();
-inCall=false;
-setState(() {
-      _pressDuration="";
-      upstream=0;
-      downstream=0;
-   });
+      inCall = false;
+      setState(() {
+        _pressDuration = "";
+        upstream = 0;
+        downstream = 0;
+      });
       //here
       // _callBloc.add(CallNewEvent());
       _callProvider.initial();
@@ -499,14 +500,14 @@ setState(() {
       GroupModel to, String mtype, String callType, String sessionType) async {
     setState(() {
       switchMute = true;
-      _pressDuration="";
-       upstream=0;
-        downstream=0;
+      _pressDuration = "";
+      upstream = 0;
+      downstream = 0;
       enableCamera = true;
       onRemoteStream = false;
       switchSpeaker = mtype == MediaType.audio ? true : false;
     });
-    
+
     List<String> groupRefIDS = [];
     // participantsCalling = to.participants;
     to.participants.forEach((element) {
@@ -625,14 +626,14 @@ setState(() {
     // _callBloc.add(CallNewEvent());
     isPushed = false;
     _ticker.cancel();
-   setState(() {
-      _pressDuration="";
-      upstream=0;
-      downstream=0;
-   });
+    setState(() {
+      _pressDuration = "";
+      upstream = 0;
+      downstream = 0;
+    });
     _callProvider.initial();
-inCall=false;
-  disposeAllRenderer();
+    inCall = false;
+    disposeAllRenderer();
     if (!kIsWeb) stopRinging();
   }
 
@@ -676,7 +677,7 @@ inCall=false;
                                                   bottom: 20),
                                               child: Text(
                                                 "Add Attachment",
-                                                style:TextStyle(
+                                                style: TextStyle(
                                                   color: createGroupColor2,
                                                   fontSize: 14,
                                                   fontFamily: searchFontFamily,
@@ -958,46 +959,45 @@ inCall=false;
       statusBarBrightness: Brightness.light, //status bar brigtness
       statusBarIconBrightness: Brightness.dark, //status barIcon Brightness
     ));
-     signalingClient.onCallStatsuploads=(uploadstats){
-    var nummm=uploadstats;
-     String dddi=nummm.toString();
-    print("DFKMDKSDF//MNKSDFMDKS 0000000$dddi");
-   
-double myDouble = double.parse(dddi);
-assert(myDouble is double);
+    signalingClient.onCallStatsuploads = (uploadstats) {
+      var nummm = uploadstats;
+      String dddi = nummm.toString();
+      print("DFKMDKSDF//MNKSDFMDKS 0000000$dddi");
 
-print("dfddfdfdfffffffffffffffff ${myDouble/1024}"); // 123.45
-upstream=  double.parse((myDouble/1024).toStringAsFixed(2)); 
- };
-  signalingClient.onCallstats=(timeStatsdownloads,timeStatsuploads){
+      double myDouble = double.parse(dddi);
+      assert(myDouble is double);
 
-   
-  //setState(() {
-     print("NOT NULL  $timeStatsdownloads");
-    // double d2=double.valueOf(timeStatsdownloads);
-    number=timeStatsdownloads;
-    String ddd=number.toString();
-    print("DFKMDKSDFMNKSDFMDKS $ddd");
-   
-double myDouble = double.parse(ddd);
-assert(myDouble is double);
+      print("dfddfdfdfffffffffffffffff ${myDouble / 1024}"); // 123.45
+      upstream = double.parse((myDouble / 1024).toStringAsFixed(2));
+    };
+    signalingClient.onCallstats = (timeStatsdownloads, timeStatsuploads) {
+      //setState(() {
+      print("NOT NULL  $timeStatsdownloads");
+      // double d2=double.valueOf(timeStatsdownloads);
+      number = timeStatsdownloads;
+      String ddd = number.toString();
+      print("DFKMDKSDFMNKSDFMDKS $ddd");
 
-print("dfddfdfdf ${myDouble/1024}"); // 123.45
-downstream=  double.parse((myDouble/1024).toStringAsFixed(2)); 
-  };
+      double myDouble = double.parse(ddd);
+      assert(myDouble is double);
+
+      print("dfddfdfdf ${myDouble / 1024}"); // 123.45
+      downstream = double.parse((myDouble / 1024).toStringAsFixed(2));
+    };
 
     print("This is widget state $_pressDuration");
 
     if (isdev == true && sockett == false) {
       print("i am here in widget build");
-   
-        if(inCall==true){
-        iscallReConnected=true;
-        }
+
+      if (inCall == true) {
+        iscallReConnected = true;
+      }
       if (isSocketregis == false) {
         isSocketregis = true;
-        print("this iscall time $_callTime..... and press duration $_pressDuration");
-       //  _callTime=_pressDuration;
+        print(
+            "this iscall time $_callTime..... and press duration $_pressDuration");
+        //  _callTime=_pressDuration;
         print("IN WIODGET TRUE AND SOCKET FALSE");
 
         signalingClient.connect(project_id, _auth.completeAddress);
@@ -1605,8 +1605,8 @@ downstream=  double.parse((myDouble/1024).toStringAsFixed(2));
                         ListStatus.Scussess) {
                       if (groupProvider.groupList.groups.length == 0)
                         return NoContactsScreen(
-                           isConnect: sockett,
-              state: widget.state,
+                            isConnect: sockett,
+                            state: widget.state,
                             refreshList: renderList,
                             groupListProvider: groupProvider,
                             authProvider: _auth,
@@ -1994,7 +1994,8 @@ downstream=  double.parse((myDouble/1024).toStringAsFixed(2));
 
   Scaffold callStart() {
     print("this is press duration value in widget build  $_pressDuration");
-          print("this is on remote stream in start call ${rendererListWithRefID.length}");
+    print(
+        "this is on remote stream in start call ${rendererListWithRefID.length}");
     return Scaffold(
       body: OrientationBuilder(builder: (context, orientation) {
         return Container(
@@ -2003,347 +2004,248 @@ downstream=  double.parse((myDouble/1024).toStringAsFixed(2));
             // meidaType == MediaType.video
             //     ?
             onRemoteStream
-                ?
-                rendererListWithRefID.length==1? Container():
-                rendererListWithRefID.length == 2
-                    ?
-                    // if video is off then show white screen
-                    rendererListWithRefID[1]["remoteVideoFlag"] == 0
-                        ? Container(
-                            decoration:
-                                BoxDecoration(color: backgroundAudioCallLight),
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SvgPicture.asset(
-                                    'assets/userIconCall.svg',
+                ? rendererListWithRefID.length == 1
+                    ? Container()
+                    : rendererListWithRefID.length == 2
+                        ?
+                        // if video is off then show white screen
+                        rendererListWithRefID[1]["remoteVideoFlag"] == 0
+                            ? Container(
+                                decoration: BoxDecoration(
+                                    color: backgroundAudioCallLight),
+                                child: Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      SvgPicture.asset(
+                                        'assets/userIconCall.svg',
+                                      ),
+                                      Text(_contactProvider
+                                          .contactList
+                                          .users[_contactProvider
+                                              .contactList.users
+                                              .indexWhere((element) =>
+                                                  element.ref_id ==
+                                                  rendererListWithRefID[1]
+                                                      ["refID"])]
+                                          .full_name)
+                                    ],
                                   ),
-                                  Text(_contactProvider
-                                      .contactList
-                                      .users[_contactProvider.contactList.users
-                                          .indexWhere((element) =>
-                                              element.ref_id ==
-                                              rendererListWithRefID[1]
-                                                  ["refID"])]
-                                      .full_name)
-                                ],
-                              ),
-                            ),
-                          )
-                        : RemoteStream(
-                            remoteRenderer: rendererListWithRefID[1]
-                                ["rtcVideoRenderer"],
-                          )
-                    : rendererListWithRefID.length == 3
-                        ? Column(
-                            children: [
-                              Expanded(
-                                child: Container(
-                                    // color: Colors.yellow,
-                                    width: MediaQuery.of(context).size.width,
-                                    child: // if video is off then show white screen
-                                        rendererListWithRefID[1]
-                                                    ["remoteVideoFlag"] ==
-                                                0
-                                            ? Container(
-                                                decoration: BoxDecoration(
-                                                    color:
-                                                        backgroundAudioCallLight),
-                                                child: Center(
-                                                  child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      SvgPicture.asset(
-                                                        'assets/userIconCall.svg',
-                                                      ),
-                                                      Text(_contactProvider
-                                                          .contactList
-                                                          .users[_contactProvider
-                                                              .contactList.users
-                                                              .indexWhere((element) =>
-                                                                  element
-                                                                      .ref_id ==
-                                                                  rendererListWithRefID[
-                                                                          1][
-                                                                      "refID"])]
-                                                          .full_name)
-                                                    ],
-                                                  ),
-                                                ),
-                                              )
-                                            : RemoteStream(
-                                                remoteRenderer:
-                                                    rendererListWithRefID[1]
-                                                        ["rtcVideoRenderer"],
-                                              )),
-                              ),
-                              Expanded(
-                                child: Container(
-                                    // color: Colors.green,
-                                    width: MediaQuery.of(context).size.width,
-                                    child: // if video is off then show white screen
-                                        rendererListWithRefID[2]
-                                                    ["remoteVideoFlag"] ==
-                                                0
-                                            ? Container(
-                                                decoration: BoxDecoration(
-                                                    color:
-                                                        backgroundAudioCallLight),
-                                                child: Center(
-                                                  child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      SvgPicture.asset(
-                                                        'assets/userIconCall.svg',
-                                                      ),
-                                                      Text(_contactProvider
-                                                          .contactList
-                                                          .users[_contactProvider
-                                                              .contactList.users
-                                                              .indexWhere((element) =>
-                                                                  element
-                                                                      .ref_id ==
-                                                                  rendererListWithRefID[
-                                                                          2][
-                                                                      "refID"])]
-                                                          .full_name)
-                                                    ],
-                                                  ),
-                                                ),
-                                              )
-                                            : RemoteStream(
-                                                remoteRenderer:
-                                                    rendererListWithRefID[2]
-                                                        ["rtcVideoRenderer"],
-                                              )),
+                                ),
                               )
-                            ],
-                          )
-                        : rendererListWithRefID.length == 4
+                            : RemoteStream(
+                                remoteRenderer: rendererListWithRefID[1]
+                                    ["rtcVideoRenderer"],
+                              )
+                        : rendererListWithRefID.length == 3
                             ? Column(
                                 children: [
                                   Expanded(
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                            // color: Colors.yellow,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                2,
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height /
-                                                2,
-                                            child: // if video is off then show white screen
-                                                rendererListWithRefID[1][
-                                                            "remoteVideoFlag"] ==
-                                                        0
-                                                    ? Container(
-                                                        decoration: BoxDecoration(
-                                                            color:
-                                                                backgroundAudioCallLight),
-                                                        child: Center(
-                                                          child: Column(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
-                                                            children: [
-                                                              SvgPicture.asset(
-                                                                'assets/userIconCall.svg',
-                                                              ),
-                                                              Text(_contactProvider
-                                                                  .contactList
-                                                                  .users[_contactProvider
-                                                                      .contactList
-                                                                      .users
-                                                                      .indexWhere((element) =>
-                                                                          element
-                                                                              .ref_id ==
-                                                                          rendererListWithRefID[1]
-                                                                              [
-                                                                              "refID"])]
-                                                                  .full_name)
-                                                            ],
+                                    child: Container(
+                                        // color: Colors.yellow,
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        child: // if video is off then show white screen
+                                            rendererListWithRefID[1]
+                                                        ["remoteVideoFlag"] ==
+                                                    0
+                                                ? Container(
+                                                    decoration: BoxDecoration(
+                                                        color:
+                                                            backgroundAudioCallLight),
+                                                    child: Center(
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          SvgPicture.asset(
+                                                            'assets/userIconCall.svg',
                                                           ),
-                                                        ),
-                                                      )
-                                                    : RemoteStream(
-                                                        remoteRenderer:
-                                                            rendererListWithRefID[
-                                                                    1][
-                                                                "rtcVideoRenderer"],
-                                                      )),
-                                        Container(
-                                          // color: Colors.yellow,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              2,
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height /
-                                              2,
-                                          child: // if video is off then show white screen
-                                              rendererListWithRefID[2]
-                                                          ["remoteVideoFlag"] ==
-                                                      0
-                                                  ? Container(
-                                                      decoration: BoxDecoration(
-                                                          color:
-                                                              backgroundAudioCallLight),
-                                                      child: Center(
-                                                        child: Column(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                          children: [
-                                                            SvgPicture.asset(
-                                                              'assets/userIconCall.svg',
-                                                            ),
-                                                            Text(_contactProvider
-                                                                .contactList
-                                                                .users[_contactProvider
-                                                                    .contactList
-                                                                    .users
-                                                                    .indexWhere((element) =>
-                                                                        element
-                                                                            .ref_id ==
-                                                                        rendererListWithRefID[2]
-                                                                            [
-                                                                            "refID"])]
-                                                                .full_name)
-                                                          ],
-                                                        ),
+                                                          Text(_contactProvider
+                                                              .contactList
+                                                              .users[_contactProvider
+                                                                  .contactList
+                                                                  .users
+                                                                  .indexWhere((element) =>
+                                                                      element
+                                                                          .ref_id ==
+                                                                      rendererListWithRefID[
+                                                                              1]
+                                                                          [
+                                                                          "refID"])]
+                                                              .full_name)
+                                                        ],
                                                       ),
-                                                    )
-                                                  : RemoteStream(
-                                                      remoteRenderer:
-                                                          rendererListWithRefID[
-                                                                  2][
-                                                              "rtcVideoRenderer"],
                                                     ),
-                                        ),
-                                      ],
-                                    ),
+                                                  )
+                                                : RemoteStream(
+                                                    remoteRenderer:
+                                                        rendererListWithRefID[1]
+                                                            [
+                                                            "rtcVideoRenderer"],
+                                                  )),
                                   ),
                                   Expanded(
                                     child: Container(
-                                      // color: Colors.green,
-                                      width: MediaQuery.of(context).size.width,
-                                      child: // if video is off then show white screen
-                                          rendererListWithRefID[3]
-                                                      ["remoteVideoFlag"] ==
-                                                  0
-                                              ? Container(
-                                                  decoration: BoxDecoration(
-                                                      color:
-                                                          backgroundAudioCallLight),
-                                                  child: Center(
-                                                    child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        SvgPicture.asset(
-                                                          'assets/userIconCall.svg',
-                                                        ),
-                                                        Text(_contactProvider
-                                                            .contactList
-                                                            .users[_contactProvider
-                                                                .contactList
-                                                                .users
-                                                                .indexWhere((element) =>
-                                                                    element
-                                                                        .ref_id ==
-                                                                    rendererListWithRefID[
-                                                                            3][
-                                                                        "refID"])]
-                                                            .full_name)
-                                                      ],
+                                        // color: Colors.green,
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        child: // if video is off then show white screen
+                                            rendererListWithRefID[2]
+                                                        ["remoteVideoFlag"] ==
+                                                    0
+                                                ? Container(
+                                                    decoration: BoxDecoration(
+                                                        color:
+                                                            backgroundAudioCallLight),
+                                                    child: Center(
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          SvgPicture.asset(
+                                                            'assets/userIconCall.svg',
+                                                          ),
+                                                          Text(_contactProvider
+                                                              .contactList
+                                                              .users[_contactProvider
+                                                                  .contactList
+                                                                  .users
+                                                                  .indexWhere((element) =>
+                                                                      element
+                                                                          .ref_id ==
+                                                                      rendererListWithRefID[
+                                                                              2]
+                                                                          [
+                                                                          "refID"])]
+                                                              .full_name)
+                                                        ],
+                                                      ),
                                                     ),
-                                                  ),
-                                                )
-                                              : RemoteStream(
-                                                  remoteRenderer:
-                                                      rendererListWithRefID[3]
-                                                          ["rtcVideoRenderer"],
-                                                ),
-                                    ),
+                                                  )
+                                                : RemoteStream(
+                                                    remoteRenderer:
+                                                        rendererListWithRefID[2]
+                                                            [
+                                                            "rtcVideoRenderer"],
+                                                  )),
                                   )
                                 ],
                               )
-                            : Column(
-                                children: [
-                                  Expanded(
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                            // color: Colors.yellow,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                2,
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height /
-                                                2,
-                                            child: // if video is off then show white screen
-                                                rendererListWithRefID[1][
-                                                            "remoteVideoFlag"] ==
-                                                        0
-                                                    ? Container(
-                                                        decoration: BoxDecoration(
-                                                            color:
-                                                                backgroundAudioCallLight),
-                                                        child: Center(
-                                                          child: Column(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
-                                                            children: [
-                                                              SvgPicture.asset(
-                                                                'assets/userIconCall.svg',
-                                                              ),
-                                                              Text(_contactProvider
-                                                                  .contactList
-                                                                  .users[_contactProvider
+                            : rendererListWithRefID.length == 4
+                                ? Column(
+                                    children: [
+                                      Expanded(
+                                        child: Row(
+                                          children: [
+                                            Container(
+                                                // color: Colors.yellow,
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width /
+                                                    2,
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height /
+                                                    2,
+                                                child: // if video is off then show white screen
+                                                    rendererListWithRefID[1][
+                                                                "remoteVideoFlag"] ==
+                                                            0
+                                                        ? Container(
+                                                            decoration:
+                                                                BoxDecoration(
+                                                                    color:
+                                                                        backgroundAudioCallLight),
+                                                            child: Center(
+                                                              child: Column(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  SvgPicture
+                                                                      .asset(
+                                                                    'assets/userIconCall.svg',
+                                                                  ),
+                                                                  Text(_contactProvider
                                                                       .contactList
-                                                                      .users
-                                                                      .indexWhere((element) =>
-                                                                          element
-                                                                              .ref_id ==
-                                                                          rendererListWithRefID[1]
-                                                                              [
-                                                                              "refID"])]
-                                                                  .full_name)
-                                                            ],
+                                                                      .users[_contactProvider
+                                                                          .contactList
+                                                                          .users
+                                                                          .indexWhere((element) =>
+                                                                              element.ref_id ==
+                                                                              rendererListWithRefID[1]["refID"])]
+                                                                      .full_name)
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          )
+                                                        : RemoteStream(
+                                                            remoteRenderer:
+                                                                rendererListWithRefID[
+                                                                        1][
+                                                                    "rtcVideoRenderer"],
+                                                          )),
+                                            Container(
+                                              // color: Colors.yellow,
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width /
+                                                  2,
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height /
+                                                  2,
+                                              child: // if video is off then show white screen
+                                                  rendererListWithRefID[2][
+                                                              "remoteVideoFlag"] ==
+                                                          0
+                                                      ? Container(
+                                                          decoration: BoxDecoration(
+                                                              color:
+                                                                  backgroundAudioCallLight),
+                                                          child: Center(
+                                                            child: Column(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                SvgPicture
+                                                                    .asset(
+                                                                  'assets/userIconCall.svg',
+                                                                ),
+                                                                Text(_contactProvider
+                                                                    .contactList
+                                                                    .users[_contactProvider
+                                                                        .contactList
+                                                                        .users
+                                                                        .indexWhere((element) =>
+                                                                            element.ref_id ==
+                                                                            rendererListWithRefID[2]["refID"])]
+                                                                    .full_name)
+                                                              ],
+                                                            ),
                                                           ),
+                                                        )
+                                                      : RemoteStream(
+                                                          remoteRenderer:
+                                                              rendererListWithRefID[
+                                                                      2][
+                                                                  "rtcVideoRenderer"],
                                                         ),
-                                                      )
-                                                    : RemoteStream(
-                                                        remoteRenderer:
-                                                            rendererListWithRefID[
-                                                                    1][
-                                                                "rtcVideoRenderer"],
-                                                      )),
-                                        Container(
-                                          // color: Colors.yellow,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              2,
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height /
-                                              2,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Container(
+                                          // color: Colors.green,
+                                          width:
+                                              MediaQuery.of(context).size.width,
                                           child: // if video is off then show white screen
-                                              rendererListWithRefID[2]
+                                              rendererListWithRefID[3]
                                                           ["remoteVideoFlag"] ==
                                                       0
                                                   ? Container(
@@ -2367,7 +2269,7 @@ downstream=  double.parse((myDouble/1024).toStringAsFixed(2));
                                                                     .indexWhere((element) =>
                                                                         element
                                                                             .ref_id ==
-                                                                        rendererListWithRefID[2]
+                                                                        rendererListWithRefID[3]
                                                                             [
                                                                             "refID"])]
                                                                 .full_name)
@@ -2378,120 +2280,221 @@ downstream=  double.parse((myDouble/1024).toStringAsFixed(2));
                                                   : RemoteStream(
                                                       remoteRenderer:
                                                           rendererListWithRefID[
-                                                                  2][
+                                                                  3][
                                                               "rtcVideoRenderer"],
                                                     ),
                                         ),
-                                      ],
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                            // color: Colors.yellow,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                2,
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height /
-                                                2,
-                                            child: // if video is off then show white screen
-                                                rendererListWithRefID[3][
-                                                            "remoteVideoFlag"] ==
-                                                        0
-                                                    ? Container(
-                                                        decoration: BoxDecoration(
-                                                            color:
-                                                                backgroundAudioCallLight),
-                                                        child: Center(
-                                                          child: Column(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
-                                                            children: [
-                                                              SvgPicture.asset(
-                                                                'assets/userIconCall.svg',
-                                                              ),
-                                                              Text(_contactProvider
-                                                                  .contactList
-                                                                  .users[_contactProvider
+                                      )
+                                    ],
+                                  )
+                                : Column(
+                                    children: [
+                                      Expanded(
+                                        child: Row(
+                                          children: [
+                                            Container(
+                                                // color: Colors.yellow,
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width /
+                                                    2,
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height /
+                                                    2,
+                                                child: // if video is off then show white screen
+                                                    rendererListWithRefID[1][
+                                                                "remoteVideoFlag"] ==
+                                                            0
+                                                        ? Container(
+                                                            decoration:
+                                                                BoxDecoration(
+                                                                    color:
+                                                                        backgroundAudioCallLight),
+                                                            child: Center(
+                                                              child: Column(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  SvgPicture
+                                                                      .asset(
+                                                                    'assets/userIconCall.svg',
+                                                                  ),
+                                                                  Text(_contactProvider
                                                                       .contactList
-                                                                      .users
-                                                                      .indexWhere((element) =>
-                                                                          element
-                                                                              .ref_id ==
-                                                                          rendererListWithRefID[3]
-                                                                              [
-                                                                              "refID"])]
-                                                                  .full_name)
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      )
-                                                    : RemoteStream(
-                                                        remoteRenderer:
-                                                            rendererListWithRefID[
-                                                                    3][
-                                                                "rtcVideoRenderer"],
-                                                      )),
-                                        Container(
-                                          // color: Colors.yellow,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              2,
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height /
-                                              2,
-                                          child: // if video is off then show white screen
-                                              rendererListWithRefID[4]
-                                                          ["remoteVideoFlag"] ==
-                                                      0
-                                                  ? Container(
-                                                      decoration: BoxDecoration(
-                                                          color:
-                                                              backgroundAudioCallLight),
-                                                      child: Center(
-                                                        child: Column(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                          children: [
-                                                            SvgPicture.asset(
-                                                              'assets/userIconCall.svg',
+                                                                      .users[_contactProvider
+                                                                          .contactList
+                                                                          .users
+                                                                          .indexWhere((element) =>
+                                                                              element.ref_id ==
+                                                                              rendererListWithRefID[1]["refID"])]
+                                                                      .full_name)
+                                                                ],
+                                                              ),
                                                             ),
-                                                            Text(_contactProvider
-                                                                .contactList
-                                                                .users[_contactProvider
+                                                          )
+                                                        : RemoteStream(
+                                                            remoteRenderer:
+                                                                rendererListWithRefID[
+                                                                        1][
+                                                                    "rtcVideoRenderer"],
+                                                          )),
+                                            Container(
+                                              // color: Colors.yellow,
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width /
+                                                  2,
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height /
+                                                  2,
+                                              child: // if video is off then show white screen
+                                                  rendererListWithRefID[2][
+                                                              "remoteVideoFlag"] ==
+                                                          0
+                                                      ? Container(
+                                                          decoration: BoxDecoration(
+                                                              color:
+                                                                  backgroundAudioCallLight),
+                                                          child: Center(
+                                                            child: Column(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                SvgPicture
+                                                                    .asset(
+                                                                  'assets/userIconCall.svg',
+                                                                ),
+                                                                Text(_contactProvider
                                                                     .contactList
-                                                                    .users
-                                                                    .indexWhere((element) =>
-                                                                        element
-                                                                            .ref_id ==
-                                                                        rendererListWithRefID[4]
-                                                                            [
-                                                                            "refID"])]
-                                                                .full_name)
-                                                          ],
+                                                                    .users[_contactProvider
+                                                                        .contactList
+                                                                        .users
+                                                                        .indexWhere((element) =>
+                                                                            element.ref_id ==
+                                                                            rendererListWithRefID[2]["refID"])]
+                                                                    .full_name)
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        )
+                                                      : RemoteStream(
+                                                          remoteRenderer:
+                                                              rendererListWithRefID[
+                                                                      2][
+                                                                  "rtcVideoRenderer"],
                                                         ),
-                                                      ),
-                                                    )
-                                                  : RemoteStream(
-                                                      remoteRenderer:
-                                                          rendererListWithRefID[
-                                                                  4][
-                                                              "rtcVideoRenderer"],
-                                                    ),
+                                            ),
+                                          ],
                                         ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              )
+                                      ),
+                                      Expanded(
+                                        child: Row(
+                                          children: [
+                                            Container(
+                                                // color: Colors.yellow,
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width /
+                                                    2,
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height /
+                                                    2,
+                                                child: // if video is off then show white screen
+                                                    rendererListWithRefID[3][
+                                                                "remoteVideoFlag"] ==
+                                                            0
+                                                        ? Container(
+                                                            decoration:
+                                                                BoxDecoration(
+                                                                    color:
+                                                                        backgroundAudioCallLight),
+                                                            child: Center(
+                                                              child: Column(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  SvgPicture
+                                                                      .asset(
+                                                                    'assets/userIconCall.svg',
+                                                                  ),
+                                                                  Text(_contactProvider
+                                                                      .contactList
+                                                                      .users[_contactProvider
+                                                                          .contactList
+                                                                          .users
+                                                                          .indexWhere((element) =>
+                                                                              element.ref_id ==
+                                                                              rendererListWithRefID[3]["refID"])]
+                                                                      .full_name)
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          )
+                                                        : RemoteStream(
+                                                            remoteRenderer:
+                                                                rendererListWithRefID[
+                                                                        3][
+                                                                    "rtcVideoRenderer"],
+                                                          )),
+                                            Container(
+                                              // color: Colors.yellow,
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width /
+                                                  2,
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height /
+                                                  2,
+                                              child: // if video is off then show white screen
+                                                  rendererListWithRefID[4][
+                                                              "remoteVideoFlag"] ==
+                                                          0
+                                                      ? Container(
+                                                          decoration: BoxDecoration(
+                                                              color:
+                                                                  backgroundAudioCallLight),
+                                                          child: Center(
+                                                            child: Column(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                SvgPicture
+                                                                    .asset(
+                                                                  'assets/userIconCall.svg',
+                                                                ),
+                                                                Text(_contactProvider
+                                                                    .contactList
+                                                                    .users[_contactProvider
+                                                                        .contactList
+                                                                        .users
+                                                                        .indexWhere((element) =>
+                                                                            element.ref_id ==
+                                                                            rendererListWithRefID[4]["refID"])]
+                                                                    .full_name)
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        )
+                                                      : RemoteStream(
+                                                          remoteRenderer:
+                                                              rendererListWithRefID[
+                                                                      4][
+                                                                  "rtcVideoRenderer"],
+                                                        ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  )
 
                 // RTCVideoView(rendererListWithRefID[0]["refID"],
                 //     mirror: false,
@@ -2632,7 +2635,7 @@ downstream=  double.parse((myDouble/1024).toStringAsFixed(2));
                                     fontStyle: FontStyle.normal,
                                     fontSize: 24),
                               ),
-                              
+
                         Text(
                           _pressDuration,
                           style: TextStyle(
@@ -2646,40 +2649,40 @@ downstream=  double.parse((myDouble/1024).toStringAsFixed(2));
                       ],
                     ),
                   ),
-                   Column(
-                          children: [
-                            // Text(
-                            //   _pressDuration,
-                            //   style: TextStyle(
-                            //       decoration: TextDecoration.none,
-                            //       fontSize: 14,
-                            //       fontFamily: secondaryFontFamily,
-                            //       fontWeight: FontWeight.w400,
-                            //       fontStyle: FontStyle.normal,
-                            //       color: darkBlackColor),
-                            // ),
-                            SizedBox(width:10),
-                          number!=null?   Text(
-                              "DownStream $downstream  UpStream $upstream",
-                              style: TextStyle(
-                                  decoration: TextDecoration.none,
-                                  fontSize: 14,
-                                  fontFamily: secondaryFontFamily,
-                                  fontWeight: FontWeight.w400,
-                                  fontStyle: FontStyle.normal,
-                                  color: darkBlackColor),
-                            ):Text(
-                              "DownStream 0   UpStream 0",
-                              style: TextStyle(
-                                  decoration: TextDecoration.none,
-                                  fontSize: 14,
-                                  fontFamily: secondaryFontFamily,
-                                  fontWeight: FontWeight.w400,
-                                  fontStyle: FontStyle.normal,
-                                  color: darkBlackColor),
-                            ),
-                          ],
-                        ),
+                  //  Column(
+                  //         children: [
+                  //           // Text(
+                  //           //   _pressDuration,
+                  //           //   style: TextStyle(
+                  //           //       decoration: TextDecoration.none,
+                  //           //       fontSize: 14,
+                  //           //       fontFamily: secondaryFontFamily,
+                  //           //       fontWeight: FontWeight.w400,
+                  //           //       fontStyle: FontStyle.normal,
+                  //           //       color: darkBlackColor),
+                  //           // ),
+                  //           SizedBox(width:10),
+                  //         number!=null?   Text(
+                  //             "DownStream $downstream  UpStream $upstream",
+                  //             style: TextStyle(
+                  //                 decoration: TextDecoration.none,
+                  //                 fontSize: 14,
+                  //                 fontFamily: secondaryFontFamily,
+                  //                 fontWeight: FontWeight.w400,
+                  //                 fontStyle: FontStyle.normal,
+                  //                 color: darkBlackColor),
+                  //           ):Text(
+                  //             "DownStream 0   UpStream 0",
+                  //             style: TextStyle(
+                  //                 decoration: TextDecoration.none,
+                  //                 fontSize: 14,
+                  //                 fontFamily: secondaryFontFamily,
+                  //                 fontWeight: FontWeight.w400,
+                  //                 fontStyle: FontStyle.normal,
+                  //                 color: darkBlackColor),
+                  //           ),
+                  //         ],
+                  //       ),
                 ],
               ),
             ),
