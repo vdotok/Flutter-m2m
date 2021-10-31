@@ -19,6 +19,7 @@ class GroupListProvider with ChangeNotifier {
   int get status => _status;
 
   handleGroupListState(ListStatus state) {
+    print("This is handle group list state");
     _groupListStatus = state;
     notifyListeners();
   }

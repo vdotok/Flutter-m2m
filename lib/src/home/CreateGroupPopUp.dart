@@ -180,15 +180,21 @@ class _CreateGroupPopUpState extends State<CreateGroupPopUp> {
                                     if (res["is_already_created"] == true) {
                                       showSnakbar(
                                           "Group with same participants already creatd with \"${groupModel["group_title"]}\" name.");
-                                    } else {
-                                      _groupListProvider.addGroup(groupModel);
-                                      Navigator.pop(context);
-                                      this.widget.backHandler();
-                                    }
-
-                                    setState(() {
+setState(() {
                                       loading = false;
                                     });
+                                    } else {
+                                      print("here in back handler");
+                                      _groupListProvider.addGroup(groupModel);
+                                      
+                                      this.widget.backHandler();
+                                      Navigator.pop(context);
+                                      setState(() {
+                                      loading = false;
+                                    });
+                                    }
+
+                                    
                                   }
                                 },
                                 child: Container(

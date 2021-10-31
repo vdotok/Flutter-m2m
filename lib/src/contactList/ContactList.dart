@@ -49,7 +49,7 @@ class _ContactListState extends State<ContactList> {
     print("this is here $value");
     List temp;
     temp = _contactProvider.contactList.users
-        .where((element) => element.full_name.toLowerCase().startsWith(value))
+        .where((element) => element.full_name.toLowerCase().startsWith(value.toLowerCase()))
         .toList();
     print("this is filtered list $_filteredList");
     setState(() {
