@@ -1,4 +1,4 @@
-package com.vdotok.many2many
+package com.vdotok.fluttermany2many
 
 import io.flutter.embedding.android.FlutterActivity
 

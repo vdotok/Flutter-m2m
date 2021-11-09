@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:vdotok_stream_example/constant.dart';
-import 'package:vdotok_stream_example/src/core/models/GroupModel.dart';
 import 'package:vdotok_stream_example/src/core/providers/groupListProvider.dart';
 import 'package:provider/provider.dart';
 import '../core/models/contact.dart';
 import '../core/providers/auth.dart';
-import '../core/providers/contact_provider.dart';
 
 class CreateGroupPopUp extends StatefulWidget {
   const CreateGroupPopUp({
@@ -18,6 +16,7 @@ class CreateGroupPopUp extends StatefulWidget {
     this.backHandler,
     this.editGroupName,
     this.groupid,
+  // @required this.publishMessage,
   })  : _groupNameController = groupNameController,
         _selectedContacts = selectedContacts,
         super(key: key);
@@ -28,6 +27,7 @@ class CreateGroupPopUp extends StatefulWidget {
   final List<Contact> _selectedContacts;
   final AuthProvider authProvider;
   final String controllerText;
+  //final publishMessage;
   final bool editGroupName;
   final backHandler;
 
@@ -160,6 +160,33 @@ class _CreateGroupPopUpState extends State<CreateGroupPopUp> {
                             return FlatButton(
                                 color: doneButtonColor,
                                 onPressed: () async {
+                                  if (widget.editGroupName) {
+                                          print("here");
+ if (widget._groupNameController.text.isEmpty ||
+                                      widget._groupNameController == null ) {
+                                   
+                                  } else {
+                                    setState(() {
+                                      loading = true;
+                                    });
+                                          await grouplistp.editGroupName(
+                                              widget._groupNameController.text,
+                                              widget.groupid,
+                                              widget.authProvider.getUser
+                                                  .auth_token);
+                                          if (grouplistp.editGroupNameStatus ==
+                                              EditGroupNameStatus.Success) {
+                                            showSnakbar(grouplistp.successMsg);
+                                            widget._groupNameController.clear();
+                                          } else if (grouplistp
+                                                  .editGroupNameStatus ==
+                                              EditGroupNameStatus.Failure) {
+                                            showSnakbar(grouplistp.errorMsg);
+                                          } else {}
+                                          Navigator.of(context).pop();
+                                             widget._groupNameController.clear();
+                                        } }
+                                        else{
                                   if (widget
                                           ._groupNameController.text.isEmpty ||
                                       widget._groupNameController == null ||
@@ -196,7 +223,7 @@ setState(() {
 
                                     
                                   }
-                                },
+                                }},
                                 child: Container(
                                     width: 144,
                                     height: 48,

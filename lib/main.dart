@@ -5,13 +5,14 @@ import 'package:vdotok_stream_example/src/core/providers/call_provider.dart';
 import 'package:vdotok_stream_example/src/core/providers/contact_provider.dart';
 import 'package:vdotok_stream_example/src/core/providers/groupListProvider.dart';
 import 'src/core/providers/auth.dart';
-
 import 'src/home/homeIndex.dart';
 import 'src/login/SignInScreen.dart';
 import 'src/routing/routes.dart';
 import 'src/splash/splash.dart';
 import 'package:provider/provider.dart';
 import 'constant.dart';
+
+
 
 class MyHttpOverrides extends HttpOverrides {
   @override
@@ -41,15 +42,12 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Vdotok Video',
         theme: ThemeData(
-            colorScheme: ColorScheme.fromSwatch(
-              primarySwatch: Colors.grey,
-            ).copyWith(),
-            accentColor: primaryColor,
+           accentColor: primaryColor,
             primaryColor: primaryColor,
             scaffoldBackgroundColor: Colors.white,
             textTheme: TextTheme(
               bodyText1: TextStyle(color: secondaryColor),
-              bodyText2: TextStyle(color: secondaryColor), //Text
+              bodyText2: TextStyle(color: secondaryColor), 
             )),
         onGenerateRoute: Routers.generateRoute,
         home: Consumer<AuthProvider>(
