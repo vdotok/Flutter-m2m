@@ -41,10 +41,10 @@ class Routers {
       //       type: PageTransitionType.rightToLeft);
       //   break;
 
-      case '/contactList':
-        return PageTransition(
-            child: ContactList(), type: PageTransitionType.rightToLeft);
-        break;
+      // case '/contactList':
+      //   return PageTransition(
+      //       child: ContactList(), type: PageTransitionType.rightToLeft);
+      //   break;
 
       default:
         return MaterialPageRoute(

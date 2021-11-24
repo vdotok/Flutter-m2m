@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:vdotok_stream_example/src/core/providers/groupListProvider.dart';
-import '../core/providers/auth.dart';
+import '../../core/providers/auth.dart';
 
-import '../../constant.dart';
+import '../../../constant.dart';
 
 class NoContactsScreen extends StatelessWidget {
   //AuthProvider authProvider;
