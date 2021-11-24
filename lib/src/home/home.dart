@@ -287,7 +287,11 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     };
 
     signalingClient.onRemoteStream = (stream, refid) async {
-      print("call callback on call remote Stream");
+     print("here on else existing participant new peer connection1");
+
+      print("call callback on call remote Stream ${stream.id}");
+      print(
+            "this is on remote stream BEFORE ADD${rendererListWithRefID.length}");
 
       Map<String, dynamic> temp = {
         "refID": refid,
@@ -296,9 +300,11 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         "remoteAudioFlag": 1
       };
 
-      await initRenderers(temp["rtcVideoRenderer"]);
+       initRenderers(temp["rtcVideoRenderer"]).then((value) 
+       {
+          temp["rtcVideoRenderer"].srcObject = stream;
       setState(() {
-        temp["rtcVideoRenderer"].srcObject = stream;
+        
         if (iscallReConnected == false) {
           print("this is  time in reconnected false $_time..... $_callTime");
           _time = DateTime.now();
@@ -318,19 +324,42 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         });
       }
       setState(() {
-        print(
-            "this is on remote stream BEFORE ADD${rendererListWithRefID.length}");
         rendererListWithRefID.add(temp);
         forLargStream = temp;
         onRemoteStream = true;
       });
-      print(
-          "this is on remote stream after ADD${rendererListWithRefID.length}");
+       print("in initialize function 1111122222");
       // setState(() {
-
+      //   temp["rtcVideoRenderer"].srcObject = stream;
+      //   if (iscallReConnected == false) {
+      //     print("this is  time in reconnected false $_time..... $_callTime");
+      //     _time = DateTime.now();
+      //     _callTime = DateTime.now();
+      //   } else {
+      //     print("this is  time in reconnected true $_time..... $_callTime");
+      //     _time = _callTime;
+      //     iscallReConnected = false;
+      //   }
+      //   //_time = DateTime.now();
+      //   _updateTimer();
+      //   _ticker = Timer.periodic(Duration(seconds: 1), (_) => _updateTimer());
       // });
-
-      // _callProvider.callStart();
+      // if (forLargStream.isEmpty) {
+      //   setState(() {
+      //     forLargStream = temp;
+      //   });
+      // }
+      // setState(() {
+      //   print(
+      //       "this is on remote stream BEFORE ADD${rendererListWithRefID.length}");
+      //   rendererListWithRefID.add(temp);
+      //   forLargStream = temp;
+      //   onRemoteStream = true;
+      // });
+      // print(
+      //     "this is on remote stream after ADD${rendererListWithRefID.length}");
+       });
+   
     };
 
     signalingClient.onReceiveCallFromUser =
@@ -544,8 +573,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     _callProvider.callDial();
   }
 
-  initRenderers(RTCVideoRenderer rtcRenderer) async {
+Future<void> initRenderers(RTCVideoRenderer rtcRenderer) async {
     await rtcRenderer.initialize();
+    print("in initialize function");
   }
 
   startRinging() async {
@@ -588,7 +618,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       // if app open from background
     }
   }
-
+  
   @override
   dispose() {
     // _localRenderer.dispose();
