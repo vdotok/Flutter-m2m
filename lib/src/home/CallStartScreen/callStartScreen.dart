@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:vdotok_stream_example/constant.dart';
+import 'package:vdotok_stream_example/src/core/models/ParticipantsModel.dart';
 import 'package:vdotok_stream_example/src/core/providers/contact_provider.dart';
 import 'package:vdotok_stream_example/src/home/home.dart';
 import 'package:vdotok_stream_example/src/home/streams/remoteStream.dart';
@@ -581,9 +582,10 @@ class _CallSttartScreenState extends State<CallSttartScreen> {
                                   int index = contact.contactList.users
                                       .indexWhere((element) =>
                                           element.ref_id == widget.incomingfrom);
-                                  print("i am here-");
+                                  print("i am here------- $index");
                                   return Text(
-                                    contact.contactList.users[index].full_name,
+                                    //"${widget.incomingfrom}",
+                                   contact.contactList.users[index].full_name,
                                     style: TextStyle(
                                         fontFamily: primaryFontFamily,
                                         color: darkBlackColor,

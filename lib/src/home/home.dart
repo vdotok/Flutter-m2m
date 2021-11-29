@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -24,10 +23,12 @@ import 'package:provider/provider.dart';
 import 'package:vibration/vibration.dart';
 import 'dart:io' show Platform;
 import '../../constant.dart';
+import '../../main.dart';
 import '../core/providers/auth.dart';
 import '../core/providers/call_provider.dart';
 import '../core/providers/contact_provider.dart';
- SignalingClient signalingClient = SignalingClient.instance;
+SignalingClient signalingClient = SignalingClient.instance..checkConnectivity();
+  String callTo = "";
 class Home extends StatefulWidget {
   final state;
   Home({this.state});
@@ -81,7 +82,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   bool switchMute = true;
   bool switchSpeaker = true;
   bool secondRemoteVideo = false;
-  String callTo = "";
+ 
+  bool isConnected=true;
   var number;
   final _searchController = new TextEditingController();
   bool sockett = true;
@@ -100,7 +102,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-    checkConnectivity();
+    
+    
     WidgetsBinding.instance.addObserver(this);
     _auth = Provider.of<AuthProvider>(context, listen: false);
     _contactProvider = Provider.of<ContactProvider>(context, listen: false);
@@ -110,25 +113,220 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     _groupListProvider.getGroupList(_auth.getUser.auth_token);
     signalingClient.connect(project_id, _auth.completeAddress);
     signalingClient.onConnect = (res) {
+print("i am here in onconnect functiono $res");
+
       if (res == "connected") {
         sockett = true;
+        print("this is before socket iffff111 $sockett");
       }
       signalingClient.register(_auth.getUser.toJson(), project_id);
     };
-    signalingClient.onError = (code, res) {
-      if (code == 1002 || code == 1001) {
-        sockett = false;
-        isSocketregis = false;
-        isPushed = false;
-        isdev = false;
-      } else {}
-      if (code == 1005) {
-        sockett = false;
-        isSocketregis = false;
-        isPushed = false;
-        isdev = false;
-      }
-    };
+    signalingClient.internetConnectivityCallBack = (mesg) {
+print("in internet connectibvity call back $mesg .... $sockett");
+if (mesg == "Connected") {
+
+setState(() {
+
+isConnected = true;
+
+});
+
+
+print("this is socket in internetconnectivity call back before snack bar $sockett");
+showSnackbar("Internet Connected", whiteColor, Colors.green, false);
+print("this is socket in internetconnectivity call back $sockett");
+print("this is before socket iffff $sockett");
+if (sockett == false) {
+  print("this is before socket iffff2222 $sockett");
+print("this is in socket connnect false if");
+signalingClient.connect(project_id, _auth.completeAddress);
+
+print("I am in Re Reregister");
+
+remoteVideoFlag = true;
+
+
+
+// signalingClient.onConnect = (res) {
+
+// print("onConnect $res");
+
+// setState(() {
+
+// sockett = true;
+
+// //isSocketregis = true;
+
+// });
+
+print("here in init state register");
+
+signalingClient.register(_auth.getUser.toJson(), project_id);
+//sockett=true;
+isSocketregis = true;
+
+// signalingClient.register(user);
+
+// };
+
+
+
+isPushed = false;
+
+// signalingClient.onRegister = (res) {
+
+// print("onRegister after reconnection $res");
+
+// setState(() {
+
+// registerRes = res;
+
+// });
+
+// };
+
+}
+
+} else {
+
+print("no internet connection");
+
+setState(() {
+
+isConnected = false;
+
+});
+
+showSnackbar("No Internet Connection", whiteColor, primaryColor, true);
+
+}
+
+};
+signalingClient.onError = (code, res) {
+
+print("onError $code $res");
+
+// print(
+
+// "hey i am here, this is localStream on Error ${local.id} remotestream ${remote.id}");
+
+if (code == 1001 || code == 1002) {
+
+setState(() {
+
+sockett = false;
+
+isConnected = false;
+
+isSocketregis = false;
+
+isPushed = false;
+
+// isdev = false;
+
+
+
+print("disconnected socket");
+
+});
+
+} else if (code == 1005) {
+
+setState(() {
+
+sockett = false;
+
+isSocketregis = false;
+
+isPushed = false;
+
+});
+
+
+
+if (_auth.loggedInStatus == Status.LoggedOut) {
+
+} else {
+
+if (isConnected == true && sockett == false) {
+
+signalingClient.connect(project_id, _auth.completeAddress);
+
+print("i am in connect in 1005");
+
+signalingClient.register(_auth.getUser.toJson(), project_id);
+
+}
+
+}
+
+}
+
+// else if(code == 1002){
+
+// setState(() {
+
+// sockett = false;
+
+// isInternetConnected = false;
+
+// isSocketregis = false;
+
+// isPushed = false;
+
+// });
+
+// }
+
+
+
+// else if (code == 1005) {
+
+// setState(() {
+
+// sockett = false;
+
+// isSocketregis = false;
+
+// isPushed = false;
+
+// // isdev = false;
+
+
+
+// print("disconnected socket ");
+
+// });
+
+// }
+
+
+
+else {
+
+print("ffgfffff $res");
+
+// snackBar = SnackBar(content: Text(res));
+
+}
+
+};
+
+
+    // signalingClient.onError = (code, res) {
+    //   if (code == 1002 || code == 1001) {
+    //     sockett = false;
+    //     isSocketregis = false;
+    //     isPushed = false;
+    //     isdev = false;
+    //   } else {}
+    //   if (code == 1005) {
+    //     sockett = false;
+    //     isSocketregis = false;
+    //     isPushed = false;
+    //     isdev = false;
+    //   }
+    // };
     signalingClient.onRegister = (res) {
       setState(() {
         registerRes = res;
@@ -241,23 +439,116 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       });
     };
   }
-  void checkConnectivity() async {
-    isDeviceConnected = false;
-    if (!kIsWeb) {
-      DataConnectionChecker().onStatusChange.listen((status) async {
-        isDeviceConnected = await DataConnectionChecker().hasConnection;
-        if (isDeviceConnected == true) {
-          setState(() {
-            isdev = true;
-          });
-        } else {
-          setState(() {
-            isdev = false;
-          });
-        }
-      });
-    }
-  }
+  showSnackbar(text, Color color, Color backgroundColor, bool check) {
+print("Hi!!! i am here in snackbar");
+if (check == false) {
+
+rootScaffoldMessengerKey.currentState
+
+..hideCurrentSnackBar()
+
+..showSnackBar(SnackBar(
+
+content: Text(
+
+'$text',
+
+style: TextStyle(color: color),
+
+),
+
+backgroundColor: backgroundColor,
+
+duration: Duration(seconds: 2),
+
+));
+
+} else if (check == true) {
+
+rootScaffoldMessengerKey.currentState
+
+..hideCurrentSnackBar()
+
+..showSnackBar(SnackBar(
+
+content: Text(
+
+'$text',
+
+style: TextStyle(color: color),
+
+),
+
+backgroundColor: backgroundColor,
+
+duration: Duration(seconds: 2),
+
+));
+
+}
+
+}
+  @override
+
+void didChangeAppLifecycleState(AppLifecycleState state) {
+
+print("this is changeapplifecyclestate");
+
+switch (state) {
+
+case AppLifecycleState.resumed:
+
+print("app in resumed");
+
+// signalingClient.sendPing();
+
+if (_auth.loggedInStatus == Status.LoggedOut) {
+
+} else if (sockett == true) {
+
+} else if (isConnected && sockett == false) {
+
+print("here in resume");
+
+signalingClient.connect(project_id, _auth.completeAddress);
+
+signalingClient.register(_auth.getUser.toJson(), project_id);
+
+}
+
+
+
+break;
+
+case AppLifecycleState.inactive:
+
+print("app in inactive");
+
+break;
+
+case AppLifecycleState.paused:
+
+print("app in paused");
+
+// signalingClient.socketDrop();
+
+break;
+
+case AppLifecycleState.detached:
+ signalingClient.unRegister(registerRes["mcToken"]);
+
+print("app in detached");
+
+break;
+
+}
+
+// super.didChangeAppLifecycleState(state);
+
+// _isInForeground = state == AppLifecycleState.resumed;
+
+}
+  
   disposeAllRenderer() async {
     for (int i = 0; i < rendererListWithRefID.length; i++) {
       if (i == 0) {
@@ -326,20 +617,20 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     FlutterRingtonePlayer.stop();
   }
 
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    print("this is state of App change $state");
-    if (state == AppLifecycleState.detached) {
-      // if app swipe killed from background
-      signalingClient.unRegister(registerRes["mcToken"]);
-    } else if (state == AppLifecycleState.inactive) {
-      // if app go to background
-    } else if (state == AppLifecycleState.paused) {
-      // if app in background and app go to in paused State
-    } else if (state == AppLifecycleState.resumed) {
-      // if app open from background
-    }
-  }
+  // @override
+  // void didChangeAppLifecycleState(AppLifecycleState state) {
+  //   print("this is state of App change $state");
+  //   if (state == AppLifecycleState.detached) {
+  //     // if app swipe killed from background
+  //     signalingClient.unRegister(registerRes["mcToken"]);
+  //   } else if (state == AppLifecycleState.inactive) {
+  //     // if app go to background
+  //   } else if (state == AppLifecycleState.paused) {
+  //     // if app in background and app go to in paused State
+  //   } else if (state == AppLifecycleState.resumed) {
+  //     // if app open from background
+  //   }
+  // }
   @override
   dispose() {
     _ticker.cancel();
@@ -389,6 +680,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     isPushed = false;
     _ticker.cancel();
     setState(() {
+      callTo="";
       _pressDuration = "";
       upstream = 0;
       downstream = 0;
@@ -526,22 +818,22 @@ void _showDialogDeletegroup(group_id, index) {
       assert(myDouble is double);
       downstream = double.parse((myDouble / 1024).toStringAsFixed(2));
     };
-    if (isdev == true && sockett == false) {
-      if (inCall == true) {
-        iscallReConnected = true;
-      }
-      if (isSocketregis == false) {
-        isSocketregis = true;
-        signalingClient.connect(project_id, _auth.completeAddress);
-        signalingClient.register(_auth.getUser.toJson(), project_id);
-        isPushed = false;
-        signalingClient.onRegister = (res) {
-          setState(() {
-            registerRes = res;
-          });
-        };
-      }
-    }
+    // if (isdev == true && sockett == false) {
+    //   if (inCall == true) {
+    //     iscallReConnected = true;
+    //   }
+    //   if (isSocketregis == false) {
+    //     isSocketregis = true;
+    //     signalingClient.connect(project_id, _auth.completeAddress);
+    //     signalingClient.register(_auth.getUser.toJson(), project_id);
+    //     isPushed = false;
+    //     signalingClient.onRegister = (res) {
+    //       setState(() {
+    //         registerRes = res;
+    //       });
+    //     };
+    //   }
+    // }
     if (!ResponsiveWidget.isSmallScreen(context))
     return WebScreen();
     else
@@ -550,7 +842,8 @@ void _showDialogDeletegroup(group_id, index) {
           if (callProvider.callStatus == CallStatus.CallReceive)
              return CallReceiveScreen(authprovider: _auth,callprovider: callProvider,callingto: callingTo,incomingfrom: incomingfrom,registerRes: registerRes,rendererListWithRefid: rendererListWithRefID,mediatype: meidaType,stopRinging: stopRinging,);
           if (callProvider.callStatus == CallStatus.CallStart) {
-             return CallSttartScreen(callto: callTo,switchmute: switchMute,switchspeaker: switchSpeaker,enablecamera: enableCamera,registerRes: registerRes,rendererListWithRefid: rendererListWithRefID,onRemotestream: onRemoteStream,pressduration: _pressDuration,incomingfrom: incomingfrom,stopcall: stopCall,mediatype: meidaType,contactprovider: _contactProvider,);}
+               
+             return CallSttartScreen(callto:callTo,switchmute: switchMute,switchspeaker: switchSpeaker,enablecamera: enableCamera,registerRes: registerRes,rendererListWithRefid: rendererListWithRefID,onRemotestream: onRemoteStream,pressduration: _pressDuration,incomingfrom: incomingfrom,stopcall: stopCall,mediatype: meidaType,contactprovider: _contactProvider,);}
           if (callProvider.callStatus == CallStatus.CallDial)
              return CallDialScreen(callingto: callingTo,mediatype: meidaType,registerRes: registerRes,rendererListWithRefid: rendererListWithRefID,callprovider: callProvider,);
           else
@@ -566,11 +859,11 @@ void _showDialogDeletegroup(group_id, index) {
                         if (groupProvider.groupList.groups.length == 0)
                         {
                           strArr.add("Home");
-                          return NoContactsScreen(isConnect: sockett,state: widget.state,refreshList: renderList,groupListProvider: groupProvider,authProvider: _auth,newChatHandler: handleGroupState);}
+                          return NoContactsScreen(isConnect: isConnected,state: widget.state,refreshList: renderList,groupListProvider: groupProvider,authProvider: _auth,newChatHandler: handleGroupState);}
                         else
                         {
                           strArr.add("Home");
-                         return GroupListScreen(authprovider: _auth, registerRes: registerRes,isdev: isdev,sockett: sockett,state: groupProvider.groupList,startCall: _startCall,showdialogdeletegroup: _showDialogDeletegroup,mediatype: meidaType,grouplistprovider: _groupListProvider,groupNameController: _groupNameController,refreshList: refreshList,);}
+                         return GroupListScreen(authprovider: _auth, registerRes: registerRes,isdev: isConnected,sockett: sockett,state: groupProvider.groupList,startCall: _startCall,showdialogdeletegroup: _showDialogDeletegroup,mediatype: meidaType,grouplistprovider: _groupListProvider,groupNameController: _groupNameController,refreshList: refreshList);}
                       } 
                       //Create group Screen
                       else

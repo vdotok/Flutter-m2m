@@ -12,7 +12,7 @@ import 'src/splash/splash.dart';
 import 'package:provider/provider.dart';
 import 'constant.dart';
 
-
+GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey;
 
 class MyHttpOverrides extends HttpOverrides {
   @override
@@ -28,7 +28,55 @@ void main() {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+
+void initState() {
+
+super.initState();
+
+rootScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+
+// signalingClient.internetConnectivityCallBack = (mesg) {
+
+// if (mesg == "Connected") {
+
+// setState(() {
+
+// isConnected = true;
+
+// });
+
+
+
+// showSnackbar("Internet Connected", whiteColor, Colors.green, false);
+
+// } else {
+
+// print("no internet connection");
+
+// setState(() {
+
+// isConnected = false;
+
+// });
+
+// showSnackbar("No Internet Connection", whiteColor, primaryColor, true);
+
+// }
+
+// };
+
+//checkStatus();
+
+//checkConnectivity();
+
+}
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -39,6 +87,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => GroupListProvider()),
       ],
       child: MaterialApp(
+        scaffoldMessengerKey: rootScaffoldMessengerKey,
         debugShowCheckedModeBanner: false,
         title: 'Vdotok Video',
         theme: ThemeData(

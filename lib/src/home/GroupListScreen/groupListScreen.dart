@@ -15,7 +15,7 @@ class GroupListScreen extends StatefulWidget {
   AuthProvider authprovider;
   String mediatype;
   final refreshList;
-  String callto;
+ 
   GroupListProvider grouplistprovider;
   final groupNameController;
   final startCall;
@@ -23,7 +23,7 @@ class GroupListScreen extends StatefulWidget {
   bool sockett;
   bool isdev;
   final showdialogdeletegroup;
-  GroupListScreen({this.authprovider,this.mediatype,this.state, this.refreshList,this.callto,this.grouplistprovider, 
+  GroupListScreen({this.authprovider,this.mediatype,this.state, this.refreshList,this.grouplistprovider, 
   this.groupNameController, this.startCall,this.registerRes,this.isdev,this.sockett, this.showdialogdeletegroup});
   @override
   _GroupListScreenState createState() => _GroupListScreenState();
@@ -155,7 +155,7 @@ class _GroupListScreenState extends State<GroupListScreen> {
                                             CAllType.many2many,
                                             SessionType.call);
                                         setState(() {
-                                          widget.callto = element.group_title;
+                                          callTo = element.group_title;
                                           widget.mediatype = MediaType.audio;
                                          
                                         });
@@ -176,7 +176,9 @@ class _GroupListScreenState extends State<GroupListScreen> {
                                             CAllType.many2many,
                                             SessionType.call);
                                         setState(() {
-                                          widget.callto = element.group_title;
+                                        
+                                          callTo = element.group_title;
+                                        
                                           widget.mediatype = MediaType.video;
                                          
                                         });
