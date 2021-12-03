@@ -44,8 +44,9 @@ dependencies:
   logger: ^1.0.0
   # flutter_ip: ^0.1.4
   wifi_info_flutter: ^2.0.2
-
-
+  wakelock: ^0.5.6
+  proximity_sensor: ^1.0.2
+  screen: ^0.0.5
 
 
 dev_dependencies:

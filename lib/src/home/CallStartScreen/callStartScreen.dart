@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:vdotok_stream_example/constant.dart';
-import 'package:vdotok_stream_example/src/core/models/ParticipantsModel.dart';
 import 'package:vdotok_stream_example/src/core/providers/contact_provider.dart';
 import 'package:vdotok_stream_example/src/home/home.dart';
 import 'package:vdotok_stream_example/src/home/streams/remoteStream.dart';
@@ -18,12 +17,10 @@ class CallSttartScreen extends StatefulWidget {
   bool onRemotestream;
   String callto;
   String pressduration;
-  bool enablecamera;
-  bool switchmute;
-  bool switchspeaker;
+ 
   final stopcall;
   CallSttartScreen({this.mediatype,this.registerRes,this.rendererListWithRefid,this.incomingfrom,
-  this.contactprovider,this.onRemotestream,this.callto,this.pressduration,this.enablecamera,this.switchmute,this.switchspeaker, this.stopcall});
+  this.contactprovider,this.onRemotestream,this.callto,this.pressduration,this.stopcall});
 
   @override
   _CallSttartScreenState createState() => _CallSttartScreenState();
@@ -648,13 +645,13 @@ class _CallSttartScreenState extends State<CallSttartScreen> {
                             Container(
                               padding: const EdgeInsets.only(right: 20),
                               child: GestureDetector(
-                                child: widget.switchspeaker
+                                child:!switchSpeaker
                                     ? SvgPicture.asset('assets/VolumnOn.svg')
                                     : SvgPicture.asset('assets/VolumeOff.svg'),
                                 onTap: () {
-                                  signalingClient.switchSpeaker(widget.switchspeaker);
+                                  signalingClient.switchSpeaker(switchSpeaker);
                                   setState(() {
-                                    widget.switchspeaker = !widget.switchspeaker;
+                                    switchSpeaker = !switchSpeaker;
                                   });
                                 },
                               ),
@@ -671,15 +668,15 @@ class _CallSttartScreenState extends State<CallSttartScreen> {
                               child: Align(
                                 alignment: Alignment.topRight,
                                 child: GestureDetector(
-                                  child: widget.switchspeaker
+                                  child:switchSpeaker
                                       ? SvgPicture.asset('assets/VolumnOn.svg')
                                       : SvgPicture.asset(
                                           'assets/VolumeOff.svg'),
                                   onTap: () {
                                     signalingClient
-                                        .switchSpeaker(widget.switchspeaker);
+                                        .switchSpeaker(switchSpeaker);
                                     setState(() {
-                                      widget.switchspeaker = !widget.switchspeaker;
+                                      switchSpeaker = !switchSpeaker;
                                     });
                                   },
                                 ),
@@ -727,18 +724,18 @@ class _CallSttartScreenState extends State<CallSttartScreen> {
                       ? Row(
                           children: [
                             GestureDetector(
-                              child: !widget.enablecamera
+                              child: !enableCamera
                                   ? SvgPicture.asset('assets/video_off.svg')
                                   : SvgPicture.asset('assets/video.svg'),
                               onTap: () {
                                 setState(() {
-                                  widget.enablecamera = !widget.enablecamera;
+                                 enableCamera = !enableCamera;
                                 });
                                 signalingClient.audioVideoState(
-                                    audioFlag: widget.switchmute ? 1 : 0,
-                                    videoFlag: widget.enablecamera ? 1 : 0,
+                                    audioFlag: switchMute  ? 1 : 0,
+                                    videoFlag: enableCamera ? 1 : 0,
                                     mcToken: widget.registerRes["mcToken"]);
-                                signalingClient.enableCamera(widget.enablecamera);
+                                signalingClient.enableCamera(enableCamera);
                               },
                             ),
                             SizedBox(
@@ -758,14 +755,14 @@ class _CallSttartScreenState extends State<CallSttartScreen> {
 
                   SizedBox(width: 20),
                   GestureDetector(
-                    child: !widget.switchmute 
+                    child: !switchMute 
                         ? SvgPicture.asset('assets/mute_microphone.svg')
                         : SvgPicture.asset('assets/microphone.svg'),
                     onTap: () {
                       final bool enabled = signalingClient.muteMic();
                       print("this is enabled $enabled");
                       setState(() {
-                        widget.switchmute  = enabled;
+                        switchMute   = enabled;
                       });
                     },
                   ),

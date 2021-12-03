@@ -27,7 +27,6 @@ void main() {
   HttpOverrides.global = new MyHttpOverrides();
   runApp(MyApp());
 }
-
 class MyApp extends StatefulWidget {
   @override
   _MyAppState createState() => _MyAppState();
@@ -42,7 +41,7 @@ super.initState();
 
 rootScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
-// signalingClient.internetConnectivityCallBack = (mesg) {
+//  netConnectivityCallBack = (mesg) {
 
 // if (mesg == "Connected") {
 

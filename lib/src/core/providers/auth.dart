@@ -88,6 +88,7 @@ class AuthProvider with ChangeNotifier {
       notifyListeners();
       return false;
     } else {
+      _completeAddress  = response['media_server_map']['complete_address'];
       SharedPref sharedPref = SharedPref();
       sharedPref.save("authUser", response);
       _registeredInStatus = Status.Registered;

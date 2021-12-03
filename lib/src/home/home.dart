@@ -3,6 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
+import 'package:proximity_sensor/proximity_sensor.dart';
+import 'package:screen/screen.dart';
 import 'package:vdotok_stream/vdotok_stream.dart';
 import 'package:vdotok_stream_example/src/core/config/config.dart';
 import 'package:vdotok_stream_example/src/home/CallDialScreen/callDialScreen.dart';
@@ -21,21 +23,36 @@ import 'package:vdotok_stream_example/src/home/CreateGroupPopUp.dart';
 import 'package:vdotok_stream_example/src/home/responsiveWidget.dart';
 import 'package:provider/provider.dart';
 import 'package:vibration/vibration.dart';
-import 'dart:io' show Platform;
+import 'package:wakelock/wakelock.dart';
+import 'dart:io' show Platform, sleep;
 import '../../constant.dart';
 import '../../main.dart';
 import '../core/providers/auth.dart';
 import '../core/providers/call_provider.dart';
 import '../core/providers/contact_provider.dart';
+
 SignalingClient signalingClient = SignalingClient.instance..checkConnectivity();
-  String callTo = "";
+String callTo = "";
+bool switchMute = true;
+bool switchSpeaker = true;
+bool enableCamera = true;
+
 class Home extends StatefulWidget {
   final state;
   Home({this.state});
   @override
   _HomeState createState() => _HomeState();
 }
+
 class _HomeState extends State<Home> with WidgetsBindingObserver {
+//  List<double> _accelerometerValues;
+//   List<double> _userAccelerometerValues;
+//   List<double> _gyroscopeValues;
+//   bool _proximityValues = false;
+//   List<StreamSubscription<dynamic>> _streamSubscriptions = <StreamSubscription<dynamic>>[];
+  bool _isNear = false;
+  StreamSubscription<dynamic> _streamSubscription;
+
   List<Contact> _selectedContacts = [];
   List<String> strArr = [];
   bool isDeviceConnected = false;
@@ -58,11 +75,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       _pressDuration = newDuration;
     });
   }
+
   String _formatDuration(Duration duration) {
     String twoDigits(int n) {
       if (n >= 10) return "$n";
       return "0$n";
     }
+
     String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
     String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
     String twoDigitHours = twoDigits(duration.inHours);
@@ -70,7 +89,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       return "$twoDigitMinutes:$twoDigitSeconds";
     else {
       return "${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
-    }  }
+    }
+  }
+
   GlobalKey forsmallView = new GlobalKey();
   GlobalKey forlargView = new GlobalKey();
   GlobalKey forDialView = new GlobalKey();
@@ -78,17 +99,78 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   String incomingfrom;
   CallProvider _callProvider;
   AuthProvider _auth;
-  bool enableCamera = true;
-  bool switchMute = true;
-  bool switchSpeaker = true;
   bool secondRemoteVideo = false;
- 
-  bool isConnected=true;
+  bool isConnected = true;
   var number;
   final _searchController = new TextEditingController();
   bool sockett = true;
   bool isSocketregis = false;
-  List<int> vibrationList = [ 500, 1000,500, 1000,  500,1000,500,  1000,   500,  1000,  500,  1000,  500,  1000, 500,  1000,  500,  1000,  500,  1000,  500,  1000,500,1000,500,1000, 500,1000, 500, 1000, 500,1000,500, 1000,500,1000,500,1000,500,1000,500, 1000,500,1000,500,1000,500,1000,500,1000,500,1000,500,1000,500,1000,500,1000,500,1000,500,1000,500,1000];
+  List<int> vibrationList = [
+    500,
+    1000,
+    500,
+    1000,
+    500,
+    1000,
+    500,
+    1000,
+    500,
+    1000,
+    500,
+    1000,
+    500,
+    1000,
+    500,
+    1000,
+    500,
+    1000,
+    500,
+    1000,
+    500,
+    1000,
+    500,
+    1000,
+    500,
+    1000,
+    500,
+    1000,
+    500,
+    1000,
+    500,
+    1000,
+    500,
+    1000,
+    500,
+    1000,
+    500,
+    1000,
+    500,
+    1000,
+    500,
+    1000,
+    500,
+    1000,
+    500,
+    1000,
+    500,
+    1000,
+    500,
+    1000,
+    500,
+    1000,
+    500,
+    1000,
+    500,
+    1000,
+    500,
+    1000,
+    500,
+    1000,
+    500,
+    1000,
+    500,
+    1000
+  ];
   String meidaType = MediaType.video;
   bool remoteVideoFlag = true;
   bool remoteAudioFlag = true;
@@ -102,8 +184,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-    
-    
+    listenSensor();
+ sleep(const Duration(seconds:10));
     WidgetsBinding.instance.addObserver(this);
     _auth = Provider.of<AuthProvider>(context, listen: false);
     _contactProvider = Provider.of<ContactProvider>(context, listen: false);
@@ -111,41 +193,68 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     _callProvider = Provider.of<CallProvider>(context, listen: false);
     _contactProvider.getContacts(_auth.getUser.auth_token);
     _groupListProvider.getGroupList(_auth.getUser.auth_token);
+
+//  _streamSubscriptions
+//         .add(accelerometerEvents.listen((AccelerometerEvent event) {
+//       setState(() {
+//         _accelerometerValues = <double>[event.x, event.y, event.z];
+//       });
+//     }));
+//     _streamSubscriptions.add(gyroscopeEvents.listen((GyroscopeEvent event) {
+//       setState(() {
+//         _gyroscopeValues = <double>[event.x, event.y, event.z];
+//       });
+//     }));
+
+//     _streamSubscriptions
+//         .add(userAccelerometerEvents.listen((UserAccelerometerEvent event) {
+//       setState(() {
+//         _userAccelerometerValues = <double>[event.x, event.y, event.z];
+//       });
+//     }));
+//     _streamSubscriptions
+//         .add(proximityEvents.listen((ProximityEvent event) {
+//       setState(() {
+//         _proximityValues = event.getValue();
+//       });
+//     }));
+
+    print("i AM here in home init");
     signalingClient.connect(project_id, _auth.completeAddress);
     signalingClient.onConnect = (res) {
-print("i am here in onconnect functiono $res");
+      print("i am here in onconnect functiono $res");
 
       if (res == "connected") {
         sockett = true;
         print("this is before socket iffff111 $sockett");
       }
+
       signalingClient.register(_auth.getUser.toJson(), project_id);
     };
     signalingClient.internetConnectivityCallBack = (mesg) {
-print("in internet connectibvity call back $mesg .... $sockett");
-if (mesg == "Connected") {
+      print("in internet connectibvity call back $mesg .... $sockett");
+      if (mesg == "Connected") {
+        setState(() {
+          isConnected = true;
+        });
 
-setState(() {
+        print(
+            "this is socket in internetconnectivity call back before snack bar $sockett");
+        showSnackbar("Internet Connected", whiteColor, Colors.green, false);
+        print("this is socket in internetconnectivity call back $sockett");
+        print("this is before socket iffff $sockett");
+        if (sockett == false) {
+          print("this is before socket iffff2222 $sockett");
+          print("this is in socket connnect false if");
+          signalingClient.connect(project_id, _auth.completeAddress);
 
-isConnected = true;
+          print("I am in Re Reregister");
 
-});
+          remoteVideoFlag = true;
 
-
-print("this is socket in internetconnectivity call back before snack bar $sockett");
-showSnackbar("Internet Connected", whiteColor, Colors.green, false);
-print("this is socket in internetconnectivity call back $sockett");
-print("this is before socket iffff $sockett");
-if (sockett == false) {
-  print("this is before socket iffff2222 $sockett");
-print("this is in socket connnect false if");
-signalingClient.connect(project_id, _auth.completeAddress);
-
-print("I am in Re Reregister");
-
-remoteVideoFlag = true;
-
-
+          if (inCall == true) {
+            iscallReConnected = true;
+          }
 
 // signalingClient.onConnect = (res) {
 
@@ -159,19 +268,17 @@ remoteVideoFlag = true;
 
 // });
 
-print("here in init state register");
+          print("here in init state register");
 
-signalingClient.register(_auth.getUser.toJson(), project_id);
+          signalingClient.register(_auth.getUser.toJson(), project_id);
 //sockett=true;
-isSocketregis = true;
+          isSocketregis = true;
 
 // signalingClient.register(user);
 
 // };
 
-
-
-isPushed = false;
+          isPushed = false;
 
 // signalingClient.onRegister = (res) {
 
@@ -185,82 +292,58 @@ isPushed = false;
 
 // };
 
-}
+        }
+      } else {
+        print("no internet connection");
 
-} else {
+        setState(() {
+          isConnected = false;
+        });
 
-print("no internet connection");
-
-setState(() {
-
-isConnected = false;
-
-});
-
-showSnackbar("No Internet Connection", whiteColor, primaryColor, true);
-
-}
-
-};
-signalingClient.onError = (code, res) {
-
-print("onError $code $res");
+        showSnackbar("No Internet Connection", whiteColor, primaryColor, true);
+      }
+    };
+    signalingClient.onError = (code, res) {
+      print("onError $code $res");
 
 // print(
 
 // "hey i am here, this is localStream on Error ${local.id} remotestream ${remote.id}");
 
-if (code == 1001 || code == 1002) {
+      if (code == 1001 || code == 1002) {
+        setState(() {
+          sockett = false;
 
-setState(() {
+          isConnected = false;
 
-sockett = false;
+          isSocketregis = false;
 
-isConnected = false;
-
-isSocketregis = false;
-
-isPushed = false;
+          isPushed = false;
 
 // isdev = false;
 
+          print("disconnected socket");
+        });
+      } else if (code == 1005) {
+        setState(() {
+          sockett = false;
 
+          isSocketregis = false;
 
-print("disconnected socket");
+          isPushed = false;
+        });
 
-});
+        if (_auth.loggedInStatus == Status.LoggedOut) {
+        } else {
+          if (isConnected == true && sockett == false) {
+            signalingClient.connect(project_id, _auth.completeAddress);
 
-} else if (code == 1005) {
+            print("i am in connect in 1005");
 
-setState(() {
-
-sockett = false;
-
-isSocketregis = false;
-
-isPushed = false;
-
-});
-
-
-
-if (_auth.loggedInStatus == Status.LoggedOut) {
-
-} else {
-
-if (isConnected == true && sockett == false) {
-
-signalingClient.connect(project_id, _auth.completeAddress);
-
-print("i am in connect in 1005");
-
-signalingClient.register(_auth.getUser.toJson(), project_id);
-
-}
-
-}
-
-}
+            signalingClient.register(_auth.getUser.toJson(), project_id);
+          }
+        }
+      }
 
 // else if(code == 1002){
 
@@ -278,8 +361,6 @@ signalingClient.register(_auth.getUser.toJson(), project_id);
 
 // }
 
-
-
 // else if (code == 1005) {
 
 // setState(() {
@@ -292,26 +373,19 @@ signalingClient.register(_auth.getUser.toJson(), project_id);
 
 // // isdev = false;
 
-
-
 // print("disconnected socket ");
 
 // });
 
 // }
 
-
-
-else {
-
-print("ffgfffff $res");
+      else {
+        print("ffgfffff $res");
 
 // snackBar = SnackBar(content: Text(res));
 
-}
-
-};
-
+      }
+    };
 
     // signalingClient.onError = (code, res) {
     //   if (code == 1002 || code == 1001) {
@@ -348,6 +422,7 @@ print("ffgfffff $res");
       });
     };
     signalingClient.onRemoteStream = (stream, refid) async {
+      print("HI1 i am here in remote stream");
       Map<String, dynamic> temp = {
         "refID": refid,
         "rtcVideoRenderer": new RTCVideoRenderer(),
@@ -361,6 +436,7 @@ print("ffgfffff $res");
           _time = DateTime.now();
           _callTime = DateTime.now();
         } else {
+          _ticker.cancel();
           _time = _callTime;
           iscallReConnected = false;
         }
@@ -380,6 +456,7 @@ print("ffgfffff $res");
     };
     signalingClient.onReceiveCallFromUser =
         (receivefrom, type, isonetone) async {
+      //    Wakelock.toggle(enable: true);
       startRinging();
       inCall = true;
       iscalloneto1 = isonetone;
@@ -399,6 +476,7 @@ print("ffgfffff $res");
       _callProvider.callReceive();
     };
     signalingClient.onParticipantsLeft = (refID) async {
+      print("this is participant left reference id $refID");
       if (refID == _auth.getUser.ref_id) {
       } else {
         int index = rendererListWithRefID
@@ -413,22 +491,27 @@ print("ffgfffff $res");
       _callProvider.callStart();
     };
     signalingClient.onCallHungUpByUser = (isLocal) {
+      print("this is on call hung by the user");
+      //.toggle(enable: false);
       inCall = false;
+      _ticker.cancel();
       setState(() {
+        callTo = "";
         _pressDuration = "";
         upstream = 0;
         downstream = 0;
       });
       _callProvider.initial();
       disposeAllRenderer();
-      stopRinging();   };
+      stopRinging();
+    };
     signalingClient.onCallBusyCallback = () {
+      //  Wakelock.toggle(enable: false);
       _callProvider.initial();
       final snackBar =
           SnackBar(content: Text('User is busy with another call.'));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      setState(() {
-      });
+      setState(() {});
     };
     signalingClient.onAudioVideoStateInfo = (audioFlag, videoFlag, refID) {
       int index = rendererListWithRefID
@@ -439,116 +522,81 @@ print("ffgfffff $res");
       });
     };
   }
+
   showSnackbar(text, Color color, Color backgroundColor, bool check) {
-print("Hi!!! i am here in snackbar");
-if (check == false) {
+    print("Hi!!! i am here in snackbar");
+    if (check == false) {
+      rootScaffoldMessengerKey.currentState
+        ..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(
+          content: Text(
+            '$text',
+            style: TextStyle(color: color),
+          ),
+          backgroundColor: backgroundColor,
+          duration: Duration(seconds: 2),
+        ));
+    } else if (check == true) {
+      rootScaffoldMessengerKey.currentState
+        ..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(
+          content: Text(
+            '$text',
+            style: TextStyle(color: color),
+          ),
+          backgroundColor: backgroundColor,
+          duration: Duration(seconds: 2),
+        ));
+    }
+  }
 
-rootScaffoldMessengerKey.currentState
-
-..hideCurrentSnackBar()
-
-..showSnackBar(SnackBar(
-
-content: Text(
-
-'$text',
-
-style: TextStyle(color: color),
-
-),
-
-backgroundColor: backgroundColor,
-
-duration: Duration(seconds: 2),
-
-));
-
-} else if (check == true) {
-
-rootScaffoldMessengerKey.currentState
-
-..hideCurrentSnackBar()
-
-..showSnackBar(SnackBar(
-
-content: Text(
-
-'$text',
-
-style: TextStyle(color: color),
-
-),
-
-backgroundColor: backgroundColor,
-
-duration: Duration(seconds: 2),
-
-));
-
-}
-
-}
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print("this is changeapplifecyclestate");
 
-void didChangeAppLifecycleState(AppLifecycleState state) {
-
-print("this is changeapplifecyclestate");
-
-switch (state) {
-
-case AppLifecycleState.resumed:
-
-print("app in resumed");
+    switch (state) {
+      case AppLifecycleState.resumed:
+        print("app in resumed");
 
 // signalingClient.sendPing();
 
-if (_auth.loggedInStatus == Status.LoggedOut) {
+        if (_auth.loggedInStatus == Status.LoggedOut) {
+        } else if (sockett == true) {
+        } else if (isConnected && sockett == false) {
+          print("here in resume");
 
-} else if (sockett == true) {
+          signalingClient.connect(project_id, _auth.completeAddress);
 
-} else if (isConnected && sockett == false) {
+          signalingClient.register(_auth.getUser.toJson(), project_id);
+        }
 
-print("here in resume");
+        break;
 
-signalingClient.connect(project_id, _auth.completeAddress);
+      case AppLifecycleState.inactive:
+        print("app in inactive");
 
-signalingClient.register(_auth.getUser.toJson(), project_id);
+        break;
 
-}
-
-
-
-break;
-
-case AppLifecycleState.inactive:
-
-print("app in inactive");
-
-break;
-
-case AppLifecycleState.paused:
-
-print("app in paused");
+      case AppLifecycleState.paused:
+        print("app in paused");
 
 // signalingClient.socketDrop();
 
-break;
+        break;
 
-case AppLifecycleState.detached:
- signalingClient.unRegister(registerRes["mcToken"]);
+      case AppLifecycleState.detached:
+        signalingClient.unRegister(registerRes["mcToken"]);
 
-print("app in detached");
+        print("app in detached");
 
-break;
-
-}
+        break;
+    }
 
 // super.didChangeAppLifecycleState(state);
 
 // _isInForeground = state == AppLifecycleState.resumed;
+  }
 
-}
-  
   disposeAllRenderer() async {
     for (int i = 0; i < rendererListWithRefID.length; i++) {
       if (i == 0) {
@@ -560,6 +608,28 @@ break;
       rendererListWithRefID.removeRange(1, (rendererListWithRefID.length));
     }
   }
+
+  Future<void> listenSensor() async {
+    FlutterError.onError = (FlutterErrorDetails details) {
+      FlutterError.dumpErrorToConsole(details);
+    };
+    _streamSubscription = ProximitySensor.events.listen((int event) {
+      print(event);
+      if (event > 0) {
+        Screen.keepOn(false);
+        Screen.keepOn(true);
+      } else {}
+      //   setState(() {
+      //     _isNear = (event > 0) ? true : false;
+      //      if(_isNear){
+      //   print("i am here is screen hand true $_isNear");
+      //   Screen.setBrightness(0);
+      //   Screen.keepOn(false);
+      // }
+      //   });
+    });
+  }
+
   _startCall(
       GroupModel to, String mtype, String callType, String sessionType) async {
     setState(() {
@@ -571,7 +641,9 @@ break;
       onRemoteStream = false;
       switchSpeaker = mtype == MediaType.audio ? true : false;
     });
-
+    meidaType = mtype;
+    print("this is call type in home page $mtype....$meidaType ");
+    // Wakelock.toggle(enable: true);
     List<String> groupRefIDS = [];
     to.participants.forEach((element) {
       if (_auth.getUser.ref_id != element.ref_id)
@@ -631,26 +703,30 @@ break;
   //     // if app open from background
   //   }
   // }
+
   @override
   dispose() {
     _ticker.cancel();
     super.dispose();
   }
+
   Future<Null> refreshList() async {
     renderList();
     return;
   }
- Future<bool> _onWillPop() async {
+
+  Future<bool> _onWillPop() async {
     print("this is string last ${strArr.last}");
-    if(strArr.last=="ContactList"){
-       _groupListProvider.handleGroupListState(ListStatus.Scussess);
-    }
-    else{
-      Navigator.pop(context);
+    if (strArr.last == "ContactList") {
+      _groupListProvider.handleGroupListState(ListStatus.Scussess);
+    } else {
+      print("i a, hereeeeeeeeddvdv");
+      SystemNavigator.pop();
       //  _groupListProvider.handleGroupListState(ListStatus.Scussess);
     }
     return false;
   }
+
   renderList() {
     if (_groupListProvider.groupListStatus == ListStatus.Scussess)
       _groupListProvider.getGroupList(_auth.getUser.auth_token);
@@ -659,28 +735,30 @@ break;
       _selectedContacts.clear();
     }
   }
- showSnakbar(msg) {
-      final snackBar = SnackBar(
-        content: Text(
-          "$msg",
-          style: TextStyle(color: whiteColor),
-        ),
-        backgroundColor: primaryColor,
-        duration: Duration(seconds: 2),
-      );
-      ScaffoldMessenger.of(context)
-        ..hideCurrentSnackBar()
-        ..showSnackBar(snackBar);
-    }
+
+  showSnakbar(msg) {
+    final snackBar = SnackBar(
+      content: Text(
+        "$msg",
+        style: TextStyle(color: whiteColor),
+      ),
+      backgroundColor: primaryColor,
+      duration: Duration(seconds: 2),
+    );
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(snackBar);
+  }
 
   stopCall() {
+    //  Wakelock.toggle(enable: false);
     signalingClient.stopCall(registerRes["mcToken"]);
     //here
     // _callBloc.add(CallNewEvent());
     isPushed = false;
     _ticker.cancel();
     setState(() {
-      callTo="";
+      callTo = "";
       _pressDuration = "";
       upstream = 0;
       downstream = 0;
@@ -690,47 +768,46 @@ break;
     disposeAllRenderer();
     if (!kIsWeb) stopRinging();
   }
-void _showDialogDeletegroup(group_id, index) {
-          showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  //title: Text('Alert Dialog Example'),
-                  content:
-                      Text('Are you sure you want to delete this chatroom?'),
-                  actions: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        FlatButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            child: Text('CANCEL',
-                                style: TextStyle(color: chatRoomColor))),
-                        FlatButton(
-                            onPressed: () async {
-                              Navigator.of(context).pop();
-                              await _groupListProvider.deleteGroup(
-                                group_id,
-                                _auth.getUser.auth_token,
-                              );
-                              if (_groupListProvider.deleteGroupStatus ==
-                                  DeleteGroupStatus.Success) {
 
-                                showSnakbar(_groupListProvider.successMsg);
-                              } else if (_groupListProvider.deleteGroupStatus ==
-                                  DeleteGroupStatus.Failure) {
-                                showSnakbar(_groupListProvider.errorMsg);
-                              } else {}
-                            },
-                            child: Text('DELETE',
-                                style: TextStyle(color: chatRoomColor)))
-                      ],
-                    )
-                  ],
-                );
-              });
-        }
+  void _showDialogDeletegroup(group_id, index) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            //title: Text('Alert Dialog Example'),
+            content: Text('Are you sure you want to delete this chatroom?'),
+            actions: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  FlatButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: Text('CANCEL',
+                          style: TextStyle(color: chatRoomColor))),
+                  FlatButton(
+                      onPressed: () async {
+                        Navigator.of(context).pop();
+                        await _groupListProvider.deleteGroup(
+                          group_id,
+                          _auth.getUser.auth_token,
+                        );
+                        if (_groupListProvider.deleteGroupStatus ==
+                            DeleteGroupStatus.Success) {
+                          showSnakbar(_groupListProvider.successMsg);
+                        } else if (_groupListProvider.deleteGroupStatus ==
+                            DeleteGroupStatus.Failure) {
+                          showSnakbar(_groupListProvider.errorMsg);
+                        } else {}
+                      },
+                      child: Text('DELETE',
+                          style: TextStyle(color: chatRoomColor)))
+                ],
+              )
+            ],
+          );
+        });
+  }
 
   backHandler() {
     setState(() {
@@ -799,7 +876,15 @@ void _showDialogDeletegroup(group_id, index) {
 
   @override
   Widget build(BuildContext context) {
-   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    // final List<String> accelerometer =
+    // _accelerometerValues?.map((double v) => v.toStringAsFixed(1))?.toList();
+    // final List<String> gyroscope =
+    // _gyroscopeValues?.map((double v) => v.toStringAsFixed(1))?.toList();
+    // final List<String> userAccelerometer = _userAccelerometerValues
+    //     ?.map((double v) => v.toStringAsFixed(1))
+    //     ?.toList();
+
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Colors.transparent, // status bar color
       statusBarBrightness: Brightness.light, //status bar brigtness
       statusBarIconBrightness: Brightness.dark, //status barIcon Brightness
@@ -835,45 +920,102 @@ void _showDialogDeletegroup(group_id, index) {
     //   }
     // }
     if (!ResponsiveWidget.isSmallScreen(context))
-    return WebScreen();
+      return WebScreen();
     else
       return Consumer<CallProvider>(
         builder: (context, callProvider, child) {
           if (callProvider.callStatus == CallStatus.CallReceive)
-             return CallReceiveScreen(authprovider: _auth,callprovider: callProvider,callingto: callingTo,incomingfrom: incomingfrom,registerRes: registerRes,rendererListWithRefid: rendererListWithRefID,mediatype: meidaType,stopRinging: stopRinging,);
+            return CallReceiveScreen(
+              authprovider: _auth,
+              callprovider: callProvider,
+              callingto: callingTo,
+              incomingfrom: incomingfrom,
+              registerRes: registerRes,
+              rendererListWithRefid: rendererListWithRefID,
+              mediatype: meidaType,
+              stopRinging: stopRinging,
+            );
           if (callProvider.callStatus == CallStatus.CallStart) {
-               
-             return CallSttartScreen(callto:callTo,switchmute: switchMute,switchspeaker: switchSpeaker,enablecamera: enableCamera,registerRes: registerRes,rendererListWithRefid: rendererListWithRefID,onRemotestream: onRemoteStream,pressduration: _pressDuration,incomingfrom: incomingfrom,stopcall: stopCall,mediatype: meidaType,contactprovider: _contactProvider,);}
+            return CallSttartScreen(
+              callto: callTo,
+              registerRes: registerRes,
+              rendererListWithRefid: rendererListWithRefID,
+              onRemotestream: onRemoteStream,
+              pressduration: _pressDuration,
+              incomingfrom: incomingfrom,
+              stopcall: stopCall,
+              mediatype: meidaType,
+              contactprovider: _contactProvider,
+            );
+          }
           if (callProvider.callStatus == CallStatus.CallDial)
-             return CallDialScreen(callingto: callingTo,mediatype: meidaType,registerRes: registerRes,rendererListWithRefid: rendererListWithRefID,callprovider: callProvider,);
+            return CallDialScreen(
+              callingto: callingTo,
+              mediatype: meidaType,
+              registerRes: registerRes,
+              rendererListWithRefid: rendererListWithRefID,
+              callprovider: callProvider,
+            );
           else
-             return WillPopScope(onWillPop: _onWillPop,
-             child:
-               SafeArea( child: Scaffold(resizeToAvoidBottomInset: true,backgroundColor: chatRoomBackgroundColor,
-                  appBar: CustomAppBar(handlePress: handleCreateGroup,),
-                  body: Consumer2<ContactProvider, GroupListProvider>(
-                    builder: (context, contact, groupProvider, child) {
-                      if (groupProvider.groupListStatus == ListStatus.Loading)
-                        return Center(child: CircularProgressIndicator(valueColor:AlwaysStoppedAnimation<Color>(chatRoomColor),));
-                      else if (groupProvider.groupListStatus == ListStatus.Scussess) {
-                        if (groupProvider.groupList.groups.length == 0)
-                        {
-                          strArr.add("Home");
-                          return NoContactsScreen(isConnect: isConnected,state: widget.state,refreshList: renderList,groupListProvider: groupProvider,authProvider: _auth,newChatHandler: handleGroupState);}
-                        else
-                        {
-                          strArr.add("Home");
-                         return GroupListScreen(authprovider: _auth, registerRes: registerRes,isdev: isConnected,sockett: sockett,state: groupProvider.groupList,startCall: _startCall,showdialogdeletegroup: _showDialogDeletegroup,mediatype: meidaType,grouplistprovider: _groupListProvider,groupNameController: _groupNameController,refreshList: refreshList);}
-                      } 
-                      //Create group Screen
-                      else
-                      {
-                        strArr.add("ContactList");
-                       return ContactListScreen(refreshcontactList: refreshList,searchController: _searchController, selectedContact: _selectedContacts,state: contact,);}
-                    },
-                  )),
-               )  );
+            return WillPopScope(
+                onWillPop: _onWillPop,
+                child: SafeArea(
+                  child: Scaffold(
+                      resizeToAvoidBottomInset: true,
+                      backgroundColor: chatRoomBackgroundColor,
+                      appBar: CustomAppBar(
+                        handlePress: handleCreateGroup,
+                      ),
+                      body: Consumer2<ContactProvider, GroupListProvider>(
+                        builder: (context, contact, groupProvider, child) {
+                          if (groupProvider.groupListStatus ==
+                              ListStatus.Loading)
+                            return Center(
+                                child: CircularProgressIndicator(
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(chatRoomColor),
+                            ));
+                          else if (groupProvider.groupListStatus ==
+                              ListStatus.Scussess) {
+                            if (groupProvider.groupList.groups.length == 0) {
+                              strArr.add("Home");
+                              return NoContactsScreen(
+                                  isConnect: isConnected,
+                                  state: widget.state,
+                                  refreshList: renderList,
+                                  groupListProvider: groupProvider,
+                                  authProvider: _auth,
+                                  newChatHandler: handleGroupState);
+                            } else {
+                              strArr.add("Home");
+                              return GroupListScreen(
+                                  authprovider: _auth,
+                                  registerRes: registerRes,
+                                  isdev: isConnected,
+                                  sockett: sockett,
+                                  state: groupProvider.groupList,
+                                  startCall: _startCall,
+                                  showdialogdeletegroup: _showDialogDeletegroup,
+                                  mediatype: meidaType,
+                                  grouplistprovider: _groupListProvider,
+                                  groupNameController: _groupNameController,
+                                  refreshList: refreshList);
+                            }
+                          }
+                          //Create group Screen
+                          else {
+                            strArr.add("ContactList");
+                            return ContactListScreen(
+                              refreshcontactList: refreshList,
+                              searchController: _searchController,
+                              selectedContact: _selectedContacts,
+                              state: contact,
+                            );
+                          }
+                        },
+                      )),
+                ));
         },
       );
-  } 
+  }
 }
