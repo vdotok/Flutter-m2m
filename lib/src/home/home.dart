@@ -59,6 +59,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   bool isdev = true;
   DateTime _time;
   Timer _ticker;
+  Timer _callticker;
   String _pressDuration = "";
   DateTime _callTime;
   bool iscalloneto1 = false;
@@ -66,6 +67,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   bool isPushed = false;
   bool iscallReConnected = false;
   double upstream;
+bool isResumed = true;
+bool inPaused = false;
+bool iscallAcceptedbyuser=false;
+
   double downstream;
   void _updateTimer() {
     var duration;
@@ -181,11 +186,17 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   List<Map<String, dynamic>> rendererListWithRefID = [];
   List<ParticipantsModel> callingTo;
   Map<String, dynamic> forLargStream = {};
+ int count=0;
   @override
   void initState() {
     super.initState();
-    listenSensor();
- sleep(const Duration(seconds:10));
+   // listenSensor();
+    signalingClient.unRegisterSuccessfullyCallBack = () {
+
+_auth.logout();
+
+};
+// sleep(const Duration(seconds:10));
     WidgetsBinding.instance.addObserver(this);
     _auth = Provider.of<AuthProvider>(context, listen: false);
     _contactProvider = Provider.of<ContactProvider>(context, listen: false);
@@ -232,160 +243,321 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       signalingClient.register(_auth.getUser.toJson(), project_id);
     };
     signalingClient.internetConnectivityCallBack = (mesg) {
-      print("in internet connectibvity call back $mesg .... $sockett");
-      if (mesg == "Connected") {
-        setState(() {
-          isConnected = true;
-        });
 
-        print(
-            "this is socket in internetconnectivity call back before snack bar $sockett");
-        showSnackbar("Internet Connected", whiteColor, Colors.green, false);
-        print("this is socket in internetconnectivity call back $sockett");
-        print("this is before socket iffff $sockett");
-        if (sockett == false) {
-          print("this is before socket iffff2222 $sockett");
-          print("this is in socket connnect false if");
-          signalingClient.connect(project_id, _auth.completeAddress);
+if (mesg == "Connected") {
 
-          print("I am in Re Reregister");
+setState(() {
 
-          remoteVideoFlag = true;
-
-          if (inCall == true) {
-            iscallReConnected = true;
-          }
-
-// signalingClient.onConnect = (res) {
-
-// print("onConnect $res");
-
-// setState(() {
+isConnected = true;
 
 // sockett = true;
 
-// //isSocketregis = true;
+});
 
-// });
 
-          print("here in init state register");
 
-          signalingClient.register(_auth.getUser.toJson(), project_id);
-//sockett=true;
-          isSocketregis = true;
+showSnackbar("Internet Connected", whiteColor, Colors.green, false);
 
-// signalingClient.register(user);
+//signalingClient.sendPing(registerRes["mcToken"]);
 
-// };
 
-          isPushed = false;
 
-// signalingClient.onRegister = (res) {
+if (sockett == false) {
 
-// print("onRegister after reconnection $res");
+signalingClient.connect(project_id, _auth.completeAddress);
+
+print("I am in Re Reregister");
+
+remoteVideoFlag = true;
+
+print("here in init state register");
+
+signalingClient.register(_auth.getUser.toJson(), project_id);
+
+}
+
+if (inCall == true) {
+
+iscallReConnected = true;
+
+}
+
+} else {
+
+print("onError no internet connection");
+
+setState(() {
+
+isConnected = false;
+
+sockett = false;
+
+});
+
+showSnackbar("No Internet Connection", whiteColor, primaryColor, true);
+
+signalingClient.closeSocket();
+
+}
+
+};
+//     signalingClient.internetConnectivityCallBack = (mesg) {
+//       print("in internet connectibvity call back $mesg .... $sockett");
+//       if (mesg == "Connected") {
+//         setState(() {
+//           isConnected = true;
+//         });
+
+//         print(
+//             "this is socket in internetconnectivity call back before snack bar $sockett");
+//         showSnackbar("Internet Connected", whiteColor, Colors.green, false);
+//         print("this is socket in internetconnectivity call back $sockett");
+//         print("this is before socket iffff $sockett");
+//         if (sockett == false) {
+//           print("this is before socket iffff2222 $sockett");
+//           print("this is in socket connnect false if");
+//           signalingClient.connect(project_id, _auth.completeAddress);
+
+//           print("I am in Re Reregister");
+
+//           remoteVideoFlag = true;
+
+//           if (inCall == true) {
+//             iscallReConnected = true;
+//           }
+
+//           print("here in init state register");
+
+//           signalingClient.register(_auth.getUser.toJson(), project_id);
+// //sockett=true;
+//           isSocketregis = true;
+
+// // signalingClient.register(user);
+
+// // };
+
+//           isPushed = false;
+
+
+//         }
+//       } else {
+//         print("no internet connection");
+
+//         setState(() {
+//           isConnected = false;
+//         });
+
+//         showSnackbar("No Internet Connection", whiteColor, primaryColor, true);
+//       }
+//     };
+signalingClient.onError = (code, res) {
+
+print("onError $code $res");
+
+// if (isConnected == false) {
 
 // setState(() {
 
-// registerRes = res;
+// isConnected = false;
+
+// //sockett = false;
 
 // });
 
-// };
+// }
 
-        }
-      } else {
-        print("no internet connection");
+// else{
 
-        setState(() {
-          isConnected = false;
-        });
+// setState(() {
 
-        showSnackbar("No Internet Connection", whiteColor, primaryColor, true);
-      }
-    };
-    signalingClient.onError = (code, res) {
-      print("onError $code $res");
+// isConnected = true;
+
+// //sockett = false;
+
+// });
+
+// }
+
+if (code == 1001 || code == 1002) {
+
+setState(() {
+
+sockett = false;
+
+isConnected = false;
+
+});
+
+} else {
+
+setState(() {
+
+sockett = false;
+
+});
+
+if (isResumed) {
+
+if (_auth.loggedInStatus == Status.LoggedOut) {
+
+} else {
+
+if (isConnected && sockett == false) {
+
+print("i am in connect in 1005");
+
+signalingClient.connect(project_id, _auth.completeAddress);
+
+
+
+signalingClient.register(_auth.getUser.toJson(), project_id);
+
+
+
+// sockett = true;
+
+} else {
+
+// sockett = false;
+
+}
+
+}
+
+} else {}
+
+}
 
 // print(
 
 // "hey i am here, this is localStream on Error ${local.id} remotestream ${remote.id}");
 
-      if (code == 1001 || code == 1002) {
-        setState(() {
-          sockett = false;
-
-          isConnected = false;
-
-          isSocketregis = false;
-
-          isPushed = false;
-
-// isdev = false;
-
-          print("disconnected socket");
-        });
-      } else if (code == 1005) {
-        setState(() {
-          sockett = false;
-
-          isSocketregis = false;
-
-          isPushed = false;
-        });
-
-        if (_auth.loggedInStatus == Status.LoggedOut) {
-        } else {
-          if (isConnected == true && sockett == false) {
-            signalingClient.connect(project_id, _auth.completeAddress);
-
-            print("i am in connect in 1005");
-
-            signalingClient.register(_auth.getUser.toJson(), project_id);
-          }
-        }
-      }
-
-// else if(code == 1002){
+// if (code == 1001 || code == 1002) {
 
 // setState(() {
 
 // sockett = false;
 
-// isInternetConnected = false;
+// isConnected = false;
 
-// isSocketregis = false;
-
-// isPushed = false;
+// print("disconnected socket");
 
 // });
 
-// }
-
-// else if (code == 1005) {
+// } else {
 
 // setState(() {
 
 // sockett = false;
 
-// isSocketregis = false;
+// });
 
-// isPushed = false;
+
+
+// if (_auth.loggedInStatus == Status.LoggedOut) {
+
+// } else {
+
+// if (isConnected == true && sockett == false) {
+
+// print("here in");
+
+// signalingClient.connect(project_id, _auth.completeAddress);
+
+// print("i am in connect in 1005");
+
+// signalingClient.register(_auth.getUser.toJson(), project_id);
+
+// }
+
+// }
+
+// }
+
+};
+//     signalingClient.onError = (code, res) {
+//       print("onError $code $res");
+
+// // print(
+
+// // "hey i am here, this is localStream on Error ${local.id} remotestream ${remote.id}");
+
+//       if (code == 1001 || code == 1002) {
+//         setState(() {
+//           sockett = false;
+
+//           isConnected = false;
+
+//           isSocketregis = false;
+
+//           isPushed = false;
 
 // // isdev = false;
 
-// print("disconnected socket ");
+//           print("disconnected socket");
+//         });
+//       } else if (code == 1005) {
+//         setState(() {
+//           sockett = false;
 
-// });
+//           isSocketregis = false;
 
-// }
+//           isPushed = false;
+//         });
 
-      else {
-        print("ffgfffff $res");
+//         if (_auth.loggedInStatus == Status.LoggedOut) {
+//         } else {
+//           if (isConnected == true && sockett == false) {
+//             signalingClient.connect(project_id, _auth.completeAddress);
 
-// snackBar = SnackBar(content: Text(res));
+//             print("i am in connect in 1005");
 
-      }
-    };
+//             signalingClient.register(_auth.getUser.toJson(), project_id);
+//           }
+//         }
+//       }
+
+// // else if(code == 1002){
+
+// // setState(() {
+
+// // sockett = false;
+
+// // isInternetConnected = false;
+
+// // isSocketregis = false;
+
+// // isPushed = false;
+
+// // });
+
+// // }
+
+// // else if (code == 1005) {
+
+// // setState(() {
+
+// // sockett = false;
+
+// // isSocketregis = false;
+
+// // isPushed = false;
+
+// // // isdev = false;
+
+// // print("disconnected socket ");
+
+// // });
+
+// // }
+
+//       else {
+//         print("ffgfffff $res");
+
+// // snackBar = SnackBar(content: Text(res));
+
+//       }
+//     };
 
     // signalingClient.onError = (code, res) {
     //   if (code == 1002 || code == 1001) {
@@ -488,13 +660,28 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     };
     signalingClient.onCallAcceptedByUser = () async {
       inCall = true;
+      iscallAcceptedbyuser=true;
       _callProvider.callStart();
     };
     signalingClient.onCallHungUpByUser = (isLocal) {
-      print("this is on call hung by the user");
+      print("this is on call hung by the user $_ticker");
+      if (inPaused) {
+
+print("here in paused");
+
+signalingClient.closeSocket();
+
+}
       //.toggle(enable: false);
       inCall = false;
-      _ticker.cancel();
+      if(_ticker!=null){
+  _ticker.cancel();
+      }
+    if(_callticker!=null){
+      _callticker.cancel();
+      count=0;
+      iscallAcceptedbyuser=false;
+    }
       setState(() {
         callTo = "";
         _pressDuration = "";
@@ -549,53 +736,147 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         ));
     }
   }
+@override
 
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    print("this is changeapplifecyclestate");
+void didChangeAppLifecycleState(AppLifecycleState state) {
 
-    switch (state) {
-      case AppLifecycleState.resumed:
-        print("app in resumed");
+print("this is changeapplifecyclestate");
 
-// signalingClient.sendPing();
+switch (state) {
 
-        if (_auth.loggedInStatus == Status.LoggedOut) {
-        } else if (sockett == true) {
-        } else if (isConnected && sockett == false) {
-          print("here in resume");
+case AppLifecycleState.resumed:
 
-          signalingClient.connect(project_id, _auth.completeAddress);
+print("app in resumed");
 
-          signalingClient.register(_auth.getUser.toJson(), project_id);
-        }
+isResumed = true;
 
-        break;
+inPaused = false;
 
-      case AppLifecycleState.inactive:
-        print("app in inactive");
+if (_auth.loggedInStatus == Status.LoggedOut) {
 
-        break;
+} else {
 
-      case AppLifecycleState.paused:
-        print("app in paused");
+print("this is variable for resume $sockett $isConnected");
 
-// signalingClient.socketDrop();
+// //signalingClient.sendPing();
 
-        break;
+signalingClient.sendPing(registerRes["mcToken"]);
 
-      case AppLifecycleState.detached:
-        signalingClient.unRegister(registerRes["mcToken"]);
+}
 
-        print("app in detached");
+// if (_auth.loggedInStatus == Status.LoggedOut) {
 
-        break;
-    }
+// } else {
+
+// //signalingClient.sendPing();
+
+
+
+// print("here in resume");
+
+// signalingClient.connect(project_id, _auth.completeAddress);
+
+// signalingClient.register(_auth.getUser.toJson(), project_id);
+
+
+
+// }
+
+
+
+break;
+
+case AppLifecycleState.inactive:
+
+print("app in inactive");
+
+// isResumed = false;
+
+// signalingClient.closeSocket();
+
+break;
+
+case AppLifecycleState.paused:
+
+print("app in paused");
+
+inPaused = true;
+
+isResumed = false;
+
+if (inCall == true) {
+
+print("incall true");
+
+} else {
+
+print("incall false");
+
+signalingClient.closeSocket();
+
+}
+
+break;
+
+case AppLifecycleState.detached:
+
+print("app in detached");
+
+break;
+
+}
 
 // super.didChangeAppLifecycleState(state);
 
 // _isInForeground = state == AppLifecycleState.resumed;
-  }
+
+}
+//   @override
+//   void didChangeAppLifecycleState(AppLifecycleState state) {
+//     print("this is changeapplifecyclestate");
+
+//     switch (state) {
+//       case AppLifecycleState.resumed:
+//         print("app in resumed");
+
+// // signalingClient.sendPing();
+
+//         if (_auth.loggedInStatus == Status.LoggedOut) {
+//         } else if (sockett == true) {
+//         } else if (isConnected && sockett == false) {
+//           print("here in resume");
+
+//           signalingClient.connect(project_id, _auth.completeAddress);
+
+//           signalingClient.register(_auth.getUser.toJson(), project_id);
+//         }
+
+//         break;
+
+//       case AppLifecycleState.inactive:
+//         print("app in inactive");
+
+//         break;
+
+//       case AppLifecycleState.paused:
+//         print("app in paused");
+
+// // signalingClient.socketDrop();
+
+//         break;
+
+//       case AppLifecycleState.detached:
+//         signalingClient.unRegister(registerRes["mcToken"]);
+
+//         print("app in detached");
+
+//         break;
+//     }
+
+// // super.didChangeAppLifecycleState(state);
+
+// // _isInForeground = state == AppLifecycleState.resumed;
+//   }
 
   disposeAllRenderer() async {
     for (int i = 0; i < rendererListWithRefID.length; i++) {
@@ -641,6 +922,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       onRemoteStream = false;
       switchSpeaker = mtype == MediaType.audio ? true : false;
     });
+    // UIDevice.current.isProximityMonitoringEnabled = true;
     meidaType = mtype;
     print("this is call type in home page $mtype....$meidaType ");
     // Wakelock.toggle(enable: true);
@@ -649,7 +931,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       if (_auth.getUser.ref_id != element.ref_id)
         groupRefIDS.add(element.ref_id.toString());
     });
-
+  _callticker = Timer.periodic(Duration(seconds: 1), (_) => _callcheck());
+  // count=count+1;
+  //  print("i am here in start call timerrrrr $count.....$iscallAcceptedbyuser");
     callingTo = to.participants;
     callingTo.removeWhere((element) => element.ref_id == _auth.getUser.ref_id);
     rendererListWithRefID.first["remoteVideoFlag"] =
@@ -667,7 +951,34 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   initRenderers(RTCVideoRenderer rtcRenderer) async {
     await rtcRenderer.initialize();
   }
+_callcheck(){
+  print("i am here in call chck  function $count");
+  count=count+1;
+  if(count==30 && iscallAcceptedbyuser==false){
+    
+      print("I am here in stopcall if");
+      _callticker.cancel();
+      count=0;
+       signalingClient.onCancelbytheCaller(registerRes["mcToken"]);
+       _callProvider.initial();
+       iscallAcceptedbyuser=false;
+    }
+    else if(count==30 && iscallAcceptedbyuser==true){
+          _callticker.cancel();
+         count=0;
+         print("I am here in stopcall call accept true");
+         iscallAcceptedbyuser=false;
+    }
+    else if(iscallAcceptedbyuser==true){
+      _callticker.cancel();
+       print("I am here in emptyyyyyyyyyy stopcall call accept true");
+        count=0;
+         iscallAcceptedbyuser=false;
+    }
+    else{
 
+    }
+}
   startRinging() async {
     if (Platform.isAndroid) {
       if (await Vibration.hasVibrator()) {
@@ -752,11 +1063,17 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
   stopCall() {
     //  Wakelock.toggle(enable: false);
+    print("i am here iin stopc sdsxfssd");
     signalingClient.stopCall(registerRes["mcToken"]);
     //here
     // _callBloc.add(CallNewEvent());
+   
     isPushed = false;
-    _ticker.cancel();
+   //  print("i am here in stop call function");
+      if(_ticker!=null){
+  _ticker.cancel();
+      }
+    //    print("THIS IS CALL STATUS ${_callProvider.callStatus}");
     setState(() {
       callTo = "";
       _pressDuration = "";
@@ -764,8 +1081,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       downstream = 0;
     });
     _callProvider.initial();
+
     inCall = false;
     disposeAllRenderer();
+   
     if (!kIsWeb) stopRinging();
   }
 

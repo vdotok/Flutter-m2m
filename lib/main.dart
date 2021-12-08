@@ -113,48 +113,48 @@ rootScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
   }
 }
 
-class Test extends StatefulWidget {
-  @override
-  _TestState createState() => _TestState();
-}
+// class Test extends StatefulWidget {
+//   @override
+//   _TestState createState() => _TestState();
+// }
 
-class _TestState extends State<Test> {
-  SignalingClient signalingClient;
-  @override
-  void initState() {
-    // TODO: implement initState
+// class _TestState extends State<Test> {
+//   SignalingClient signalingClient;
+//   @override
+//   void initState() {
+//     // TODO: implement initState
 
-    signalingClient = SignalingClient.instance;
-    // signalingClient.methodInvoke();
-    super.initState();
-  }
+//     signalingClient = SignalingClient.instance;
+//     // signalingClient.methodInvoke();
+//     super.initState();
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            StreamBuilder(
-                stream: signalingClient.numberStream(),
-                builder: (BuildContext context, snapshot) {
-                  if (snapshot.hasData)
-                    return Text(snapshot.data.toString());
-                  else if (snapshot.hasError)
-                    return Text("no data found");
-                  else
-                    return Text("no data found");
-                }),
-            RaisedButton(
-              onPressed: () {
-                // signalingClient.handleLocationChanges();
-              },
-              child: Text("invoke method"),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: Center(
+//         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: [
+//             StreamBuilder(
+//                 stream: signalingClient.numberStream(),
+//                 builder: (BuildContext context, snapshot) {
+//                   if (snapshot.hasData)
+//                     return Text(snapshot.data.toString());
+//                   else if (snapshot.hasError)
+//                     return Text("no data found");
+//                   else
+//                     return Text("no data found");
+//                 }),
+//             RaisedButton(
+//               onPressed: () {
+//                 // signalingClient.handleLocationChanges();
+//               },
+//               child: Text("invoke method"),
+//             )
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
