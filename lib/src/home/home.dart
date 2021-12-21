@@ -70,7 +70,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 bool isResumed = true;
 bool inPaused = false;
 bool iscallAcceptedbyuser=false;
-
+bool inInactive = false;
+bool isRegisteredAlready=false;
   double downstream;
   void _updateTimer() {
     var duration;
@@ -272,7 +273,7 @@ remoteVideoFlag = true;
 
 print("here in init state register");
 
-signalingClient.register(_auth.getUser.toJson(), project_id);
+//signalingClient.register(_auth.getUser.toJson(), project_id);
 
 }
 
@@ -383,26 +384,36 @@ if (code == 1001 || code == 1002) {
 setState(() {
 
 sockett = false;
-
+isRegisteredAlready=false;
 isConnected = false;
 
 });
 
-} else {
+} 
+else if(code==401){
+print("in code 401");
+print("here in 401");setState(() {sockett = false;
+//isRegisteredAlready=true;
+final snackBar = SnackBar(content: Text('$res'));ScaffoldMessenger.of(context).showSnackBar(snackBar);});
+isRegisteredAlready=true;
 
+}
+else {
+  if (_auth.loggedInStatus == Status.LoggedOut) {
+
+}
+else{
 setState(() {
 
 sockett = false;
-
+//isRegisteredAlready=false;
 });
 
 if (isResumed) {
 
-if (_auth.loggedInStatus == Status.LoggedOut) {
 
-} else {
 
-if (isConnected && sockett == false) {
+if (isConnected && sockett == false && !isRegisteredAlready)  {
 
 print("i am in connect in 1005");
 
@@ -410,7 +421,7 @@ signalingClient.connect(project_id, _auth.completeAddress);
 
 
 
-signalingClient.register(_auth.getUser.toJson(), project_id);
+//signalingClient.register(_auth.getUser.toJson(), project_id);
 
 
 
@@ -422,10 +433,10 @@ signalingClient.register(_auth.getUser.toJson(), project_id);
 
 }
 
-}
+
 
 } else {}
-
+}
 }
 
 // print(
@@ -672,6 +683,25 @@ print("here in paused");
 signalingClient.closeSocket();
 
 }
+
+if (Platform.isIOS) {
+
+if (inInactive) {
+
+print("here in paused");
+
+signalingClient.closeSocket();
+
+}
+
+}
+//       if (inPaused) {
+
+// print("here in paused");
+
+// signalingClient.closeSocket();
+
+// }
       //.toggle(enable: false);
       inCall = false;
       if(_ticker!=null){
@@ -749,7 +779,7 @@ case AppLifecycleState.resumed:
 print("app in resumed");
 
 isResumed = true;
-
+inInactive=false;
 inPaused = false;
 
 if (_auth.loggedInStatus == Status.LoggedOut) {
@@ -787,7 +817,27 @@ signalingClient.sendPing(registerRes["mcToken"]);
 break;
 
 case AppLifecycleState.inactive:
+inInactive = true;
 
+isResumed = false;
+
+inPaused = false;
+
+if (Platform.isIOS) {
+
+if (inCall == true) {
+
+print("incall true");
+
+} else {
+
+print("here in ininactive");
+
+signalingClient.closeSocket();
+
+}
+
+}
 print("app in inactive");
 
 // isResumed = false;
@@ -801,7 +851,7 @@ case AppLifecycleState.paused:
 print("app in paused");
 
 inPaused = true;
-
+inInactive =false;
 isResumed = false;
 
 if (inCall == true) {
