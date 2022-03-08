@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:move_to_background/move_to_background.dart';
 import 'package:provider/provider.dart';
 import 'package:vdotok_stream_example/constant.dart';
 import 'package:vdotok_stream_example/src/core/providers/contact_provider.dart';
@@ -29,15 +30,35 @@ class CallSttartScreen extends StatefulWidget {
 
 
 class _CallSttartScreenState extends State<CallSttartScreen> {
+  Future<bool> _onWillPop() async {
+    print("this is string last ");
+   // print("this is incall vaiableee $inCall");
+   // if(inCall){
+
+MoveToBackground.moveTaskToBack();
+print("thissssssskbncjvbcvj");
+return false;
+
+
+}
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return
+    
+      WillPopScope(
+                onWillPop: _onWillPop,
+                child:
+     Scaffold(
       body: OrientationBuilder(builder: (context, orientation) {
         return Container(
           child: Stack(children: <Widget>[
             widget.onRemotestream
                 ? widget.rendererListWithRefid.length == 1
-                    ? Container()
+                    ? Container(
+                    //color:Colors.red
+                    // child:
+                    // Center(child: Text("Reconnecting......"))
+                    )
                     :  widget.rendererListWithRefid.length == 2
                         ?
                          widget.rendererListWithRefid[1]["remoteVideoFlag"] == 0
@@ -664,11 +685,11 @@ class _CallSttartScreenState extends State<CallSttartScreen> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.fromLTRB(
-                                  327.0, 120.0, 20.0, 8.0),
+                                  0, 120.0, 20.0, 8.0),
                               child: Align(
                                 alignment: Alignment.topRight,
                                 child: GestureDetector(
-                                  child:switchSpeaker
+                                  child:!switchSpeaker
                                       ? SvgPicture.asset('assets/VolumnOn.svg')
                                       : SvgPicture.asset(
                                           'assets/VolumeOff.svg'),
@@ -711,7 +732,9 @@ class _CallSttartScreenState extends State<CallSttartScreen> {
                       ),
                     ),
                   )
-                : Container(),
+                : Container(
+                 // color:Colors.red
+                ),
             Container(
               padding: EdgeInsets.only(
                 bottom: 56,
@@ -772,6 +795,6 @@ class _CallSttartScreenState extends State<CallSttartScreen> {
           ]),
         );
       }),
-    );
+    ));
   }
 }

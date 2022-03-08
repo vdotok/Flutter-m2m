@@ -1,10 +1,16 @@
 import 'dart:async';
+//import 'package:audioplayers/audioplayers.dart';
+//import 'package:audioplayer/audioplayer.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
-import 'package:proximity_sensor/proximity_sensor.dart';
-import 'package:screen/screen.dart';
+import 'package:http/http.dart';
+import 'package:move_to_background/move_to_background.dart';
+import 'package:path_provider/path_provider.dart';
+//import 'package:proximity_sensor/proximity_sensor.dart';
+//import 'package:screen/screen.dart';
 import 'package:vdotok_stream/vdotok_stream.dart';
 import 'package:vdotok_stream_example/src/core/config/config.dart';
 import 'package:vdotok_stream_example/src/home/CallDialScreen/callDialScreen.dart';
@@ -24,7 +30,7 @@ import 'package:vdotok_stream_example/src/home/responsiveWidget.dart';
 import 'package:provider/provider.dart';
 import 'package:vibration/vibration.dart';
 import 'package:wakelock/wakelock.dart';
-import 'dart:io' show Platform, sleep;
+import 'dart:io' show File, Platform, sleep;
 import '../../constant.dart';
 import '../../main.dart';
 import '../core/providers/auth.dart';
@@ -36,7 +42,8 @@ String callTo = "";
 bool switchMute = true;
 bool switchSpeaker = true;
 bool enableCamera = true;
-
+bool isRinging=false;
+   AudioPlayer audioPlayer = AudioPlayer();
 class Home extends StatefulWidget {
   final state;
   Home({this.state});
@@ -188,10 +195,15 @@ bool isRegisteredAlready=false;
   List<ParticipantsModel> callingTo;
   Map<String, dynamic> forLargStream = {};
  int count=0;
+ 
+ //AssetsAudioPlayer audioPlayer = AssetsAudioPlayer();  // this will create a instance object of a class
+
+ 
   @override
   void initState() {
     super.initState();
    // listenSensor();
+   
     signalingClient.unRegisterSuccessfullyCallBack = () {
 
 _auth.logout();
@@ -238,6 +250,7 @@ _auth.logout();
 
       if (res == "connected") {
         sockett = true;
+        isConnected=true;
         print("this is before socket iffff111 $sockett");
       }
 
@@ -639,7 +652,7 @@ signalingClient.connect(project_id, _auth.completeAddress);
     };
     signalingClient.onReceiveCallFromUser =
         (receivefrom, type, isonetone) async {
-      //    Wakelock.toggle(enable: true);
+          Wakelock.toggle(enable: true);
       startRinging();
       inCall = true;
       iscalloneto1 = isonetone;
@@ -658,12 +671,14 @@ signalingClient.connect(project_id, _auth.completeAddress);
       });
       _callProvider.callReceive();
     };
+    signalingClient.onTargetAlerting = () {setState(() {isRinging = true;});};
     signalingClient.onParticipantsLeft = (refID) async {
       print("this is participant left reference id $refID");
       if (refID == _auth.getUser.ref_id) {
       } else {
         int index = rendererListWithRefID
             .indexWhere((element) => element["refID"] == refID);
+            print("this is indexxxxxxx $index");
         setState(() {
           rendererListWithRefID.removeAt(index);
         });
@@ -672,10 +687,12 @@ signalingClient.connect(project_id, _auth.completeAddress);
     signalingClient.onCallAcceptedByUser = () async {
       inCall = true;
       iscallAcceptedbyuser=true;
+      audioPlayer.stop();
       _callProvider.callStart();
     };
     signalingClient.onCallHungUpByUser = (isLocal) {
       print("this is on call hung by the user $_ticker");
+      audioPlayer.stop();
       if (inPaused) {
 
 print("here in paused");
@@ -717,13 +734,14 @@ signalingClient.closeSocket();
         _pressDuration = "";
         upstream = 0;
         downstream = 0;
+        isRinging=false;
       });
       _callProvider.initial();
       disposeAllRenderer();
       stopRinging();
     };
     signalingClient.onCallBusyCallback = () {
-      //  Wakelock.toggle(enable: false);
+        Wakelock.toggle(enable: false);
       _callProvider.initial();
       final snackBar =
           SnackBar(content: Text('User is busy with another call.'));
@@ -941,24 +959,24 @@ break;
   }
 
   Future<void> listenSensor() async {
-    FlutterError.onError = (FlutterErrorDetails details) {
-      FlutterError.dumpErrorToConsole(details);
-    };
-    _streamSubscription = ProximitySensor.events.listen((int event) {
-      print(event);
-      if (event > 0) {
-        Screen.keepOn(false);
-        Screen.keepOn(true);
-      } else {}
-      //   setState(() {
-      //     _isNear = (event > 0) ? true : false;
-      //      if(_isNear){
-      //   print("i am here is screen hand true $_isNear");
-      //   Screen.setBrightness(0);
-      //   Screen.keepOn(false);
-      // }
-      //   });
-    });
+    // FlutterError.onError = (FlutterErrorDetails details) {
+    //   FlutterError.dumpErrorToConsole(details);
+    // };
+    // _streamSubscription = ProximitySensor.events.listen((int event) {
+    //   print(event);
+    //   if (event > 0) {
+    //     Screen.keepOn(false);
+    //     Screen.keepOn(true);
+    //   } else {}
+    //   //   setState(() {
+    //   //     _isNear = (event > 0) ? true : false;
+    //   //      if(_isNear){
+    //   //   print("i am here is screen hand true $_isNear");
+    //   //   Screen.setBrightness(0);
+    //   //   Screen.keepOn(false);
+    //   // }
+    //   //   });
+    // });
   }
 
   _startCall(
@@ -974,13 +992,37 @@ break;
     });
     // UIDevice.current.isProximityMonitoringEnabled = true;
     meidaType = mtype;
-    print("this is call type in home page $mtype....$meidaType ");
-    // Wakelock.toggle(enable: true);
+    final file = new File(
+
+'${(await getTemporaryDirectory()).path}/music.mp3');
+
+await file.writeAsBytes(
+
+(await rootBundle.load("assets/sound/audio.mp3")).buffer.asUint8List());
+
+int status = await audioPlayer.play(file.path,
+
+isLocal: true);
+   // callbackDispatcher();
+//       final bytes = await readBytes(Uri.parse(""));
+//     final dir = await getApplicationDocumentsDirectory();
+//     final file = File('${dir.path}/audio.mp3');
+//      AudioCache audioCache = AudioCache();
+// audioCache.play('assets/sound/sound.mp3');
+// await audioPlayer.play('assets/sound/sounds.mp3');
+ //audioPlayer.open(
+  // Audio('assets/sound/sounds.mp3');
+// );
+
+//     await audioPlayer.play('assets/sound/sounds.mp3', isLocal: true);
+    print("this is call type in home page ...$meidaType ");
+     Wakelock.toggle(enable: true);
     List<String> groupRefIDS = [];
     to.participants.forEach((element) {
       if (_auth.getUser.ref_id != element.ref_id)
         groupRefIDS.add(element.ref_id.toString());
     });
+    
   _callticker = Timer.periodic(Duration(seconds: 1), (_) => _callcheck());
   // count=count+1;
   //  print("i am here in start call timerrrrr $count.....$iscallAcceptedbyuser");
@@ -1001,6 +1043,7 @@ break;
   initRenderers(RTCVideoRenderer rtcRenderer) async {
     await rtcRenderer.initialize();
   }
+  
 _callcheck(){
   print("i am here in call chck  function $count");
   count=count+1;
@@ -1028,6 +1071,21 @@ _callcheck(){
     else{
 
     }
+}
+void callbackDispatcher() {
+  print('callbackDispatcher');
+    FlutterRingtonePlayer.play(
+      android: AndroidSounds.notification,
+      ios: IosSounds.glass,
+      looping: false,
+      // Android only - API >= 28
+      volume: 1,
+      // Android only - API >= 28
+      asAlarm: true, // Android only - all APIs
+    );
+
+   // return Future.value(true);
+  //});
 }
   startRinging() async {
     if (Platform.isAndroid) {
@@ -1072,20 +1130,51 @@ _callcheck(){
   }
 
   Future<Null> refreshList() async {
+    print("this is in refresh list $isConnected....$sockett");
+    if ( sockett == false )  {
+
+print("i am in connect in 1005");
+
+signalingClient.connect(project_id, _auth.completeAddress);
+
+
+
+//signalingClient.register(_auth.getUser.toJson(), project_id);
+
+
+
+// sockett = true;
+
+} 
     renderList();
     return;
   }
 
   Future<bool> _onWillPop() async {
-    print("this is string last ${strArr.last}");
-    if (strArr.last == "ContactList") {
+    print("this is string last ");
+    print("this is incall vaiableee $inCall");
+    if(inCall){
+
+MoveToBackground.moveTaskToBack();
+print("thissssssskbncjvbcvj");
+return false;
+
+}
+
+// else
+
+
+
+// { return true;}
+    else if (strArr.last == "ContactList") {
+      print("jere on contact ;isr");
       _groupListProvider.handleGroupListState(ListStatus.Scussess);
     } else {
       print("i a, hereeeeeeeeddvdv");
-      SystemNavigator.pop();
+    SystemNavigator.pop();
       //  _groupListProvider.handleGroupListState(ListStatus.Scussess);
     }
-    return false;
+   return false;
   }
 
   renderList() {
@@ -1112,12 +1201,12 @@ _callcheck(){
   }
 
   stopCall() {
-    //  Wakelock.toggle(enable: false);
+      Wakelock.toggle(enable: false);
     print("i am here iin stopc sdsxfssd");
     signalingClient.stopCall(registerRes["mcToken"]);
     //here
     // _callBloc.add(CallNewEvent());
-   
+   //audioPlayer.stop();
     isPushed = false;
    //  print("i am here in stop call function");
       if(_ticker!=null){
@@ -1356,6 +1445,7 @@ _callcheck(){
                                   authProvider: _auth,
                                   newChatHandler: handleGroupState);
                             } else {
+                              print("here in grou screeeen");
                               strArr.add("Home");
                               return GroupListScreen(
                                   authprovider: _auth,

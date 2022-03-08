@@ -59,7 +59,7 @@ class CallDialScreen extends StatelessWidget {
                     // crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        "Calling",
+                       isRinging==false? "Calling..": "Ringing..",
                         style: TextStyle(
                             fontSize: 14,
                             decoration: TextDecoration.none,
@@ -97,8 +97,10 @@ class CallDialScreen extends StatelessWidget {
                   'assets/end.svg',
                 ),
                 onTap: () {
+                 // audioPlayer.stop();
                   signalingClient.onCancelbytheCaller(registerRes["mcToken"]);
                 callprovider.initial();
+                audioPlayer.stop();
                 },
               ),
             ),

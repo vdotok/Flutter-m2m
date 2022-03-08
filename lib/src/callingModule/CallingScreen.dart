@@ -1129,7 +1129,7 @@
 //                                 alignment: Alignment.topRight,
 //                                 child: GestureDetector(
 //                                   child: switchSpeaker
-//                                       ? SvgPicture.asset('assets/VolumnOn.svg')
+//                                       ? SvgPicture.asset('VolumnOn.svg')
 //                                       : SvgPicture.asset(
 //                                           'assets/VolumeOff.svg'),
 //                                   onTap: () {

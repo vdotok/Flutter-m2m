@@ -51,7 +51,8 @@ class NoContactsScreen extends StatelessWidget {
           Container(
             width: 196,
             height: 56,
-            child: Container(
+            child: 
+            Container(
                 width: 196,
                 height: 56,
                 decoration: BoxDecoration(
@@ -61,7 +62,8 @@ class NoContactsScreen extends StatelessWidget {
                     width: 3,
                   ),
                 ),
-                child: FlatButton(
+                child:
+                 FlatButton(
                   onPressed: () {
                    // handleGroupState()
                     newChatHandler();
