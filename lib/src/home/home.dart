@@ -651,7 +651,7 @@ signalingClient.connect(project_id, _auth.completeAddress);
       });
     };
     signalingClient.onReceiveCallFromUser =
-        (receivefrom, type, isonetone) async {
+        (receivefrom, type, isonetone,callType,sessionType) async {
           Wakelock.toggle(enable: true);
       startRinging();
       inCall = true;
@@ -672,7 +672,7 @@ signalingClient.connect(project_id, _auth.completeAddress);
       _callProvider.callReceive();
     };
     signalingClient.onTargetAlerting = () {setState(() {isRinging = true;});};
-    signalingClient.onParticipantsLeft = (refID) async {
+    signalingClient.onParticipantsLeft = (refID,receive) async {
       print("this is participant left reference id $refID");
       if (refID == _auth.getUser.ref_id) {
       } else {
