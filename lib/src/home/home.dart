@@ -42,8 +42,9 @@ String callTo = "";
 bool switchMute = true;
 bool switchSpeaker = true;
 bool enableCamera = true;
-bool isRinging=false;
-   AudioPlayer audioPlayer = AudioPlayer();
+bool isRinging = false;
+AudioPlayer audioPlayer = AudioPlayer();
+
 class Home extends StatefulWidget {
   final state;
   Home({this.state});
@@ -74,11 +75,11 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   bool isPushed = false;
   bool iscallReConnected = false;
   double upstream;
-bool isResumed = true;
-bool inPaused = false;
-bool iscallAcceptedbyuser=false;
-bool inInactive = false;
-bool isRegisteredAlready=false;
+  bool isResumed = true;
+  bool inPaused = false;
+  bool iscallAcceptedbyuser = false;
+  bool inInactive = false;
+  bool isRegisteredAlready = false;
   double downstream;
   void _updateTimer() {
     var duration;
@@ -194,21 +195,18 @@ bool isRegisteredAlready=false;
   List<Map<String, dynamic>> rendererListWithRefID = [];
   List<ParticipantsModel> callingTo;
   Map<String, dynamic> forLargStream = {};
- int count=0;
- 
- //AssetsAudioPlayer audioPlayer = AssetsAudioPlayer();  // this will create a instance object of a class
+  int count = 0;
 
- 
+  //AssetsAudioPlayer audioPlayer = AssetsAudioPlayer();  // this will create a instance object of a class
+
   @override
   void initState() {
     super.initState();
-   // listenSensor();
-   
+    // listenSensor();
+
     signalingClient.unRegisterSuccessfullyCallBack = () {
-
-_auth.logout();
-
-};
+      _auth.logout();
+    };
 // sleep(const Duration(seconds:10));
     WidgetsBinding.instance.addObserver(this);
     _auth = Provider.of<AuthProvider>(context, listen: false);
@@ -250,71 +248,54 @@ _auth.logout();
 
       if (res == "connected") {
         sockett = true;
-        isConnected=true;
+        isConnected = true;
         print("this is before socket iffff111 $sockett");
       }
 
       signalingClient.register(_auth.getUser.toJson(), project_id);
     };
     signalingClient.internetConnectivityCallBack = (mesg) {
-
-if (mesg == "Connected") {
-
-setState(() {
-
-isConnected = true;
+      if (mesg == "Connected") {
+        setState(() {
+          isConnected = true;
 
 // sockett = true;
+        });
 
-});
-
-
-
-showSnackbar("Internet Connected", whiteColor, Colors.green, false);
+        showSnackbar("Internet Connected", whiteColor, Colors.green, false);
 
 //signalingClient.sendPing(registerRes["mcToken"]);
 
+        if (sockett == false) {
+          signalingClient.connect(project_id, _auth.completeAddress);
 
+          print("I am in Re Reregister");
 
-if (sockett == false) {
+          remoteVideoFlag = true;
 
-signalingClient.connect(project_id, _auth.completeAddress);
-
-print("I am in Re Reregister");
-
-remoteVideoFlag = true;
-
-print("here in init state register");
+          print("here in init state register");
 
 //signalingClient.register(_auth.getUser.toJson(), project_id);
 
-}
+        }
 
-if (inCall == true) {
+        if (inCall == true) {
+          iscallReConnected = true;
+        }
+      } else {
+        print("onError no internet connection");
 
-iscallReConnected = true;
+        setState(() {
+          isConnected = false;
 
-}
+          sockett = false;
+        });
 
-} else {
+        showSnackbar("No Internet Connection", whiteColor, primaryColor, true);
 
-print("onError no internet connection");
-
-setState(() {
-
-isConnected = false;
-
-sockett = false;
-
-});
-
-showSnackbar("No Internet Connection", whiteColor, primaryColor, true);
-
-signalingClient.closeSocket();
-
-}
-
-};
+        signalingClient.closeSocket();
+      }
+    };
 //     signalingClient.internetConnectivityCallBack = (mesg) {
 //       print("in internet connectibvity call back $mesg .... $sockett");
 //       if (mesg == "Connected") {
@@ -352,7 +333,6 @@ signalingClient.closeSocket();
 
 //           isPushed = false;
 
-
 //         }
 //       } else {
 //         print("no internet connection");
@@ -364,239 +344,90 @@ signalingClient.closeSocket();
 //         showSnackbar("No Internet Connection", whiteColor, primaryColor, true);
 //       }
 //     };
-signalingClient.onError = (code, res) {
+    signalingClient.onError = (code, res) {
+      print("onError $code $res");
+      // if (isConnected == false) {
+      //   setState(() {
+      //     isConnected = false;
+      //     //sockett = false;
+      //   });
+      // }
+      // else{
+      //   setState(() {
+      //     isConnected = true;
+      //     //sockett = false;
+      //   });
+      // }
+      if (code == 1001 || code == 1002) {
+         if (isConnected
+              && !isRegisteredAlready
+            ) {
+          print("internet is connected $sockett");
+           signalingClient.connect(project_id, _auth.completeAddress);
+        }
+        setState(() {
+          sockett = false;
+          isConnected = false;
+          isRegisteredAlready = false;
+        });
+      } else if (code == 401) {
+        print("here in 401");
+        setState(() {
+          sockett = false;
+          isRegisteredAlready = true;
+
+          final snackBar = SnackBar(content: Text('$res'));
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        });
+      } else {
+        if (_auth.loggedInStatus == Status.LoggedOut) {
+        } else {
+          setState(() {
+            sockett = false;
+            // isRegisteredAlready=false;
+          });
+          if (isResumed) {
+            // if (_auth.loggedInStatus == Status.LoggedOut) {
+            // } else {
+            if (isConnected && sockett == false && !isRegisteredAlready) {
+              print("i am in connect in 1005");
+              signalingClient.connect(project_id, _auth.completeAddress);
+
+              // signalingClient.register(_auth.getUser.toJson(), project_id);
+
+              // sockett = true;
+            } else {
+              //  sockett = false;
+            }
+            //}
+          } else {}
+        }
+      }
+      // print(
+      //     "hey i am here, this is localStream on Error ${local.id} remotestream ${remote.id}");
+      // if (code == 1001 || code == 1002) {
+      //   setState(() {
+      //     sockett = false;
+      //     isConnected = false;
+      //     print("disconnected socket");
+      //   });
+      // } else {
+      //   setState(() {
+      //     sockett = false;
+      //   });
+
+      //   if (_auth.loggedInStatus == Status.LoggedOut) {
+      //   } else {
+      //     if (isConnected == true && sockett == false) {
+      //       print("here in");
+      //       signalingClient.connect(project_id, _auth.completeAddress);
+      //       print("i am in connect in 1005");
+      //       signalingClient.register(_auth.getUser.toJson(), project_id);
+      //     }
+      //   }
+      // }
+    };
 
-print("onError $code $res");
-
-// if (isConnected == false) {
-
-// setState(() {
-
-// isConnected = false;
-
-// //sockett = false;
-
-// });
-
-// }
-
-// else{
-
-// setState(() {
-
-// isConnected = true;
-
-// //sockett = false;
-
-// });
-
-// }
-
-if (code == 1001 || code == 1002) {
-
-setState(() {
-
-sockett = false;
-isRegisteredAlready=false;
-isConnected = false;
-
-});
-
-} 
-else if(code==401){
-print("in code 401");
-print("here in 401");setState(() {sockett = false;
-//isRegisteredAlready=true;
-final snackBar = SnackBar(content: Text('$res'));ScaffoldMessenger.of(context).showSnackBar(snackBar);});
-isRegisteredAlready=true;
-
-}
-else {
-  if (_auth.loggedInStatus == Status.LoggedOut) {
-
-}
-else{
-setState(() {
-
-sockett = false;
-//isRegisteredAlready=false;
-});
-
-if (isResumed) {
-
-
-
-if (isConnected && sockett == false && !isRegisteredAlready)  {
-
-print("i am in connect in 1005");
-
-signalingClient.connect(project_id, _auth.completeAddress);
-
-
-
-//signalingClient.register(_auth.getUser.toJson(), project_id);
-
-
-
-// sockett = true;
-
-} else {
-
-// sockett = false;
-
-}
-
-
-
-} else {}
-}
-}
-
-// print(
-
-// "hey i am here, this is localStream on Error ${local.id} remotestream ${remote.id}");
-
-// if (code == 1001 || code == 1002) {
-
-// setState(() {
-
-// sockett = false;
-
-// isConnected = false;
-
-// print("disconnected socket");
-
-// });
-
-// } else {
-
-// setState(() {
-
-// sockett = false;
-
-// });
-
-
-
-// if (_auth.loggedInStatus == Status.LoggedOut) {
-
-// } else {
-
-// if (isConnected == true && sockett == false) {
-
-// print("here in");
-
-// signalingClient.connect(project_id, _auth.completeAddress);
-
-// print("i am in connect in 1005");
-
-// signalingClient.register(_auth.getUser.toJson(), project_id);
-
-// }
-
-// }
-
-// }
-
-};
-//     signalingClient.onError = (code, res) {
-//       print("onError $code $res");
-
-// // print(
-
-// // "hey i am here, this is localStream on Error ${local.id} remotestream ${remote.id}");
-
-//       if (code == 1001 || code == 1002) {
-//         setState(() {
-//           sockett = false;
-
-//           isConnected = false;
-
-//           isSocketregis = false;
-
-//           isPushed = false;
-
-// // isdev = false;
-
-//           print("disconnected socket");
-//         });
-//       } else if (code == 1005) {
-//         setState(() {
-//           sockett = false;
-
-//           isSocketregis = false;
-
-//           isPushed = false;
-//         });
-
-//         if (_auth.loggedInStatus == Status.LoggedOut) {
-//         } else {
-//           if (isConnected == true && sockett == false) {
-//             signalingClient.connect(project_id, _auth.completeAddress);
-
-//             print("i am in connect in 1005");
-
-//             signalingClient.register(_auth.getUser.toJson(), project_id);
-//           }
-//         }
-//       }
-
-// // else if(code == 1002){
-
-// // setState(() {
-
-// // sockett = false;
-
-// // isInternetConnected = false;
-
-// // isSocketregis = false;
-
-// // isPushed = false;
-
-// // });
-
-// // }
-
-// // else if (code == 1005) {
-
-// // setState(() {
-
-// // sockett = false;
-
-// // isSocketregis = false;
-
-// // isPushed = false;
-
-// // // isdev = false;
-
-// // print("disconnected socket ");
-
-// // });
-
-// // }
-
-//       else {
-//         print("ffgfffff $res");
-
-// // snackBar = SnackBar(content: Text(res));
-
-//       }
-//     };
-
-    // signalingClient.onError = (code, res) {
-    //   if (code == 1002 || code == 1001) {
-    //     sockett = false;
-    //     isSocketregis = false;
-    //     isPushed = false;
-    //     isdev = false;
-    //   } else {}
-    //   if (code == 1005) {
-    //     sockett = false;
-    //     isSocketregis = false;
-    //     isPushed = false;
-    //     isdev = false;
-    //   }
-    // };
     signalingClient.onRegister = (res) {
       setState(() {
         registerRes = res;
@@ -651,8 +482,8 @@ signalingClient.connect(project_id, _auth.completeAddress);
       });
     };
     signalingClient.onReceiveCallFromUser =
-        (receivefrom, type, isonetone,callType,sessionType) async {
-          Wakelock.toggle(enable: true);
+        (receivefrom, type, isonetone, callType, sessionType) async {
+      Wakelock.toggle(enable: true);
       startRinging();
       inCall = true;
       iscalloneto1 = isonetone;
@@ -671,14 +502,18 @@ signalingClient.connect(project_id, _auth.completeAddress);
       });
       _callProvider.callReceive();
     };
-    signalingClient.onTargetAlerting = () {setState(() {isRinging = true;});};
-    signalingClient.onParticipantsLeft = (refID,receive) async {
+    signalingClient.onTargetAlerting = () {
+      setState(() {
+        isRinging = true;
+      });
+    };
+    signalingClient.onParticipantsLeft = (refID, receive) async {
       print("this is participant left reference id $refID");
       if (refID == _auth.getUser.ref_id) {
       } else {
         int index = rendererListWithRefID
             .indexWhere((element) => element["refID"] == refID);
-            print("this is indexxxxxxx $index");
+        print("this is indexxxxxxx $index");
         setState(() {
           rendererListWithRefID.removeAt(index);
         });
@@ -686,7 +521,7 @@ signalingClient.connect(project_id, _auth.completeAddress);
     };
     signalingClient.onCallAcceptedByUser = () async {
       inCall = true;
-      iscallAcceptedbyuser=true;
+      iscallAcceptedbyuser = true;
       audioPlayer.stop();
       _callProvider.callStart();
     };
@@ -694,24 +529,18 @@ signalingClient.connect(project_id, _auth.completeAddress);
       print("this is on call hung by the user $_ticker");
       audioPlayer.stop();
       if (inPaused) {
+        print("here in paused");
 
-print("here in paused");
+        signalingClient.closeSocket();
+      }
 
-signalingClient.closeSocket();
+      if (Platform.isIOS) {
+        if (inInactive) {
+          print("here in paused");
 
-}
-
-if (Platform.isIOS) {
-
-if (inInactive) {
-
-print("here in paused");
-
-signalingClient.closeSocket();
-
-}
-
-}
+          signalingClient.closeSocket();
+        }
+      }
 //       if (inPaused) {
 
 // print("here in paused");
@@ -721,27 +550,27 @@ signalingClient.closeSocket();
 // }
       //.toggle(enable: false);
       inCall = false;
-      if(_ticker!=null){
-  _ticker.cancel();
+      if (_ticker != null) {
+        _ticker.cancel();
       }
-    if(_callticker!=null){
-      _callticker.cancel();
-      count=0;
-      iscallAcceptedbyuser=false;
-    }
+      if (_callticker != null) {
+        _callticker.cancel();
+        count = 0;
+        iscallAcceptedbyuser = false;
+      }
       setState(() {
         callTo = "";
         _pressDuration = "";
         upstream = 0;
         downstream = 0;
-        isRinging=false;
+        isRinging = false;
       });
       _callProvider.initial();
       disposeAllRenderer();
       stopRinging();
     };
     signalingClient.onCallBusyCallback = () {
-        Wakelock.toggle(enable: false);
+      Wakelock.toggle(enable: false);
       _callProvider.initial();
       final snackBar =
           SnackBar(content: Text('User is busy with another call.'));
@@ -784,33 +613,27 @@ signalingClient.closeSocket();
         ));
     }
   }
-@override
 
-void didChangeAppLifecycleState(AppLifecycleState state) {
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print("this is changeapplifecyclestate");
 
-print("this is changeapplifecyclestate");
+    switch (state) {
+      case AppLifecycleState.resumed:
+        print("app in resumed");
 
-switch (state) {
+        isResumed = true;
+        inInactive = false;
+        inPaused = false;
 
-case AppLifecycleState.resumed:
-
-print("app in resumed");
-
-isResumed = true;
-inInactive=false;
-inPaused = false;
-
-if (_auth.loggedInStatus == Status.LoggedOut) {
-
-} else {
-
-print("this is variable for resume $sockett $isConnected");
+        if (_auth.loggedInStatus == Status.LoggedOut) {
+        } else {
+          print("this is variable for resume $sockett $isConnected");
 
 // //signalingClient.sendPing();
 
-signalingClient.sendPing(registerRes["mcToken"]);
-
-}
+          signalingClient.sendPing(registerRes["mcToken"]);
+        }
 
 // if (_auth.loggedInStatus == Status.LoggedOut) {
 
@@ -818,87 +641,67 @@ signalingClient.sendPing(registerRes["mcToken"]);
 
 // //signalingClient.sendPing();
 
-
-
 // print("here in resume");
 
 // signalingClient.connect(project_id, _auth.completeAddress);
 
 // signalingClient.register(_auth.getUser.toJson(), project_id);
 
-
-
 // }
 
+        break;
 
+      case AppLifecycleState.inactive:
+        inInactive = true;
 
-break;
+        isResumed = false;
 
-case AppLifecycleState.inactive:
-inInactive = true;
+        inPaused = false;
 
-isResumed = false;
+        if (Platform.isIOS) {
+          if (inCall == true) {
+            print("incall true");
+          } else {
+            print("here in ininactive");
 
-inPaused = false;
-
-if (Platform.isIOS) {
-
-if (inCall == true) {
-
-print("incall true");
-
-} else {
-
-print("here in ininactive");
-
-signalingClient.closeSocket();
-
-}
-
-}
-print("app in inactive");
+            signalingClient.closeSocket();
+          }
+        }
+        print("app in inactive");
 
 // isResumed = false;
 
 // signalingClient.closeSocket();
 
-break;
+        break;
 
-case AppLifecycleState.paused:
+      case AppLifecycleState.paused:
+        print("app in paused");
 
-print("app in paused");
+        inPaused = true;
+        inInactive = false;
+        isResumed = false;
 
-inPaused = true;
-inInactive =false;
-isResumed = false;
+        if (inCall == true) {
+          print("incall true");
+        } else {
+          print("incall false");
 
-if (inCall == true) {
+          signalingClient.closeSocket();
+        }
 
-print("incall true");
+        break;
 
-} else {
+      case AppLifecycleState.detached:
+        print("app in detached");
 
-print("incall false");
-
-signalingClient.closeSocket();
-
-}
-
-break;
-
-case AppLifecycleState.detached:
-
-print("app in detached");
-
-break;
-
-}
+        break;
+    }
 
 // super.didChangeAppLifecycleState(state);
 
 // _isInForeground = state == AppLifecycleState.resumed;
-
-}
+  }
 //   @override
 //   void didChangeAppLifecycleState(AppLifecycleState state) {
 //     print("this is changeapplifecyclestate");
@@ -992,40 +795,35 @@ break;
     });
     // UIDevice.current.isProximityMonitoringEnabled = true;
     meidaType = mtype;
-    final file = new File(
+    final file = new File('${(await getTemporaryDirectory()).path}/music.mp3');
 
-'${(await getTemporaryDirectory()).path}/music.mp3');
+    await file.writeAsBytes(
+        (await rootBundle.load("assets/sound/audio.mp3")).buffer.asUint8List());
 
-await file.writeAsBytes(
-
-(await rootBundle.load("assets/sound/audio.mp3")).buffer.asUint8List());
-
-int status = await audioPlayer.play(file.path,
-
-isLocal: true);
-   // callbackDispatcher();
+    int status = await audioPlayer.play(file.path, isLocal: true);
+    // callbackDispatcher();
 //       final bytes = await readBytes(Uri.parse(""));
 //     final dir = await getApplicationDocumentsDirectory();
 //     final file = File('${dir.path}/audio.mp3');
 //      AudioCache audioCache = AudioCache();
 // audioCache.play('assets/sound/sound.mp3');
 // await audioPlayer.play('assets/sound/sounds.mp3');
- //audioPlayer.open(
-  // Audio('assets/sound/sounds.mp3');
+    //audioPlayer.open(
+    // Audio('assets/sound/sounds.mp3');
 // );
 
 //     await audioPlayer.play('assets/sound/sounds.mp3', isLocal: true);
     print("this is call type in home page ...$meidaType ");
-     Wakelock.toggle(enable: true);
+    Wakelock.toggle(enable: true);
     List<String> groupRefIDS = [];
     to.participants.forEach((element) {
       if (_auth.getUser.ref_id != element.ref_id)
         groupRefIDS.add(element.ref_id.toString());
     });
-    
-  _callticker = Timer.periodic(Duration(seconds: 1), (_) => _callcheck());
-  // count=count+1;
-  //  print("i am here in start call timerrrrr $count.....$iscallAcceptedbyuser");
+
+    _callticker = Timer.periodic(Duration(seconds: 1), (_) => _callcheck());
+    // count=count+1;
+    //  print("i am here in start call timerrrrr $count.....$iscallAcceptedbyuser");
     callingTo = to.participants;
     callingTo.removeWhere((element) => element.ref_id == _auth.getUser.ref_id);
     rendererListWithRefID.first["remoteVideoFlag"] =
@@ -1043,37 +841,32 @@ isLocal: true);
   initRenderers(RTCVideoRenderer rtcRenderer) async {
     await rtcRenderer.initialize();
   }
-  
-_callcheck(){
-  print("i am here in call chck  function $count");
-  count=count+1;
-  if(count==30 && iscallAcceptedbyuser==false){
-    
+
+  _callcheck() {
+    print("i am here in call chck  function $count");
+    count = count + 1;
+    if (count == 30 && iscallAcceptedbyuser == false) {
       print("I am here in stopcall if");
       _callticker.cancel();
-      count=0;
-       signalingClient.onCancelbytheCaller(registerRes["mcToken"]);
-       _callProvider.initial();
-       iscallAcceptedbyuser=false;
-    }
-    else if(count==30 && iscallAcceptedbyuser==true){
-          _callticker.cancel();
-         count=0;
-         print("I am here in stopcall call accept true");
-         iscallAcceptedbyuser=false;
-    }
-    else if(iscallAcceptedbyuser==true){
+      count = 0;
+      signalingClient.onCancelbytheCaller(registerRes["mcToken"]);
+      _callProvider.initial();
+      iscallAcceptedbyuser = false;
+    } else if (count == 30 && iscallAcceptedbyuser == true) {
       _callticker.cancel();
-       print("I am here in emptyyyyyyyyyy stopcall call accept true");
-        count=0;
-         iscallAcceptedbyuser=false;
-    }
-    else{
+      count = 0;
+      print("I am here in stopcall call accept true");
+      iscallAcceptedbyuser = false;
+    } else if (iscallAcceptedbyuser == true) {
+      _callticker.cancel();
+      print("I am here in emptyyyyyyyyyy stopcall call accept true");
+      count = 0;
+      iscallAcceptedbyuser = false;
+    } else {}
+  }
 
-    }
-}
-void callbackDispatcher() {
-  print('callbackDispatcher');
+  void callbackDispatcher() {
+    print('callbackDispatcher');
     FlutterRingtonePlayer.play(
       android: AndroidSounds.notification,
       ios: IosSounds.glass,
@@ -1084,9 +877,10 @@ void callbackDispatcher() {
       asAlarm: true, // Android only - all APIs
     );
 
-   // return Future.value(true);
-  //});
-}
+    // return Future.value(true);
+    //});
+  }
+
   startRinging() async {
     if (Platform.isAndroid) {
       if (await Vibration.hasVibrator()) {
@@ -1131,21 +925,16 @@ void callbackDispatcher() {
 
   Future<Null> refreshList() async {
     print("this is in refresh list $isConnected....$sockett");
-    if ( sockett == false )  {
+    if (sockett == false) {
+      print("i am in connect in 1005");
 
-print("i am in connect in 1005");
-
-signalingClient.connect(project_id, _auth.completeAddress);
-
-
+      signalingClient.connect(project_id, _auth.completeAddress);
 
 //signalingClient.register(_auth.getUser.toJson(), project_id);
 
-
-
 // sockett = true;
 
-} 
+    }
     renderList();
     return;
   }
@@ -1153,17 +942,13 @@ signalingClient.connect(project_id, _auth.completeAddress);
   Future<bool> _onWillPop() async {
     print("this is string last ");
     print("this is incall vaiableee $inCall");
-    if(inCall){
-
-MoveToBackground.moveTaskToBack();
-print("thissssssskbncjvbcvj");
-return false;
-
-}
+    if (inCall) {
+      MoveToBackground.moveTaskToBack();
+      print("thissssssskbncjvbcvj");
+      return false;
+    }
 
 // else
-
-
 
 // { return true;}
     else if (strArr.last == "ContactList") {
@@ -1171,10 +956,10 @@ return false;
       _groupListProvider.handleGroupListState(ListStatus.Scussess);
     } else {
       print("i a, hereeeeeeeeddvdv");
-    SystemNavigator.pop();
+      SystemNavigator.pop();
       //  _groupListProvider.handleGroupListState(ListStatus.Scussess);
     }
-   return false;
+    return false;
   }
 
   renderList() {
@@ -1201,17 +986,17 @@ return false;
   }
 
   stopCall() {
-      Wakelock.toggle(enable: false);
+    Wakelock.toggle(enable: false);
     print("i am here iin stopc sdsxfssd");
     signalingClient.stopCall(registerRes["mcToken"]);
     //here
     // _callBloc.add(CallNewEvent());
-   //audioPlayer.stop();
+    //audioPlayer.stop();
     isPushed = false;
-   //  print("i am here in stop call function");
-      if(_ticker!=null){
-  _ticker.cancel();
-      }
+    //  print("i am here in stop call function");
+    if (_ticker != null) {
+      _ticker.cancel();
+    }
     //    print("THIS IS CALL STATUS ${_callProvider.callStatus}");
     setState(() {
       callTo = "";
@@ -1223,7 +1008,7 @@ return false;
 
     inCall = false;
     disposeAllRenderer();
-   
+
     if (!kIsWeb) stopRinging();
   }
 
