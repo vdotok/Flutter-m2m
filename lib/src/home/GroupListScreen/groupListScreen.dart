@@ -52,6 +52,34 @@ class _GroupListScreenState extends State<GroupListScreen> {
         }
       });
     }
+    Future buildShowDialog(
+      BuildContext context, String mesg, String errorMessage) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return StatefulBuilder(builder: (context, setState) {
+            Future.delayed(Duration(seconds: 2), () {
+              Navigator.of(context).pop(true);
+            });
+            return AlertDialog(
+                title: Center(
+                    child: Text(
+                  "${mesg}",
+                  style: TextStyle(color: counterColor),
+                )),
+                content: Text("$errorMessage"),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0)),
+                elevation: 0,
+                actions: <Widget>[
+                  Container(
+                    height: 50,
+                    width: 319,
+                  )
+                ]);
+          });
+        });
+  }
   @override
   Widget build(BuildContext context) {
    return Scaffold(
@@ -148,7 +176,17 @@ class _GroupListScreenState extends State<GroupListScreen> {
                                   Container(
                                     child: IconButton(
                                       icon: SvgPicture.asset('assets/call.svg'),
-                                      onPressed: () {
+                                      onPressed: 
+                                      !widget.isdev
+                                ? (!isRegisteredAlready)
+                                    ? () {
+                                        buildShowDialog(
+                                            context,
+                                            "No Internet Connection",
+                                            "Make sure your device has internet.");
+                                      }
+                                     
+                                      :() {
                                         widget.startCall(
                                             element,
                                             MediaType.audio,
@@ -160,7 +198,7 @@ class _GroupListScreenState extends State<GroupListScreen> {
                                          
                                         });
                                         print("three dot icon pressed");
-                                      },
+                                      } :() {}
                                     ),
                                   ),
                                   Container(
@@ -169,7 +207,17 @@ class _GroupListScreenState extends State<GroupListScreen> {
                                     child: IconButton(
                                       icon: SvgPicture.asset(
                                           'assets/videocallicon.svg'),
-                                      onPressed: () {
+                                      onPressed:
+                                      
+                                       !widget.isdev
+                                ? (!isRegisteredAlready)
+                                    ? () {
+                                        buildShowDialog(
+                                            context,
+                                            "No Internet Connection",
+                                            "Make sure your device has internet.");
+                                      }
+                                       :() {
                                         widget.startCall(
                                             element,
                                             MediaType.video,
@@ -183,7 +231,7 @@ class _GroupListScreenState extends State<GroupListScreen> {
                                          
                                         });
                                         print("three dot icon pressed");
-                                      },
+                                      }:(){}
                                     ),
                                   )
                                   ,
@@ -395,8 +443,10 @@ class _GroupListScreenState extends State<GroupListScreen> {
                             Container(
                               child: FlatButton(
                                 onPressed: () {
-                                  widget.authprovider.logout();
-
+                                
+  if (isRegisteredAlready) {
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                        }
                                   signalingClient
                                       .unRegister(widget.registerRes["mcToken"]);
                                 },

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:vdotok_stream_example/src/core/providers/groupListProvider.dart';
+import 'package:vdotok_stream_example/src/home/home.dart';
 import '../../core/providers/auth.dart';
 
 import '../../../constant.dart';
@@ -13,7 +14,14 @@ class NoContactsScreen extends StatelessWidget {
   final newChatHandler;
   final GroupListProvider groupListProvider;
   final AuthProvider authProvider;
-  NoContactsScreen({this.refreshList, this.newChatHandler, this.groupListProvider, this.authProvider, this.isConnect, this.state});
+  final registerRes;
+  NoContactsScreen(
+      {this.refreshList,
+      this.newChatHandler,
+      this.groupListProvider,
+      this.authProvider,
+      this.isConnect,
+      this.state, this.registerRes});
 
   @override
   Widget build(BuildContext context) {
@@ -51,8 +59,7 @@ class NoContactsScreen extends StatelessWidget {
           Container(
             width: 196,
             height: 56,
-            child: 
-            Container(
+            child: Container(
                 width: 196,
                 height: 56,
                 decoration: BoxDecoration(
@@ -62,10 +69,9 @@ class NoContactsScreen extends StatelessWidget {
                     width: 3,
                   ),
                 ),
-                child:
-                 FlatButton(
+                child: FlatButton(
                   onPressed: () {
-                   // handleGroupState()
+                    // handleGroupState()
                     newChatHandler();
                   },
                   child: Text(
@@ -99,7 +105,7 @@ class NoContactsScreen extends StatelessWidget {
                 ),
                 child: Center(
                     child: FlatButton(
-                     onPressed: refreshList,
+                  onPressed: refreshList,
                   child: Text(
                     "Refresh",
                     style: TextStyle(
@@ -112,41 +118,42 @@ class NoContactsScreen extends StatelessWidget {
                   ),
                 ))),
           ),
-          SizedBox(height:40),
-           Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                        width: 105,
-                        child: FlatButton(
-                          onPressed: () {
-                            authProvider.logout();
-                         
-                          },
-                          child: Text(
-                            "LOG OUT",
-                            style: TextStyle(
-                                fontSize: 14.0,
-                                fontFamily: primaryFontFamily,
-                                fontStyle: FontStyle.normal,
-                                fontWeight: FontWeight.w700,
-                                color: logoutButtonColor,
-                                letterSpacing: 0.90),
-                          ),
-                        )),
-                          Container(
-                  height: 10,
-                  width: 10,
-                  decoration: BoxDecoration(
-                      color:
-                          isConnect? Colors.green : Colors.red,
-                      shape: BoxShape.circle),
-                ),
-                  ],
-                ),
-                  Container(
-                    // padding: const EdgeInsets.only(bottom: 60),
-                    child: Text(authProvider.getUser.full_name))
+          SizedBox(height: 40),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                  width: 105,
+                  child: FlatButton(
+                    onPressed: () {
+                      if (isRegisteredAlready) {
+                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                      }
+                      signalingClient.unRegister(registerRes["mcToken"]);
+                    },
+                    child: Text(
+                      "LOG OUT",
+                      style: TextStyle(
+                          fontSize: 14.0,
+                          fontFamily: primaryFontFamily,
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.w700,
+                          color: logoutButtonColor,
+                          letterSpacing: 0.90),
+                    ),
+                  )),
+              Container(
+                height: 10,
+                width: 10,
+                decoration: BoxDecoration(
+                    color: isConnect ? Colors.green : Colors.red,
+                    shape: BoxShape.circle),
+              ),
+            ],
+          ),
+          Container(
+              // padding: const EdgeInsets.only(bottom: 60),
+              child: Text(authProvider.getUser.full_name))
         ],
       ),
     );

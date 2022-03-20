@@ -43,6 +43,8 @@ bool switchMute = true;
 bool switchSpeaker = true;
 bool enableCamera = true;
 bool isRinging = false;
+var snackBar;
+bool isRegisteredAlready = false;
 AudioPlayer audioPlayer = AudioPlayer();
 
 class Home extends StatefulWidget {
@@ -79,7 +81,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   bool inPaused = false;
   bool iscallAcceptedbyuser = false;
   bool inInactive = false;
-  bool isRegisteredAlready = false;
+
   double downstream;
   void _updateTimer() {
     var duration;
@@ -202,12 +204,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-    // listenSensor();
-
-    signalingClient.unRegisterSuccessfullyCallBack = () {
-      _auth.logout();
-    };
-// sleep(const Duration(seconds:10));
+   
     WidgetsBinding.instance.addObserver(this);
     _auth = Provider.of<AuthProvider>(context, listen: false);
     _contactProvider = Provider.of<ContactProvider>(context, listen: false);
@@ -216,30 +213,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     _contactProvider.getContacts(_auth.getUser.auth_token);
     _groupListProvider.getGroupList(_auth.getUser.auth_token);
 
-//  _streamSubscriptions
-//         .add(accelerometerEvents.listen((AccelerometerEvent event) {
-//       setState(() {
-//         _accelerometerValues = <double>[event.x, event.y, event.z];
-//       });
-//     }));
-//     _streamSubscriptions.add(gyroscopeEvents.listen((GyroscopeEvent event) {
-//       setState(() {
-//         _gyroscopeValues = <double>[event.x, event.y, event.z];
-//       });
-//     }));
 
-//     _streamSubscriptions
-//         .add(userAccelerometerEvents.listen((UserAccelerometerEvent event) {
-//       setState(() {
-//         _userAccelerometerValues = <double>[event.x, event.y, event.z];
-//       });
-//     }));
-//     _streamSubscriptions
-//         .add(proximityEvents.listen((ProximityEvent event) {
-//       setState(() {
-//         _proximityValues = event.getValue();
-//       });
-//     }));
 
     print("i AM here in home init");
     signalingClient.connect(project_id, _auth.completeAddress);
@@ -259,12 +233,12 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         setState(() {
           isConnected = true;
 
-// sockett = true;
+
         });
 
         showSnackbar("Internet Connected", whiteColor, Colors.green, false);
 
-//signalingClient.sendPing(registerRes["mcToken"]);
+
 
         if (sockett == false) {
           signalingClient.connect(project_id, _auth.completeAddress);
@@ -296,75 +270,12 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         signalingClient.closeSocket();
       }
     };
-//     signalingClient.internetConnectivityCallBack = (mesg) {
-//       print("in internet connectibvity call back $mesg .... $sockett");
-//       if (mesg == "Connected") {
-//         setState(() {
-//           isConnected = true;
-//         });
 
-//         print(
-//             "this is socket in internetconnectivity call back before snack bar $sockett");
-//         showSnackbar("Internet Connected", whiteColor, Colors.green, false);
-//         print("this is socket in internetconnectivity call back $sockett");
-//         print("this is before socket iffff $sockett");
-//         if (sockett == false) {
-//           print("this is before socket iffff2222 $sockett");
-//           print("this is in socket connnect false if");
-//           signalingClient.connect(project_id, _auth.completeAddress);
-
-//           print("I am in Re Reregister");
-
-//           remoteVideoFlag = true;
-
-//           if (inCall == true) {
-//             iscallReConnected = true;
-//           }
-
-//           print("here in init state register");
-
-//           signalingClient.register(_auth.getUser.toJson(), project_id);
-// //sockett=true;
-//           isSocketregis = true;
-
-// // signalingClient.register(user);
-
-// // };
-
-//           isPushed = false;
-
-//         }
-//       } else {
-//         print("no internet connection");
-
-//         setState(() {
-//           isConnected = false;
-//         });
-
-//         showSnackbar("No Internet Connection", whiteColor, primaryColor, true);
-//       }
-//     };
     signalingClient.onError = (code, res) {
       print("onError $code $res");
-      // if (isConnected == false) {
-      //   setState(() {
-      //     isConnected = false;
-      //     //sockett = false;
-      //   });
-      // }
-      // else{
-      //   setState(() {
-      //     isConnected = true;
-      //     //sockett = false;
-      //   });
-      // }
+    
       if (code == 1001 || code == 1002) {
-         if (isConnected
-              && !isRegisteredAlready
-            ) {
-          print("internet is connected $sockett");
-           signalingClient.connect(project_id, _auth.completeAddress);
-        }
+       
         setState(() {
           sockett = false;
           isConnected = false;
@@ -376,7 +287,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           sockett = false;
           isRegisteredAlready = true;
 
-          final snackBar = SnackBar(content: Text('$res'));
+          snackBar = SnackBar(
+            content: Text('$res'),
+            duration: Duration(days: 365),
+          );
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
         });
       } else {
@@ -403,29 +317,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           } else {}
         }
       }
-      // print(
-      //     "hey i am here, this is localStream on Error ${local.id} remotestream ${remote.id}");
-      // if (code == 1001 || code == 1002) {
-      //   setState(() {
-      //     sockett = false;
-      //     isConnected = false;
-      //     print("disconnected socket");
-      //   });
-      // } else {
-      //   setState(() {
-      //     sockett = false;
-      //   });
-
-      //   if (_auth.loggedInStatus == Status.LoggedOut) {
-      //   } else {
-      //     if (isConnected == true && sockett == false) {
-      //       print("here in");
-      //       signalingClient.connect(project_id, _auth.completeAddress);
-      //       print("i am in connect in 1005");
-      //       signalingClient.register(_auth.getUser.toJson(), project_id);
-      //     }
-      //   }
-      // }
+     
     };
 
     signalingClient.onRegister = (res) {
@@ -519,6 +411,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         });
       }
     };
+    signalingClient.unRegisterSuccessfullyCallBack = () {
+      _auth.logout();
+    };
     signalingClient.onCallAcceptedByUser = () async {
       inCall = true;
       iscallAcceptedbyuser = true;
@@ -572,8 +467,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     signalingClient.onCallBusyCallback = () {
       Wakelock.toggle(enable: false);
       _callProvider.initial();
-      final snackBar =
-          SnackBar(content: Text('User is busy with another call.'));
+      snackBar = SnackBar(content: Text('User is busy with another call.'));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
       setState(() {});
     };
@@ -630,32 +524,14 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         } else {
           print("this is variable for resume $sockett $isConnected");
 
-// //signalingClient.sendPing();
-
           signalingClient.sendPing(registerRes["mcToken"]);
         }
-
-// if (_auth.loggedInStatus == Status.LoggedOut) {
-
-// } else {
-
-// //signalingClient.sendPing();
-
-// print("here in resume");
-
-// signalingClient.connect(project_id, _auth.completeAddress);
-
-// signalingClient.register(_auth.getUser.toJson(), project_id);
-
-// }
 
         break;
 
       case AppLifecycleState.inactive:
         inInactive = true;
-
         isResumed = false;
-
         inPaused = false;
 
         if (Platform.isIOS) {
@@ -669,9 +545,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         }
         print("app in inactive");
 
-// isResumed = false;
-
-// signalingClient.closeSocket();
 
         break;
 
@@ -702,52 +575,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
 // _isInForeground = state == AppLifecycleState.resumed;
   }
-//   @override
-//   void didChangeAppLifecycleState(AppLifecycleState state) {
-//     print("this is changeapplifecyclestate");
 
-//     switch (state) {
-//       case AppLifecycleState.resumed:
-//         print("app in resumed");
-
-// // signalingClient.sendPing();
-
-//         if (_auth.loggedInStatus == Status.LoggedOut) {
-//         } else if (sockett == true) {
-//         } else if (isConnected && sockett == false) {
-//           print("here in resume");
-
-//           signalingClient.connect(project_id, _auth.completeAddress);
-
-//           signalingClient.register(_auth.getUser.toJson(), project_id);
-//         }
-
-//         break;
-
-//       case AppLifecycleState.inactive:
-//         print("app in inactive");
-
-//         break;
-
-//       case AppLifecycleState.paused:
-//         print("app in paused");
-
-// // signalingClient.socketDrop();
-
-//         break;
-
-//       case AppLifecycleState.detached:
-//         signalingClient.unRegister(registerRes["mcToken"]);
-
-//         print("app in detached");
-
-//         break;
-//     }
-
-// // super.didChangeAppLifecycleState(state);
-
-// // _isInForeground = state == AppLifecycleState.resumed;
-//   }
 
   disposeAllRenderer() async {
     for (int i = 0; i < rendererListWithRefID.length; i++) {
@@ -801,18 +629,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         (await rootBundle.load("assets/sound/audio.mp3")).buffer.asUint8List());
 
     int status = await audioPlayer.play(file.path, isLocal: true);
-    // callbackDispatcher();
-//       final bytes = await readBytes(Uri.parse(""));
-//     final dir = await getApplicationDocumentsDirectory();
-//     final file = File('${dir.path}/audio.mp3');
-//      AudioCache audioCache = AudioCache();
-// audioCache.play('assets/sound/sound.mp3');
-// await audioPlayer.play('assets/sound/sounds.mp3');
-    //audioPlayer.open(
-    // Audio('assets/sound/sounds.mp3');
-// );
-
-//     await audioPlayer.play('assets/sound/sounds.mp3', isLocal: true);
+ 
     print("this is call type in home page ...$meidaType ");
     Wakelock.toggle(enable: true);
     List<String> groupRefIDS = [];
@@ -972,7 +789,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   }
 
   showSnakbar(msg) {
-    final snackBar = SnackBar(
+    snackBar = SnackBar(
       content: Text(
         "$msg",
         style: TextStyle(color: whiteColor),
@@ -1207,6 +1024,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                       resizeToAvoidBottomInset: true,
                       backgroundColor: chatRoomBackgroundColor,
                       appBar: CustomAppBar(
+                        isConnect: isConnected,
                         handlePress: handleCreateGroup,
                       ),
                       body: Consumer2<ContactProvider, GroupListProvider>(
@@ -1228,6 +1046,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                                   refreshList: renderList,
                                   groupListProvider: groupProvider,
                                   authProvider: _auth,
+                                  registerRes: registerRes,
                                   newChatHandler: handleGroupState);
                             } else {
                               print("here in grou screeeen");
@@ -1254,6 +1073,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                               searchController: _searchController,
                               selectedContact: _selectedContacts,
                               state: contact,
+                              isConnect:isConnected
                             );
                           }
                         },
