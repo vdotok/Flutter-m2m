@@ -1,16 +1,12 @@
 import 'dart:async';
-//import 'package:audioplayers/audioplayers.dart';
-//import 'package:audioplayer/audioplayer.dart';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
-import 'package:http/http.dart';
 import 'package:move_to_background/move_to_background.dart';
 import 'package:path_provider/path_provider.dart';
-//import 'package:proximity_sensor/proximity_sensor.dart';
-//import 'package:screen/screen.dart';
 import 'package:vdotok_stream/vdotok_stream.dart';
 import 'package:vdotok_stream_example/src/core/config/config.dart';
 import 'package:vdotok_stream_example/src/home/CallDialScreen/callDialScreen.dart';
@@ -199,12 +195,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   Map<String, dynamic> forLargStream = {};
   int count = 0;
 
-  //AssetsAudioPlayer audioPlayer = AssetsAudioPlayer();  // this will create a instance object of a class
-
   @override
   void initState() {
     super.initState();
-   
+
     WidgetsBinding.instance.addObserver(this);
     _auth = Provider.of<AuthProvider>(context, listen: false);
     _contactProvider = Provider.of<ContactProvider>(context, listen: false);
@@ -212,8 +206,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     _callProvider = Provider.of<CallProvider>(context, listen: false);
     _contactProvider.getContacts(_auth.getUser.auth_token);
     _groupListProvider.getGroupList(_auth.getUser.auth_token);
-
-
 
     print("i AM here in home init");
     signalingClient.connect(project_id, _auth.completeAddress);
@@ -232,13 +224,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       if (mesg == "Connected") {
         setState(() {
           isConnected = true;
-
-
         });
 
         showSnackbar("Internet Connected", whiteColor, Colors.green, false);
-
-
 
         if (sockett == false) {
           signalingClient.connect(project_id, _auth.completeAddress);
@@ -273,12 +261,16 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
     signalingClient.onError = (code, res) {
       print("onError $code $res");
-    
+
       if (code == 1001 || code == 1002) {
-       
+        print("fk9tt");
+
+        //  isInternetConnect = true;
+        // signalingClient.connect(project_id, authProvider.completeAddress);
+        signalingClient.sendPing(registerRes["mctoken"]);
         setState(() {
           sockett = false;
-          isConnected = false;
+
           isRegisteredAlready = false;
         });
       } else if (code == 401) {
@@ -317,7 +309,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           } else {}
         }
       }
-     
     };
 
     signalingClient.onRegister = (res) {
@@ -361,17 +352,21 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         }
         _updateTimer();
         _ticker = Timer.periodic(Duration(seconds: 1), (_) => _updateTimer());
+        rendererListWithRefID.add(temp);
+        forLargStream = temp;
+        onRemoteStream = true;
       });
       if (forLargStream.isEmpty) {
         setState(() {
           forLargStream = temp;
         });
       }
-      setState(() {
-        rendererListWithRefID.add(temp);
-        forLargStream = temp;
-        onRemoteStream = true;
-      });
+      if (_callticker != null) {
+        _callticker.cancel();
+        count = 0;
+        iscallAcceptedbyuser = true;
+      }
+      audioPlayer.stop();
     };
     signalingClient.onReceiveCallFromUser =
         (receivefrom, type, isonetone, callType, sessionType) async {
@@ -393,6 +388,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         remoteAudioFlag = true;
       });
       _callProvider.callReceive();
+      _callticker = Timer.periodic(Duration(seconds: 1), (_) => _callcheck());
     };
     signalingClient.onTargetAlerting = () {
       setState(() {
@@ -418,6 +414,16 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       inCall = true;
       iscallAcceptedbyuser = true;
       audioPlayer.stop();
+      if (iscallReConnected == false) {
+        _time = DateTime.now();
+        _callTime = DateTime.now();
+      } else {
+        _ticker.cancel();
+        _time = _callTime;
+        iscallReConnected = false;
+      }
+      _updateTimer();
+      _ticker = Timer.periodic(Duration(seconds: 1), (_) => _updateTimer());
       _callProvider.callStart();
     };
     signalingClient.onCallHungUpByUser = (isLocal) {
@@ -496,14 +502,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         ));
     } else if (check == true) {
       rootScaffoldMessengerKey.currentState
-        ..hideCurrentSnackBar()
         ..showSnackBar(SnackBar(
           content: Text(
             '$text',
             style: TextStyle(color: color),
           ),
           backgroundColor: backgroundColor,
-          duration: Duration(seconds: 2),
+          duration: Duration(days: 365),
         ));
     }
   }
@@ -545,7 +550,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         }
         print("app in inactive");
 
-
         break;
 
       case AppLifecycleState.paused:
@@ -575,7 +579,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
 // _isInForeground = state == AppLifecycleState.resumed;
   }
-
 
   disposeAllRenderer() async {
     for (int i = 0; i < rendererListWithRefID.length; i++) {
@@ -629,7 +632,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         (await rootBundle.load("assets/sound/audio.mp3")).buffer.asUint8List());
 
     int status = await audioPlayer.play(file.path, isLocal: true);
- 
+
     print("this is call type in home page ...$meidaType ");
     Wakelock.toggle(enable: true);
     List<String> groupRefIDS = [];
@@ -660,7 +663,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   }
 
   _callcheck() {
-    print("i am here in call chck  function $count");
+    print("i am here in call chck  function $count $iscallAcceptedbyuser");
     count = count + 1;
     if (count == 30 && iscallAcceptedbyuser == false) {
       print("I am here in stopcall if");
@@ -1046,6 +1049,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                                   refreshList: renderList,
                                   groupListProvider: groupProvider,
                                   authProvider: _auth,
+                                  socket:sockett,
                                   registerRes: registerRes,
                                   newChatHandler: handleGroupState);
                             } else {
@@ -1064,17 +1068,27 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                                   groupNameController: _groupNameController,
                                   refreshList: refreshList);
                             }
+                          } 
+                          else if (groupProvider.groupListStatus ==
+                              ListStatus.Failure) {
+                            return Center(
+                              child: Text(
+                                "${groupProvider.errorMsg}",
+                                style: TextStyle(
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            );
                           }
                           //Create group Screen
                           else {
                             strArr.add("ContactList");
                             return ContactListScreen(
-                              refreshcontactList: refreshList,
-                              searchController: _searchController,
-                              selectedContact: _selectedContacts,
-                              state: contact,
-                              isConnect:isConnected
-                            );
+                                refreshcontactList: refreshList,
+                                searchController: _searchController,
+                                selectedContact: _selectedContacts,
+                                state: contact,
+                                isConnect: isConnected);
                           }
                         },
                       )),

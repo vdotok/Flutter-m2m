@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:vdotok_stream_example/src/core/providers/groupListProvider.dart';
@@ -11,6 +13,7 @@ class NoContactsScreen extends StatelessWidget {
   final bool isConnect;
   final bool state;
   final refreshList;
+  final socket;
   final newChatHandler;
   final GroupListProvider groupListProvider;
   final AuthProvider authProvider;
@@ -21,7 +24,8 @@ class NoContactsScreen extends StatelessWidget {
       this.groupListProvider,
       this.authProvider,
       this.isConnect,
-      this.state, this.registerRes});
+      this.state,
+      this.registerRes, this.socket});
 
   @override
   Widget build(BuildContext context) {
@@ -128,6 +132,7 @@ class NoContactsScreen extends StatelessWidget {
                     onPressed: () {
                       if (isRegisteredAlready) {
                         ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                        isRegisteredAlready = false;
                       }
                       signalingClient.unRegister(registerRes["mcToken"]);
                     },
@@ -146,7 +151,7 @@ class NoContactsScreen extends StatelessWidget {
                 height: 10,
                 width: 10,
                 decoration: BoxDecoration(
-                    color: isConnect ? Colors.green : Colors.red,
+                    color: isConnect && socket? Colors.green : Colors.red,
                     shape: BoxShape.circle),
               ),
             ],

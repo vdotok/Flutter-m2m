@@ -176,17 +176,17 @@ class _GroupListScreenState extends State<GroupListScreen> {
                                   Container(
                                     child: IconButton(
                                       icon: SvgPicture.asset('assets/call.svg'),
-                                      onPressed: 
+                                      onPressed:
                                       !widget.isdev
                                 ? (!isRegisteredAlready)
                                     ? () {
-                                        buildShowDialog(
-                                            context,
-                                            "No Internet Connection",
-                                            "Make sure your device has internet.");
+                                        // buildShowDialog(
+                                        //     context,
+                                        //     "No Internet Connection",
+                                        //     "Make sure your device has internet.");
                                       }
                                      
-                                      :() {
+                                       :() {}:   isRegisteredAlready?(){}:() {
                                         widget.startCall(
                                             element,
                                             MediaType.audio,
@@ -198,7 +198,7 @@ class _GroupListScreenState extends State<GroupListScreen> {
                                          
                                         });
                                         print("three dot icon pressed");
-                                      } :() {}
+                                      } 
                                     ),
                                   ),
                                   Container(
@@ -212,12 +212,12 @@ class _GroupListScreenState extends State<GroupListScreen> {
                                        !widget.isdev
                                 ? (!isRegisteredAlready)
                                     ? () {
-                                        buildShowDialog(
-                                            context,
-                                            "No Internet Connection",
-                                            "Make sure your device has internet.");
+                                        // buildShowDialog(
+                                        //     context,
+                                        //     "No Internet Connection",
+                                        //     "Make sure your device has internet.");
                                       }
-                                       :() {
+                                     :() {}:   isRegisteredAlready?(){}:() {
                                         widget.startCall(
                                             element,
                                             MediaType.video,
@@ -231,7 +231,7 @@ class _GroupListScreenState extends State<GroupListScreen> {
                                          
                                         });
                                         print("three dot icon pressed");
-                                      }:(){}
+                                      }
                                     ),
                                   )
                                   ,
@@ -446,6 +446,7 @@ class _GroupListScreenState extends State<GroupListScreen> {
                                 
   if (isRegisteredAlready) {
                           ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                           isRegisteredAlready = false;
                         }
                                   signalingClient
                                       .unRegister(widget.registerRes["mcToken"]);

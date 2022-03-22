@@ -25,10 +25,10 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   void initState() {
     super.initState();
-    setState(() {
-      _emailController.text = "pakistan1";
-      _passwordController.text = "12345678";
-    });
+    // setState(() {
+    //   _emailController.text = "pakistan1";
+    //   _passwordController.text = "12345678";
+    // });
   }
 
   handlePress() async {

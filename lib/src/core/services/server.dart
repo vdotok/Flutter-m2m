@@ -8,7 +8,7 @@ import '../../../src/core/config/config.dart';
 Future<dynamic> callAPI(datarequest, myurl, authToken) async {
   final url = URL + version + myurl;
   print("this is api call $datarequest $url  $authToken");
-  final response = await http.post(Uri.parse('$url'),
+  try{final response = await http.post(Uri.parse('$url'),
       headers: authToken != null
           ? {
               HttpHeaders.contentTypeHeader: 'application/json',
@@ -22,13 +22,20 @@ Future<dynamic> callAPI(datarequest, myurl, authToken) async {
     return json.decode(response.body);
   } else {
     throw Exception("Failed to Load Data");
+  }}catch (e) {
+    print("The error$e");
+    Map<String, dynamic> response = {
+      "statusCode": 400,
+      "message": "No internet connection"
+    };
+    return response;
   }
 }
 
 Future<dynamic> getAPI(myurl, authToken) async {
   final url = URL + version + myurl;
   print('this is url $url');
-  final response = await http.get(
+  try{final response = await http.get(
     Uri.parse('$url'),
     headers: authToken != null
         ? {
@@ -43,5 +50,12 @@ Future<dynamic> getAPI(myurl, authToken) async {
     return json.decode(response.body);
   } else {
     throw Exception("Failed to Load Data");
+  }}catch (e) {
+    print("The error$e");
+    Map<String, dynamic> response = {
+      "statusCode": 400,
+      "message": "No internet connection"
+    };
+    return response;
   }
 }
