@@ -19,12 +19,21 @@ class CallReceiveScreen extends StatelessWidget {
   AuthProvider authprovider;
   String incomingfrom;
   final stopRinging;
-  CallReceiveScreen({this.callingto,this.mediatype,this.registerRes,this.rendererListWithRefid,this.callprovider,this.authprovider,this.incomingfrom, this.stopRinging});
+  final groupName;
+  CallReceiveScreen(
+      {this.callingto,
+      this.mediatype,
+      this.registerRes,
+      this.rendererListWithRefid,
+      this.callprovider,
+      this.authprovider,
+      this.incomingfrom,
+      this.stopRinging, this.groupName});
 
   @override
   Widget build(BuildContext context) {
     print("here i am in separte class of Call Receive Screen");
-     return Scaffold(body: OrientationBuilder(builder: (context, orientation) {
+    return Scaffold(body: OrientationBuilder(builder: (context, orientation) {
       return Stack(children: <Widget>[
         mediatype == MediaType.video
             ? Container(
@@ -67,29 +76,38 @@ class CallReceiveScreen extends StatelessWidget {
               SizedBox(
                 height: 8,
               ),
-              Consumer<ContactProvider>(
-                builder: (context, contact, child) {
-                  if (contact.contactState == ContactStates.Success) {
-                    int index = contact.contactList.users.indexWhere(
-                        (element) => element.ref_id == incomingfrom);
-                    return Text(
-                      index == -1
-                          ? incomingfrom
-                          : contact.contactList.users[index].full_name,
-                      style: TextStyle(
-                          fontFamily: primaryFontFamily,
-                          color: darkBlackColor,
-                          decoration: TextDecoration.none,
-                          fontWeight: FontWeight.w700,
-                          fontStyle: FontStyle.normal,
-                          fontSize: 24),
-                    );
-                  } else
-                    return Container(
-                     
-                    );
-                },
+               Text(
+                
+                    groupName,
+                style: TextStyle(
+                    fontFamily: primaryFontFamily,
+                    color: darkBlackColor,
+                    decoration: TextDecoration.none,
+                    fontWeight: FontWeight.w700,
+                    fontStyle: FontStyle.normal,
+                    fontSize: 24),
               ),
+              // Consumer<ContactProvider>(
+              //   builder: (context, contact, child) {
+              //     if (contact.contactState == ContactStates.Success) {
+              //       int index = contact.contactList.users.indexWhere(
+              //           (element) => element.ref_id == incomingfrom);
+              //       return Text(
+              //         index == -1
+              //             ? incomingfrom
+              //             : contact.contactList.users[index].full_name,
+              //         style: TextStyle(
+              //             fontFamily: primaryFontFamily,
+              //             color: darkBlackColor,
+              //             decoration: TextDecoration.none,
+              //             fontWeight: FontWeight.w700,
+              //             fontStyle: FontStyle.normal,
+              //             fontSize: 24),
+              //       );
+              //     } else
+              //       return Container();
+              //   },
+              // ),
             ],
           ),
         ),
@@ -109,9 +127,8 @@ class CallReceiveScreen extends StatelessWidget {
                   stopRinging();
                   signalingClient.onDeclineCall(
                       authprovider.getUser.ref_id, registerRes["mcToken"]);
-                 
+
                   callprovider.initial();
-                 
                 },
               ),
               SizedBox(width: 64),

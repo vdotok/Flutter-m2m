@@ -40,6 +40,7 @@ bool switchSpeaker = true;
 bool enableCamera = true;
 bool isRinging = false;
 var snackBar;
+String groupName = "";
 bool isRegisteredAlready = false;
 AudioPlayer audioPlayer = AudioPlayer();
 
@@ -368,22 +369,23 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       }
       audioPlayer.stop();
     };
-    signalingClient.onReceiveCallFromUser =
-        (receivefrom, type, isonetone, callType, sessionType) async {
+    signalingClient.onReceiveCallFromUser = (res) async {
       Wakelock.toggle(enable: true);
       startRinging();
       inCall = true;
-      iscalloneto1 = isonetone;
+      iscalloneto1 = res["call_type"] == "one_to_one" ? true : false;
+      print("ugdghfghf ${res["groupName"]}");
       setState(() {
+        groupName = res["data"]["groupName"];
         onRemoteStream = false;
         _pressDuration = "";
         upstream = 0;
         downstream = 0;
-        incomingfrom = receivefrom;
-        meidaType = type;
+        incomingfrom = res["from"];
+        meidaType = res["media_type"];
         switchMute = true;
         enableCamera = true;
-        switchSpeaker = type == MediaType.audio ? true : false;
+        switchSpeaker = res["media_type"] == MediaType.audio ? true : false;
         remoteVideoFlag = true;
         remoteAudioFlag = true;
       });
@@ -414,16 +416,16 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       inCall = true;
       iscallAcceptedbyuser = true;
       audioPlayer.stop();
-      if (iscallReConnected == false) {
-        _time = DateTime.now();
-        _callTime = DateTime.now();
-      } else {
-        _ticker.cancel();
-        _time = _callTime;
-        iscallReConnected = false;
-      }
-      _updateTimer();
-      _ticker = Timer.periodic(Duration(seconds: 1), (_) => _updateTimer());
+      // if (iscallReConnected == false) {
+      //   _time = DateTime.now();
+      //   _callTime = DateTime.now();
+      // } else {
+      //   _ticker.cancel();
+      //   _time = _callTime;
+      //   iscallReConnected = false;
+      // }
+      // _updateTimer();
+      // _ticker = Timer.periodic(Duration(seconds: 1), (_) => _updateTimer());
       _callProvider.callStart();
     };
     signalingClient.onCallHungUpByUser = (isLocal) {
@@ -648,7 +650,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     callingTo.removeWhere((element) => element.ref_id == _auth.getUser.ref_id);
     rendererListWithRefID.first["remoteVideoFlag"] =
         mtype == MediaType.video ? 1 : 0;
+    print("i am here in call chck ${to.group_title}");
     signalingClient.startCall(
+        groupName: to.group_title,
         from: _auth.getUser.ref_id,
         to: groupRefIDS,
         mcToken: registerRes["mcToken"],
@@ -739,7 +743,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
   @override
   dispose() {
-    _ticker.cancel();
+    if (_ticker != null) {
+      _ticker.cancel();
+    }
     super.dispose();
   }
 
@@ -952,20 +958,20 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       statusBarBrightness: Brightness.light, //status bar brigtness
       statusBarIconBrightness: Brightness.dark, //status barIcon Brightness
     ));
-    signalingClient.onCallStatsuploads = (uploadstats) {
-      var nummm = uploadstats;
-      String dddi = nummm.toString();
-      double myDouble = double.parse(dddi);
-      assert(myDouble is double);
-      upstream = double.parse((myDouble / 1024).toStringAsFixed(2));
-    };
-    signalingClient.onCallstats = (timeStatsdownloads, timeStatsuploads) {
-      number = timeStatsdownloads;
-      String ddd = number.toString();
-      double myDouble = double.parse(ddd);
-      assert(myDouble is double);
-      downstream = double.parse((myDouble / 1024).toStringAsFixed(2));
-    };
+    // signalingClient.onCallStatsuploads = (uploadstats) {
+    //   var nummm = uploadstats;
+    //   String dddi = nummm.toString();
+    //   double myDouble = double.parse(dddi);
+    //   assert(myDouble is double);
+    //   upstream = double.parse((myDouble / 1024).toStringAsFixed(2));
+    // };
+    // signalingClient.onCallstats = (timeStatsdownloads, timeStatsuploads) {
+    //   number = timeStatsdownloads;
+    //   String ddd = number.toString();
+    //   double myDouble = double.parse(ddd);
+    //   assert(myDouble is double);
+    //   downstream = double.parse((myDouble / 1024).toStringAsFixed(2));
+    // };
     // if (isdev == true && sockett == false) {
     //   if (inCall == true) {
     //     iscallReConnected = true;
@@ -989,6 +995,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         builder: (context, callProvider, child) {
           if (callProvider.callStatus == CallStatus.CallReceive)
             return CallReceiveScreen(
+              groupName: groupName,
               authprovider: _auth,
               callprovider: callProvider,
               callingto: callingTo,
@@ -1032,6 +1039,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                       ),
                       body: Consumer2<ContactProvider, GroupListProvider>(
                         builder: (context, contact, groupProvider, child) {
+                          print("dudshjg ${groupProvider.groupListStatus}");
                           if (groupProvider.groupListStatus ==
                               ListStatus.Loading)
                             return Center(
@@ -1049,7 +1057,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                                   refreshList: renderList,
                                   groupListProvider: groupProvider,
                                   authProvider: _auth,
-                                  socket:sockett,
+                                  socket: sockett,
                                   registerRes: registerRes,
                                   newChatHandler: handleGroupState);
                             } else {
@@ -1068,8 +1076,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                                   groupNameController: _groupNameController,
                                   refreshList: refreshList);
                             }
-                          } 
-                          else if (groupProvider.groupListStatus ==
+                          } else if (groupProvider.groupListStatus ==
                               ListStatus.Failure) {
                             return Center(
                               child: Text(

@@ -68,26 +68,35 @@ class CallDialScreen extends StatelessWidget {
                             fontStyle: FontStyle.normal,
                             color: darkBlackColor),
                       ),
-                      Expanded(
-                        child: ListView.builder(
-                          itemCount: callingto.length,
-                          itemBuilder: (context, index) {
-                            return Container(
-                              alignment: Alignment.center,
-                              child: Text(
-                                callingto[index].full_name,
-                                style: TextStyle(
-                                    fontFamily: primaryFontFamily,
-                                    color: darkBlackColor,
-                                    decoration: TextDecoration.none,
-                                    fontWeight: FontWeight.w700,
-                                    fontStyle: FontStyle.normal,
-                                    fontSize: 24),
-                              ),
-                            );
-                          },
-                        ),
-                      )
+                      Text(
+                              "$groupName",
+                              style: TextStyle(
+                                  fontFamily: primaryFontFamily,
+                                  color: darkBlackColor,
+                                  decoration: TextDecoration.none,
+                                  fontWeight: FontWeight.w700,
+                                  fontStyle: FontStyle.normal,
+                                  fontSize: 24)),
+                      // Expanded(
+                      //   child: ListView.builder(
+                      //     itemCount: callingto.length,
+                      //     itemBuilder: (context, index) {
+                      //       return Container(
+                      //         alignment: Alignment.center,
+                      //         child: Text(
+                      //           callingto[index].full_name,
+                      //           style: TextStyle(
+                      //               fontFamily: primaryFontFamily,
+                      //               color: darkBlackColor,
+                      //               decoration: TextDecoration.none,
+                      //               fontWeight: FontWeight.w700,
+                      //               fontStyle: FontStyle.normal,
+                      //               fontSize: 24),
+                      //         ),
+                      //       );
+                      //     },
+                      //   ),
+                      // )
                     ])),
             Container(
               padding: EdgeInsets.only(bottom: 56),
