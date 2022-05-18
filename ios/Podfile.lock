@@ -35,7 +35,7 @@ PODS:
     - Libyuv (= 1703)
     - MMWormhole
     - VdoTokStreaming
-  - VdoTokStreaming (1.0.7)
+  - VdoTokStreaming (1.1.1)
   - vibration (1.7.3):
     - Flutter
   - wakelock (0.0.1):
@@ -123,7 +123,7 @@ SPEC CHECKSUMS:
   replay_kit_launcher: e2b85653d7ee455d067abc1a74c4feb8574087d4
   shared_preferences_ios: 548a61f8053b9b8a49ac19c1ffbc8b92c50d68ad
   vdotok_stream: 80373297324ed9af4297d5e2f8423a2f6ae9899e
-  VdoTokStreaming: a2cf10fbab6b4c0485d583d8ca9067eec63d9389
+  VdoTokStreaming: 80051843998fbbc2f026b69d5d5883aed4e48a6a
   vibration: b5a33e764c3f609a975b9dca73dce20fdde627dc
   wakelock: d0fc7c864128eac40eba1617cb5264d9c940b46f
   wifi_info_flutter: 55d4c2469034f5b5c38063ccefa62f708a503a2b

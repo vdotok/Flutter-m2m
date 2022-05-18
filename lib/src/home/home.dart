@@ -186,6 +186,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   ];
   String meidaType = MediaType.video;
   bool remoteVideoFlag = true;
+    Map<String, dynamic> customData;
   bool remoteAudioFlag = true;
   bool onRemoteStream = false;
   ContactProvider _contactProvider;
@@ -369,7 +370,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       }
       audioPlayer.stop();
     };
-    signalingClient.onReceiveCallFromUser = (res) async {
+    signalingClient.onReceiveCallFromUser = (res,isMultiSession) async {
       Wakelock.toggle(enable: true);
       startRinging();
       inCall = true;
@@ -397,7 +398,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         isRinging = true;
       });
     };
-    signalingClient.onParticipantsLeft = (refID, receive) async {
+    signalingClient.onParticipantsLeft = (refID, receive,ishandle) async {
       print("this is participant left reference id $refID");
       if (refID == _auth.getUser.ref_id) {
       } else {
@@ -427,6 +428,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       // _updateTimer();
       // _ticker = Timer.periodic(Duration(seconds: 1), (_) => _updateTimer());
       _callProvider.callStart();
+    };
+     signalingClient.insufficientBalance = (res) {
+      print("here in insufficient balance");
+      snackBar = SnackBar(content: Text('$res'));
+
+// Find the Scaffold in the widget tree and use it to show a SnackBar.
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
     };
     signalingClient.onCallHungUpByUser = (isLocal) {
       print("this is on call hung by the user $_ticker");
@@ -462,8 +470,12 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         iscallAcceptedbyuser = false;
       }
       setState(() {
+         inCall = false;
+        iscallReConnected = false;
+        isRinging = false;
         callTo = "";
         _pressDuration = "";
+        iscallAcceptedbyuser = false;
         upstream = 0;
         downstream = 0;
         isRinging = false;
@@ -651,8 +663,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     rendererListWithRefID.first["remoteVideoFlag"] =
         mtype == MediaType.video ? 1 : 0;
     print("i am here in call chck ${to.group_title}");
+     customData = {
+        "calleName": "",
+        "groupName": groupName,
+        "groupAutoCreatedValue": ""
+      };
     signalingClient.startCall(
-        groupName: to.group_title,
+      customData: customData,
         from: _auth.getUser.ref_id,
         to: groupRefIDS,
         mcToken: registerRes["mcToken"],
