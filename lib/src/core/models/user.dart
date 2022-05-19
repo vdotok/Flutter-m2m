@@ -5,23 +5,6 @@ part 'user.g.dart';
 class User {
   //final String active;
   final String auth_token;
-<<<<<<< HEAD
-  final String authorization_token;
-  final String email;
-  final String full_name;
-  final String message;
-  //final String passwordCount;
-  final int process_time;
-  final String ref_id;
-  final int status;
-  final int user_id;
-  final dynamic resgisterRes;
-  User(
-      {this.auth_token,
-      this.authorization_token,
-      this.email,
-      this.full_name,
-=======
   final String? authorization_token;
   final String? email;
   final String full_name;
@@ -37,7 +20,6 @@ class User {
       this.authorization_token,
       this.email,
       required this.full_name,
->>>>>>> 95fd6584abf96bb0dfe2c53a6712964e820512c0
       this.message,
       this.process_time,
       this.ref_id,

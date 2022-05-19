@@ -5,30 +5,33 @@ import 'package:vdotok_stream_example/src/core/providers/groupListProvider.dart'
 import 'package:provider/provider.dart';
 import '../core/models/contact.dart';
 import '../core/providers/auth.dart';
-
 class CreateGroupPopUp extends StatefulWidget {
   const CreateGroupPopUp({
+    Key? key,
+    required TextEditingController groupNameController,
+    List<Contact?>? selectedContacts,
+    required this.authProvider,
+    required this.controllerText,
+    this.backHandler,
+    required this.editGroupName,
+    this.groupid,
+    // @required this.publishMessage,
+  })  : _groupNameController = groupNameController,
+        _selectedContacts = selectedContacts,
         super(key: key);
-
   final TextEditingController _groupNameController;
   // final ContactProvider contactProvider;
   // final GroupListProvider groupListProvider;
-
-  final List<Contact> _selectedContacts;
-
   final List<Contact?>? _selectedContacts;
   final AuthProvider authProvider;
   final String controllerText;
   //final publishMessage;
   final bool editGroupName;
   final backHandler;
-
   final int? groupid;
-
   @override
   _CreateGroupPopUpState createState() => _CreateGroupPopUpState();
 }
-
 class _CreateGroupPopUpState extends State<CreateGroupPopUp> {
   GroupListProvider? _groupListProvider;
   bool loading = false;
@@ -39,7 +42,6 @@ class _CreateGroupPopUpState extends State<CreateGroupPopUp> {
     }
     _groupListProvider = Provider.of<GroupListProvider>(context, listen: false);
   }
-
   @override
   Widget build(BuildContext context) {
     showSnakbar(
@@ -57,7 +59,6 @@ class _CreateGroupPopUpState extends State<CreateGroupPopUp> {
         ..hideCurrentSnackBar()
         ..showSnackBar(snackBar);
     }
-
     return GestureDetector(onTap: () {
       FocusScopeNode currentFous = FocusScope.of(context);
       if (!currentFous.hasPrimaryFocus) {
@@ -206,7 +207,6 @@ class _CreateGroupPopUpState extends State<CreateGroupPopUp> {
                                         print("here in back handler");
                                         _groupListProvider!
                                             .addGroup(groupModel);
-
                                         this.widget.backHandler();
                                         Navigator.pop(context);
                                         setState(() {

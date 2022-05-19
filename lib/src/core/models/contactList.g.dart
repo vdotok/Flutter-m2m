@@ -9,15 +9,9 @@ part of 'contactList.dart';
 ContactList _$ContactListFromJson(Map<String, dynamic> json) {
   return ContactList(
     users: (json['users'] as List)
-<<<<<<< HEAD
-        ?.map((e) =>
-            e == null ? null : Contact.fromJson(e as Map<String, dynamic>))
-        ?.toList(),
-=======
         .map((e) =>
             e == null ? null : Contact.fromJson(e as Map<String, dynamic>))
         .toList(),
->>>>>>> 95fd6584abf96bb0dfe2c53a6712964e820512c0
   );
 }
 
