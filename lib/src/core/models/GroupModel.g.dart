@@ -18,10 +18,17 @@ GroupModel _$GroupModelFromJson(Map<String, dynamic> json) {
     id: json['id'],
     counter: json['counter'],
     participants: (json['participants'] as List)
+<<<<<<< HEAD
         ?.map((e) => e == null
             ? null
             : ParticipantsModel.fromJson(e as Map<String, dynamic>))
         ?.toList(),
+=======
+        .map((e) => e == null
+            ? null
+            : ParticipantsModel.fromJson(e as Map<String, dynamic>))
+        .toList(),
+>>>>>>> 95fd6584abf96bb0dfe2c53a6712964e820512c0
   );
 }
 

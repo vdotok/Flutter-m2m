@@ -4,7 +4,7 @@ import 'responsiveWidget.dart';
 import '../../constant.dart';
 
 class NoGroupScreen extends StatefulWidget {
-  const NoGroupScreen({Key key, this.handleRefresh, this.handleNewCreate})
+  const NoGroupScreen({Key? key, this.handleRefresh, this.handleNewCreate})
       : super(key: key);
   final handleRefresh;
   final handleNewCreate;

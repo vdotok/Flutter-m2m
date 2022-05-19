@@ -68,7 +68,7 @@ const selectcontactColor = Color(0xff190354);
 
 const receiverMessagecolor = Color(0xff659b91);
 
-Size size;
+Size? size;
 
 //taimoor
 const whiteColor = Color(0xFFFFFFFF);

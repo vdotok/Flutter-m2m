@@ -11,26 +11,24 @@ class ContactListScreen extends StatefulWidget {
   final isConnect;
   final refreshcontactList;
   ContactListScreen(
-      {this.state,
-      this.selectedContact,
+      {required this.state,
+      required this.selectedContact,
       this.searchController,
-      this.refreshcontactList, this.isConnect});
+      this.refreshcontactList,
+      this.isConnect});
   @override
   _ContactListScreenState createState() => _ContactListScreenState();
 }
 
 class _ContactListScreenState extends State<ContactListScreen> {
-
-
- 
   bool notmatched = false;
   List _filteredList = [];
   onSearch(value) {
     print("this is here $value");
     List temp;
-    temp = widget.state.contactList.users
+    temp = widget.state.contactList.users!
         .where((element) =>
-            element.full_name.toLowerCase().startsWith(value.toLowerCase()))
+            element!.full_name.toLowerCase().startsWith(value.toLowerCase()))
         .toList();
     print("this is filtered list $_filteredList");
     setState(() {
@@ -71,7 +69,7 @@ class _ContactListScreenState extends State<ContactListScreen> {
                       onSearch(value);
                     },
                     validator: (value) =>
-                        value.isEmpty ? "Field cannot be empty." : null,
+                        value!.isEmpty ? "Field cannot be empty." : null,
                     decoration: InputDecoration(
                       fillColor: refreshTextColor,
                       filled: true,
@@ -119,13 +117,13 @@ class _ContactListScreenState extends State<ContactListScreen> {
                             cacheExtent: 9999,
                             scrollDirection: Axis.vertical,
                             itemCount: widget.searchController.text.isEmpty
-                                ? widget.state.contactList.users.length
+                                ? widget.state.contactList.users!.length
                                 : _filteredList.length,
                             itemBuilder: (context, position) {
-                              Contact element =
-                                  widget.searchController.text.isEmpty
-                                      ? widget.state.contactList.users[position]
-                                      : _filteredList[position];
+                              Contact element = widget
+                                      .searchController.text.isEmpty
+                                  ? widget.state.contactList.users![position]
+                                  : _filteredList[position];
 
                               return Column(
                                 children: [

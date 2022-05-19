@@ -38,7 +38,7 @@ class CallProvider with ChangeNotifier {
   }
 
   removeRenderer(String refID) {
-    _remoteRendererList[refID].srcObject = null;
+    _remoteRendererList[refID]!.srcObject = null;
     notifyListeners();
   }
 }

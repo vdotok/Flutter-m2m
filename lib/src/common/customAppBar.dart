@@ -7,7 +7,7 @@ import '../../src/core/providers/auth.dart';
 import '../../constant.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const CustomAppBar({Key key, this.handlePress, this.isConnect})
+  const CustomAppBar({Key? key, this.handlePress, this.isConnect})
       : super(key: key);
   final handlePress;
   final isConnect;
@@ -49,20 +49,16 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: IconButton(
-                      onPressed: 
-                      !isConnect
-                          ? 
-                          (!isRegisteredAlready)
+                      onPressed: !isConnect
+                          ? (!isRegisteredAlready)
                               ? () {}
-                              :   () {}:isRegisteredAlready
-                                  ? () {}
-                                  : 
-                                  () {
-                                      handlePress(
-                                          groupProvider.groupListStatus);
-                                      // Navigator.pushNamed(context, "/contactList");
-                                    },
-                         
+                              : () {}
+                          : isRegisteredAlready
+                              ? () {}
+                              : () {
+                                  handlePress(groupProvider.groupListStatus);
+                                  // Navigator.pushNamed(context, "/contactList");
+                                },
                       icon: SvgPicture.asset(
                         'assets/checkmark.svg',
                       ),

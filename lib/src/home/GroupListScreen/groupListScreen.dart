@@ -23,16 +23,16 @@ class GroupListScreen extends StatefulWidget {
   bool isdev;
   final showdialogdeletegroup;
   GroupListScreen(
-      {this.authprovider,
-      this.mediatype,
-      this.state,
+      {required this.authprovider,
+      required this.mediatype,
+      required this.state,
       this.refreshList,
-      this.grouplistprovider,
+      required this.grouplistprovider,
       this.groupNameController,
       this.startCall,
       this.registerRes,
-      this.isdev,
-      this.sockett,
+      required this.isdev,
+      required this.sockett,
       this.showdialogdeletegroup});
   @override
   _GroupListScreenState createState() => _GroupListScreenState();
@@ -45,9 +45,9 @@ class _GroupListScreenState extends State<GroupListScreen> {
   onSearch(value) {
     print("this is here $value");
     List temp;
-    temp = widget.state.groups
+    temp = widget.state.groups!
         .where((element) =>
-            element.group_title.toLowerCase().startsWith(value.toLowerCase()))
+            element!.group_title.toLowerCase().startsWith(value.toLowerCase()))
         .toList();
     print("this is filtered list $_groupfilteredList");
     setState(() {
@@ -108,7 +108,7 @@ class _GroupListScreenState extends State<GroupListScreen> {
                     onSearch(value);
                   },
                   validator: (value) =>
-                      value.isEmpty ? "Field cannot be empty." : null,
+                      value!.isEmpty ? "Field cannot be empty." : null,
                   decoration: InputDecoration(
                     fillColor: refreshTextColor,
                     filled: true,
@@ -154,12 +154,12 @@ class _GroupListScreenState extends State<GroupListScreen> {
                           cacheExtent: 9999,
                           scrollDirection: Axis.vertical,
                           itemCount: _GroupListsearchController.text.isEmpty
-                              ? widget.state.groups.length
+                              ? widget.state.groups!.length
                               : _groupfilteredList.length,
                           itemBuilder: (context, position) {
                             GroupModel element =
                                 _GroupListsearchController.text.isEmpty
-                                    ? widget.state.groups[position]
+                                    ? widget.state.groups![position]
                                     : _groupfilteredList[position];
                             return Container(
                               height: 50,
@@ -274,15 +274,15 @@ class _GroupListScreenState extends State<GroupListScreen> {
                                                 PopupMenuItem(
                                                   enabled: (listProvider
                                                                   .groupList
-                                                                  .groups[
-                                                                      position]
+                                                                  .groups![
+                                                                      position]!
                                                                   .participants
                                                                   .length ==
                                                               1 ||
                                                           listProvider
                                                                   .groupList
-                                                                  .groups[
-                                                                      position]
+                                                                  .groups![
+                                                                      position]!
                                                                   .participants
                                                                   .length ==
                                                               2)
@@ -380,13 +380,14 @@ class _GroupListScreenState extends State<GroupListScreen> {
                                                           editGroupName: true,
                                                           groupid: listProvider
                                                               .groupList
-                                                              .groups[position]
+                                                              .groups![
+                                                                  position]!
                                                               .id,
                                                           controllerText:
                                                               listProvider
                                                                   .groupList
-                                                                  .groups[
-                                                                      position]
+                                                                  .groups![
+                                                                      position]!
                                                                   .group_title,
                                                           groupNameController:
                                                               widget
@@ -401,9 +402,9 @@ class _GroupListScreenState extends State<GroupListScreen> {
                                             } else if (menu == 2) {
                                               widget.showdialogdeletegroup(
                                                   listProvider.groupList
-                                                      .groups[position].id,
+                                                      .groups![position]!.id,
                                                   listProvider.groupList
-                                                      .groups[position]);
+                                                      .groups![position]);
                                             }
                                           }),
                                     );

@@ -8,37 +8,29 @@ import '../core/providers/auth.dart';
 
 class CreateGroupPopUp extends StatefulWidget {
   const CreateGroupPopUp({
-    Key key,
-    @required TextEditingController groupNameController,
-    List<Contact> selectedContacts,
-    @required this.authProvider,
-    this.controllerText,
-    this.backHandler,
-    this.editGroupName,
-    this.groupid,
-  // @required this.publishMessage,
-  })  : _groupNameController = groupNameController,
-        _selectedContacts = selectedContacts,
         super(key: key);
 
   final TextEditingController _groupNameController;
   // final ContactProvider contactProvider;
   // final GroupListProvider groupListProvider;
+
   final List<Contact> _selectedContacts;
+
+  final List<Contact?>? _selectedContacts;
   final AuthProvider authProvider;
   final String controllerText;
   //final publishMessage;
   final bool editGroupName;
   final backHandler;
 
-  final int groupid;
+  final int? groupid;
 
   @override
   _CreateGroupPopUpState createState() => _CreateGroupPopUpState();
 }
 
 class _CreateGroupPopUpState extends State<CreateGroupPopUp> {
-  GroupListProvider _groupListProvider;
+  GroupListProvider? _groupListProvider;
   bool loading = false;
   @override
   void initState() {
@@ -161,69 +153,69 @@ class _CreateGroupPopUpState extends State<CreateGroupPopUp> {
                                 color: doneButtonColor,
                                 onPressed: () async {
                                   if (widget.editGroupName) {
-                                          print("here");
- if (widget._groupNameController.text.isEmpty ||
-                                      widget._groupNameController == null ) {
-                                   
+                                    print("here");
+                                    if (widget._groupNameController.text
+                                            .isEmpty ||
+                                        widget._groupNameController == null) {
+                                    } else {
+                                      setState(() {
+                                        loading = true;
+                                      });
+                                      await grouplistp.editGroupName(
+                                          widget._groupNameController.text,
+                                          widget.groupid,
+                                          widget
+                                              .authProvider.getUser.auth_token);
+                                      if (grouplistp.editGroupNameStatus ==
+                                          EditGroupNameStatus.Success) {
+                                        showSnakbar(grouplistp.successMsg);
+                                        widget._groupNameController.clear();
+                                      } else if (grouplistp
+                                              .editGroupNameStatus ==
+                                          EditGroupNameStatus.Failure) {
+                                        showSnakbar(grouplistp.errorMsg);
+                                      } else {}
+                                      Navigator.of(context).pop();
+                                      widget._groupNameController.clear();
+                                    }
                                   } else {
-                                    setState(() {
-                                      loading = true;
-                                    });
-                                          await grouplistp.editGroupName(
+                                    if (widget._groupNameController.text
+                                            .isEmpty ||
+                                        widget._groupNameController == null ||
+                                        widget._selectedContacts!.length > 20) {
+                                      return null;
+                                    } else {
+                                      setState(() {
+                                        loading = true;
+                                      });
+                                      var res = await _groupListProvider!
+                                          .createGroup(
                                               widget._groupNameController.text,
-                                              widget.groupid,
+                                              widget._selectedContacts,
                                               widget.authProvider.getUser
                                                   .auth_token);
-                                          if (grouplistp.editGroupNameStatus ==
-                                              EditGroupNameStatus.Success) {
-                                            showSnakbar(grouplistp.successMsg);
-                                            widget._groupNameController.clear();
-                                          } else if (grouplistp
-                                                  .editGroupNameStatus ==
-                                              EditGroupNameStatus.Failure) {
-                                            showSnakbar(grouplistp.errorMsg);
-                                          } else {}
-                                          Navigator.of(context).pop();
-                                             widget._groupNameController.clear();
-                                        } }
-                                        else{
-                                  if (widget
-                                          ._groupNameController.text.isEmpty ||
-                                      widget._groupNameController == null ||
-                                      widget._selectedContacts.length > 20) {
-                                    return null;
-                                  } else {
-                                    setState(() {
-                                      loading = true;
-                                    });
-                                    var res =
-                                        await _groupListProvider.createGroup(
-                                            widget._groupNameController.text,
-                                            widget._selectedContacts,
-                                            widget.authProvider.getUser
-                                                .auth_token);
-                                    var groupModel = res["group"];
+                                      var groupModel = res["group"];
 // grouplistp.addGroup(groupModel)
-                                    if (res["is_already_created"] == true) {
-                                      showSnakbar(
-                                          "Group with same participants already creatd with \"${groupModel["group_title"]}\" name.");
-setState(() {
-                                      loading = false;
-                                    });
-                                    } else {
-                                      print("here in back handler");
-                                      _groupListProvider.addGroup(groupModel);
-                                      
-                                      this.widget.backHandler();
-                                      Navigator.pop(context);
-                                      setState(() {
-                                      loading = false;
-                                    });
-                                    }
+                                      if (res["is_already_created"] == true) {
+                                        showSnakbar(
+                                            "Group with same participants already creatd with \"${groupModel["group_title"]}\" name.");
+                                        setState(() {
+                                          loading = false;
+                                        });
+                                      } else {
+                                        print("here in back handler");
+                                        _groupListProvider!
+                                            .addGroup(groupModel);
 
-                                    
+                                        this.widget.backHandler();
+                                        Navigator.pop(context);
+                                        setState(() {
+                                          loading = false;
+                                        });
+                                      }
+                                    }
                                   }
-                                }},
+                                },
                                 child: Container(
                                     width: 144,
                                     height: 48,

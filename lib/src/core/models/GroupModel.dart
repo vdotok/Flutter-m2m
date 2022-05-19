@@ -13,7 +13,11 @@ class GroupModel {
   dynamic created_datetime;
   dynamic counter;
   dynamic typingstatus;
+<<<<<<< HEAD
   List<ParticipantsModel> participants = [];
+=======
+  List<ParticipantsModel?> participants = [];
+>>>>>>> 95fd6584abf96bb0dfe2c53a6712964e820512c0
 
   GroupModel(
       {this.admin_id,
@@ -25,7 +29,11 @@ class GroupModel {
       this.typingstatus,
       this.id,
       this.counter,
+<<<<<<< HEAD
       this.participants});
+=======
+      required this.participants});
+>>>>>>> 95fd6584abf96bb0dfe2c53a6712964e820512c0
 
   factory GroupModel.fromJson(Map<String, dynamic> json) =>
       _$GroupModelFromJson(json);

@@ -11,7 +11,7 @@ import '../../../constant.dart';
 class NoContactsScreen extends StatelessWidget {
   //AuthProvider authProvider;
   final bool isConnect;
-  final bool state;
+  final bool? state;
   final refreshList;
   final socket;
   final newChatHandler;
@@ -21,14 +21,16 @@ class NoContactsScreen extends StatelessWidget {
   NoContactsScreen(
       {this.refreshList,
       this.newChatHandler,
-      this.groupListProvider,
-      this.authProvider,
-      this.isConnect,
+      required this.groupListProvider,
+      required this.authProvider,
+      required this.isConnect,
       this.state,
-      this.registerRes, this.socket});
+      this.registerRes,
+      this.socket});
 
   @override
   Widget build(BuildContext context) {
+    print("this is no chat s");
     return Container(
       width: MediaQuery.of(context).size.width,
       child: Column(
@@ -151,7 +153,7 @@ class NoContactsScreen extends StatelessWidget {
                 height: 10,
                 width: 10,
                 decoration: BoxDecoration(
-                    color: isConnect && socket? Colors.green : Colors.red,
+                    color: isConnect && socket ? Colors.green : Colors.red,
                     shape: BoxShape.circle),
               ),
             ],

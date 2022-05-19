@@ -8,16 +8,21 @@ import 'package:vdotok_stream_example/src/home/streams/remoteStream.dart';
 import '../../../constant.dart';
 
 class CallDialScreen extends StatelessWidget {
-  List<ParticipantsModel> callingto;
+  List<ParticipantsModel?>? callingto;
   String mediatype;
   var registerRes;
   List<Map<String, dynamic>> rendererListWithRefid = [];
   CallProvider callprovider;
-  CallDialScreen({this.callingto,this.mediatype,this.registerRes,this.rendererListWithRefid,this.callprovider});
+  CallDialScreen(
+      {required this.callingto,
+      required this.mediatype,
+      this.registerRes,
+      required this.rendererListWithRefid,
+      required this.callprovider});
 
   @override
   Widget build(BuildContext context) {
-     return Scaffold(
+    return Scaffold(
       body: OrientationBuilder(builder: (context, orientation) {
         return Stack(
           children: [
@@ -30,8 +35,7 @@ class CallDialScreen extends StatelessWidget {
                     child: RemoteStream(
                       remoteRenderer: rendererListWithRefid[0]
                           ["rtcVideoRenderer"],
-                    )
-                    )
+                    ))
                 : Container(
                     decoration: BoxDecoration(
                         gradient: LinearGradient(
@@ -50,7 +54,6 @@ class CallDialScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-
             Container(
                 padding: EdgeInsets.only(top: 120),
                 alignment: Alignment.center,
@@ -59,7 +62,7 @@ class CallDialScreen extends StatelessWidget {
                     // crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                       isRinging==false? "Calling..": "Ringing..",
+                        isRinging == false ? "Calling.." : "Ringing..",
                         style: TextStyle(
                             fontSize: 14,
                             decoration: TextDecoration.none,
@@ -68,15 +71,14 @@ class CallDialScreen extends StatelessWidget {
                             fontStyle: FontStyle.normal,
                             color: darkBlackColor),
                       ),
-                      Text(
-                              "$groupName",
-                              style: TextStyle(
-                                  fontFamily: primaryFontFamily,
-                                  color: darkBlackColor,
-                                  decoration: TextDecoration.none,
-                                  fontWeight: FontWeight.w700,
-                                  fontStyle: FontStyle.normal,
-                                  fontSize: 24)),
+                      Text("$groupName",
+                          style: TextStyle(
+                              fontFamily: primaryFontFamily,
+                              color: darkBlackColor,
+                              decoration: TextDecoration.none,
+                              fontWeight: FontWeight.w700,
+                              fontStyle: FontStyle.normal,
+                              fontSize: 24)),
                       // Expanded(
                       //   child: ListView.builder(
                       //     itemCount: callingto.length,
@@ -106,10 +108,10 @@ class CallDialScreen extends StatelessWidget {
                   'assets/end.svg',
                 ),
                 onTap: () {
-                 // audioPlayer.stop();
+                  // audioPlayer.stop();
                   signalingClient.onCancelbytheCaller(registerRes["mcToken"]);
-                callprovider.initial();
-                audioPlayer.stop();
+                  callprovider.initial();
+                  // audioPlayer.stop();
                 },
               ),
             ),

@@ -11,24 +11,25 @@ import 'package:vdotok_stream_example/src/home/streams/remoteStream.dart';
 
 // ignore: must_be_immutable
 class CallReceiveScreen extends StatelessWidget {
-  List<ParticipantsModel> callingto;
+  List<ParticipantsModel?>? callingto;
   String mediatype;
   var registerRes;
   List<Map<String, dynamic>> rendererListWithRefid = [];
   CallProvider callprovider;
   AuthProvider authprovider;
-  String incomingfrom;
+  String? incomingfrom;
   final stopRinging;
   final groupName;
   CallReceiveScreen(
-      {this.callingto,
-      this.mediatype,
+      {required this.callingto,
+      required this.mediatype,
       this.registerRes,
-      this.rendererListWithRefid,
-      this.callprovider,
-      this.authprovider,
-      this.incomingfrom,
-      this.stopRinging, this.groupName});
+      required this.rendererListWithRefid,
+      required this.callprovider,
+      required this.authprovider,
+      required this.incomingfrom,
+      this.stopRinging,
+      this.groupName});
 
   @override
   Widget build(BuildContext context) {
@@ -76,9 +77,8 @@ class CallReceiveScreen extends StatelessWidget {
               SizedBox(
                 height: 8,
               ),
-               Text(
-                
-                    groupName,
+              Text(
+                groupName,
                 style: TextStyle(
                     fontFamily: primaryFontFamily,
                     color: darkBlackColor,

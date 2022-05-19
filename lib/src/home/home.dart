@@ -1,14 +1,13 @@
 import 'dart:async';
-
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:move_to_background/move_to_background.dart';
-import 'package:path_provider/path_provider.dart';
+
 import 'package:vdotok_stream/vdotok_stream.dart';
 import 'package:vdotok_stream_example/src/core/config/config.dart';
+import 'package:vdotok_stream_example/src/core/models/contact.dart';
 import 'package:vdotok_stream_example/src/home/CallDialScreen/callDialScreen.dart';
 import 'package:vdotok_stream_example/src/home/CallReceiveScreen/callReceiveScreen.dart';
 import 'package:vdotok_stream_example/src/home/CallStartScreen/callStartScreen.dart';
@@ -18,7 +17,7 @@ import 'package:vdotok_stream_example/src/home/NoContactScreen/noContactsScreen.
 import 'package:vdotok_stream_example/src/common/customAppBar.dart';
 import 'package:vdotok_stream_example/src/core/models/GroupModel.dart';
 import 'package:vdotok_stream_example/src/core/models/ParticipantsModel.dart';
-import 'package:vdotok_stream_example/src/core/models/contact.dart';
+
 import 'package:vdotok_stream_example/src/core/providers/groupListProvider.dart';
 import 'package:vdotok_stream_example/src/home/WebScreen/webScreen.dart';
 import 'package:vdotok_stream_example/src/home/CreateGroupPopUp.dart';
@@ -42,7 +41,7 @@ bool isRinging = false;
 var snackBar;
 String groupName = "";
 bool isRegisteredAlready = false;
-AudioPlayer audioPlayer = AudioPlayer();
+// AudioPlayer audioPlayer = AudioPlayer();
 
 class Home extends StatefulWidget {
   final state;
@@ -57,29 +56,27 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 //   List<double> _gyroscopeValues;
 //   bool _proximityValues = false;
 //   List<StreamSubscription<dynamic>> _streamSubscriptions = <StreamSubscription<dynamic>>[];
-  bool _isNear = false;
-  StreamSubscription<dynamic> _streamSubscription;
 
   List<Contact> _selectedContacts = [];
   List<String> strArr = [];
   bool isDeviceConnected = false;
   bool isdev = true;
-  DateTime _time;
-  Timer _ticker;
-  Timer _callticker;
+  late DateTime _time;
+  Timer? _ticker;
+  late Timer _callticker;
   String _pressDuration = "";
-  DateTime _callTime;
+  late DateTime _callTime;
   bool iscalloneto1 = false;
   bool inCall = false;
   bool isPushed = false;
   bool iscallReConnected = false;
-  double upstream;
+  late double upstream;
   bool isResumed = true;
   bool inPaused = false;
   bool iscallAcceptedbyuser = false;
   bool inInactive = false;
 
-  double downstream;
+  late double downstream;
   void _updateTimer() {
     var duration;
     duration = DateTime.now().difference(_time);
@@ -109,9 +106,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   GlobalKey forlargView = new GlobalKey();
   GlobalKey forDialView = new GlobalKey();
   var registerRes;
-  String incomingfrom;
-  CallProvider _callProvider;
-  AuthProvider _auth;
+  String? incomingfrom;
+  late CallProvider _callProvider;
+  late AuthProvider _auth;
   bool secondRemoteVideo = false;
   bool isConnected = true;
   var number;
@@ -186,14 +183,14 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   ];
   String meidaType = MediaType.video;
   bool remoteVideoFlag = true;
-    Map<String, dynamic> customData;
+  late Map<String, dynamic> customData;
   bool remoteAudioFlag = true;
   bool onRemoteStream = false;
-  ContactProvider _contactProvider;
-  GroupListProvider _groupListProvider;
+  late ContactProvider _contactProvider;
+  late GroupListProvider _groupListProvider;
   final _groupNameController = TextEditingController();
   List<Map<String, dynamic>> rendererListWithRefID = [];
-  List<ParticipantsModel> callingTo;
+  List<ParticipantsModel?>? callingTo;
   Map<String, dynamic> forLargStream = {};
   int count = 0;
 
@@ -348,7 +345,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           _time = DateTime.now();
           _callTime = DateTime.now();
         } else {
-          _ticker.cancel();
+          _ticker!.cancel();
           _time = _callTime;
           iscallReConnected = false;
         }
@@ -368,9 +365,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         count = 0;
         iscallAcceptedbyuser = true;
       }
-      audioPlayer.stop();
+      // audioPlayer.stop();
     };
-    signalingClient.onReceiveCallFromUser = (res,isMultiSession) async {
+    signalingClient.onReceiveCallFromUser = (res, isMultiSession) async {
       Wakelock.toggle(enable: true);
       startRinging();
       inCall = true;
@@ -398,7 +395,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         isRinging = true;
       });
     };
-    signalingClient.onParticipantsLeft = (refID, receive,ishandle) async {
+    signalingClient.onParticipantsLeft = (refID, receive, ishandle) async {
       print("this is participant left reference id $refID");
       if (refID == _auth.getUser.ref_id) {
       } else {
@@ -406,7 +403,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             .indexWhere((element) => element["refID"] == refID);
         print("this is indexxxxxxx $index");
         setState(() {
-          rendererListWithRefID.removeAt(index);
+          if (index != -1) {
+            rendererListWithRefID.removeAt(index);
+          }
         });
       }
     };
@@ -416,7 +415,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     signalingClient.onCallAcceptedByUser = () async {
       inCall = true;
       iscallAcceptedbyuser = true;
-      audioPlayer.stop();
+      // audioPlayer.stop();
       // if (iscallReConnected == false) {
       //   _time = DateTime.now();
       //   _callTime = DateTime.now();
@@ -429,7 +428,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       // _ticker = Timer.periodic(Duration(seconds: 1), (_) => _updateTimer());
       _callProvider.callStart();
     };
-     signalingClient.insufficientBalance = (res) {
+    signalingClient.insufficientBalance = (res) {
       print("here in insufficient balance");
       snackBar = SnackBar(content: Text('$res'));
 
@@ -438,20 +437,30 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     };
     signalingClient.onCallHungUpByUser = (isLocal) {
       print("this is on call hung by the user $_ticker");
-      audioPlayer.stop();
+      // audioPlayer.stop();
       if (inPaused) {
         print("here in paused");
 
         signalingClient.closeSocket();
       }
+      if (kIsWeb) {
+      } else {
+        if (Platform.isIOS) {
+          if (inInactive) {
+            print("here in paused");
 
-      if (Platform.isIOS) {
-        if (inInactive) {
-          print("here in paused");
-
-          signalingClient.closeSocket();
+            signalingClient.closeSocket();
+          }
         }
       }
+
+      // if (Platform.isIOS) {
+      //   if (inInactive) {
+      //     print("here in paused");
+
+      //     signalingClient.closeSocket();
+      //   }
+      // }
 //       if (inPaused) {
 
 // print("here in paused");
@@ -462,7 +471,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       //.toggle(enable: false);
       inCall = false;
       if (_ticker != null) {
-        _ticker.cancel();
+        _ticker!.cancel();
       }
       if (_callticker != null) {
         _callticker.cancel();
@@ -470,7 +479,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         iscallAcceptedbyuser = false;
       }
       setState(() {
-         inCall = false;
+        inCall = false;
         iscallReConnected = false;
         isRinging = false;
         callTo = "";
@@ -504,7 +513,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   showSnackbar(text, Color color, Color backgroundColor, bool check) {
     print("Hi!!! i am here in snackbar");
     if (check == false) {
-      rootScaffoldMessengerKey.currentState
+      rootScaffoldMessengerKey!.currentState!
         ..hideCurrentSnackBar()
         ..showSnackBar(SnackBar(
           content: Text(
@@ -515,7 +524,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           duration: Duration(seconds: 2),
         ));
     } else if (check == true) {
-      rootScaffoldMessengerKey.currentState
+      rootScaffoldMessengerKey!.currentState!
         ..showSnackBar(SnackBar(
           content: Text(
             '$text',
@@ -640,18 +649,18 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     });
     // UIDevice.current.isProximityMonitoringEnabled = true;
     meidaType = mtype;
-    final file = new File('${(await getTemporaryDirectory()).path}/music.mp3');
+    // final file = new File('${(await getTemporaryDirectory()).path}/music.mp3');
 
-    await file.writeAsBytes(
-        (await rootBundle.load("assets/sound/audio.mp3")).buffer.asUint8List());
+    // await file.writeAsBytes(
+    //     (await rootBundle.load("assets/sound/audio.mp3")).buffer.asUint8List());
 
-    int status = await audioPlayer.play(file.path, isLocal: true);
+    // int status = await audioPlayer.play(file.path, isLocal: true);
 
     print("this is call type in home page ...$meidaType ");
     Wakelock.toggle(enable: true);
     List<String> groupRefIDS = [];
     to.participants.forEach((element) {
-      if (_auth.getUser.ref_id != element.ref_id)
+      if (_auth.getUser.ref_id != element!.ref_id)
         groupRefIDS.add(element.ref_id.toString());
     });
 
@@ -659,17 +668,18 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     // count=count+1;
     //  print("i am here in start call timerrrrr $count.....$iscallAcceptedbyuser");
     callingTo = to.participants;
-    callingTo.removeWhere((element) => element.ref_id == _auth.getUser.ref_id);
+    callingTo!
+        .removeWhere((element) => element!.ref_id == _auth.getUser.ref_id);
     rendererListWithRefID.first["remoteVideoFlag"] =
         mtype == MediaType.video ? 1 : 0;
     print("i am here in call chck ${to.group_title}");
-     customData = {
-        "calleName": "",
-        "groupName": groupName,
-        "groupAutoCreatedValue": ""
-      };
+    customData = {
+      "calleName": "",
+      "groupName": groupName,
+      "groupAutoCreatedValue": ""
+    };
     signalingClient.startCall(
-      customData: customData,
+        customData: customData,
         from: _auth.getUser.ref_id,
         to: groupRefIDS,
         mcToken: registerRes["mcToken"],
@@ -724,9 +734,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
   startRinging() async {
     if (Platform.isAndroid) {
-      if (await Vibration.hasVibrator()) {
-        Vibration.vibrate(pattern: vibrationList);
-      }
+      // if (await Vibration.hasVibrator()) {
+      Vibration.vibrate(pattern: vibrationList);
+
+      // }
     }
     FlutterRingtonePlayer.play(
       android: AndroidSounds.ringtone,
@@ -761,7 +772,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   @override
   dispose() {
     if (_ticker != null) {
-      _ticker.cancel();
+      _ticker!.cancel();
     }
     super.dispose();
   }
@@ -838,7 +849,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     isPushed = false;
     //  print("i am here in stop call function");
     if (_ticker != null) {
-      _ticker.cancel();
+      _ticker!.cancel();
     }
     //    print("THIS IS CALL STATUS ${_callProvider.callStatus}");
     setState(() {
@@ -919,11 +930,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             context: context,
             builder: (BuildContext context) {
               return CreateGroupPopUp(
-                  editGroupName: false,
-                  backHandler: backHandler,
-                  groupNameController: _groupNameController,
-                  selectedContacts: _selectedContacts,
-                  authProvider: _auth);
+                editGroupName: false,
+                backHandler: backHandler,
+                groupNameController: _groupNameController,
+                selectedContacts: _selectedContacts,
+                authProvider: _auth,
+                controllerText: '',
+              );
             });
       } else {
         buildShowDialog(context, "Maximum limit is 4!!!");
@@ -1066,7 +1079,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                             ));
                           else if (groupProvider.groupListStatus ==
                               ListStatus.Scussess) {
-                            if (groupProvider.groupList.groups.length == 0) {
+                            if (groupProvider.groupList.groups!.length == 0) {
                               strArr.add("Home");
                               return NoContactsScreen(
                                   isConnect: isConnected,

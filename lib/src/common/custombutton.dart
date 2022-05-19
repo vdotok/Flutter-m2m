@@ -2,19 +2,17 @@ import 'package:flutter/material.dart';
 
 import '../../constant.dart';
 
-
 class ReusableButton extends StatefulWidget {
   final String text;
   final handlePress;
 
-  ReusableButton({this.text, this.handlePress});
+  ReusableButton({required this.text, this.handlePress});
 
   @override
   _ReusableButtonState createState() => _ReusableButtonState();
 }
 
 class _ReusableButtonState extends State<ReusableButton> {
-
   @override
   Widget build(BuildContext context) {
     return Padding(

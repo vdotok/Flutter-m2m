@@ -12,11 +12,11 @@ import 'src/splash/splash.dart';
 import 'package:provider/provider.dart';
 import 'constant.dart';
 
-GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey;
+GlobalKey<ScaffoldMessengerState>? rootScaffoldMessengerKey;
 
 class MyHttpOverrides extends HttpOverrides {
   @override
-  HttpClient createHttpClient(SecurityContext context) {
+  HttpClient createHttpClient(SecurityContext? context) {
     return super.createHttpClient(context)
       ..badCertificateCallback =
           (X509Certificate cert, String host, int port) => true;
@@ -34,12 +34,10 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   @override
+  void initState() {
+    super.initState();
 
-void initState() {
-
-super.initState();
-
-rootScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+    rootScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
 //  netConnectivityCallBack = (mesg) {
 
@@ -50,8 +48,6 @@ rootScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 // isConnected = true;
 
 // });
-
-
 
 // showSnackbar("Internet Connected", whiteColor, Colors.green, false);
 
@@ -74,8 +70,8 @@ rootScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 //checkStatus();
 
 //checkConnectivity();
+  }
 
-}
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -90,13 +86,14 @@ rootScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
         debugShowCheckedModeBanner: false,
         title: 'Vdotok Video',
         theme: ThemeData(
-           accentColor: primaryColor,
             primaryColor: primaryColor,
             scaffoldBackgroundColor: Colors.white,
             textTheme: TextTheme(
               bodyText1: TextStyle(color: secondaryColor),
-              bodyText2: TextStyle(color: secondaryColor), 
-            )),
+              bodyText2: TextStyle(color: secondaryColor),
+            ),
+            colorScheme:
+                ColorScheme.fromSwatch().copyWith(secondary: primaryColor)),
         onGenerateRoute: Routers.generateRoute,
         home: Consumer<AuthProvider>(
           builder: (context, auth, child) {

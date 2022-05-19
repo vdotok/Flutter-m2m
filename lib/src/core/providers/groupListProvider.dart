@@ -4,7 +4,9 @@ import '../models/GroupModel.dart';
 import '../services/server.dart';
 
 enum ListStatus { Scussess, Failure, Loading, CreateGroup }
+
 enum DeleteGroupStatus { Success, Failure, Loading }
+
 enum EditGroupNameStatus { Success, Failure, Loading }
 
 class GroupListProvider with ChangeNotifier {
@@ -12,16 +14,16 @@ class GroupListProvider with ChangeNotifier {
   ListStatus get groupListStatus => _groupListStatus;
   EditGroupNameStatus _editGroupNameStatus = EditGroupNameStatus.Loading;
   EditGroupNameStatus get editGroupNameStatus => _editGroupNameStatus;
-  GroupListModel _groupList;
+  late GroupListModel _groupList;
   GroupListModel get groupList => _groupList;
   DeleteGroupStatus _deleteGroupStatus = DeleteGroupStatus.Loading;
   DeleteGroupStatus get deleteGroupStatus => _deleteGroupStatus;
-  String _errorMsg;
+  late String _errorMsg;
   String get errorMsg => _errorMsg;
 
-  String _successMsg;
+  late String _successMsg;
   String get successMsg => _successMsg;
-  int _status;
+  late int _status;
   int get status => _status;
 
   handleGroupListState(ListStatus state) {
@@ -112,7 +114,7 @@ class GroupListProvider with ChangeNotifier {
 
   addGroup(dynamic groupModel) {
     print("this is add group");
-    _groupList.groups.insert(0, GroupModel.fromJson(groupModel));
+    _groupList.groups!.insert(0, GroupModel.fromJson(groupModel));
     notifyListeners();
   }
 

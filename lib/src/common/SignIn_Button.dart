@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 
 import '../../constant.dart';
 
-
 class SignInButtonFile extends StatefulWidget {
   String name;
   final handlePress;
   bool _autoValidate = true;
   var myController = TextEditingController();
-  SignInButtonFile({Key key, this.name, this.handlePress}) : super(key: key);
+  SignInButtonFile({Key? key, required this.name, this.handlePress})
+      : super(key: key);
   @override
   _WidgetHeaderState createState() => _WidgetHeaderState();
 }

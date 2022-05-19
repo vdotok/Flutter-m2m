@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:vdotok_stream/vdotok_stream.dart';
 
 class LargStream extends StatefulWidget {
+<<<<<<< HEAD
   const LargStream({Key key, this.remoteRenderer}) : super(key: key);
+=======
+  const LargStream({Key? key, required this.remoteRenderer}) : super(key: key);
+>>>>>>> 95fd6584abf96bb0dfe2c53a6712964e820512c0
   final RTCVideoRenderer remoteRenderer;
 
   @override
