@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:vdotok_stream/vdotok_stream.dart';
 import 'package:vdotok_stream_example/src/core/providers/call_provider.dart';
 import 'package:vdotok_stream_example/src/core/providers/contact_provider.dart';
 import 'package:vdotok_stream_example/src/core/providers/groupListProvider.dart';
@@ -27,6 +26,7 @@ void main() {
   HttpOverrides.global = new MyHttpOverrides();
   runApp(MyApp());
 }
+
 class MyApp extends StatefulWidget {
   @override
   _MyAppState createState() => _MyAppState();
