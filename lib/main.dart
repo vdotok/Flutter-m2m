@@ -94,7 +94,7 @@ class _MyAppState extends State<MyApp> {
             ),
             colorScheme:
                 ColorScheme.fromSwatch().copyWith(secondary: primaryColor)),
-        onGenerateRoute: Routers.generateRoute,
+        // onGenerateRoute: Routers.generateRoute,
         home: Consumer<AuthProvider>(
           builder: (context, auth, child) {
             if (auth.loggedInStatus == Status.Authenticating)

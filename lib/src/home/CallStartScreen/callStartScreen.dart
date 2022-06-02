@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:move_to_background/move_to_background.dart';
 import 'package:provider/provider.dart';
 import 'package:vdotok_stream_example/constant.dart';
+import 'package:vdotok_stream_example/src/common/dragable.dart';
 import 'package:vdotok_stream_example/src/core/providers/contact_provider.dart';
 import 'package:vdotok_stream_example/src/home/home.dart';
 import 'package:vdotok_stream_example/src/home/streams/remoteStream.dart';
@@ -760,29 +761,34 @@ class _CallSttartScreenState extends State<CallSttartScreen> {
                           )
                     : SizedBox(),
                 widget.mediatype == MediaType.video
-                    ? Positioned(
-                        right: 20.0,
-                        bottom: 145.0,
-                        // right: 20,
-                        child: Align(
-                          alignment: Alignment.bottomCenter,
-                          child: Container(
-                            height: 170,
-                            width: 130,
-                            decoration: BoxDecoration(
-                              color: Colors.red,
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                            child: ClipRRect(
-                                borderRadius: BorderRadius.circular(10.0),
-                                child: RemoteStream(
-                                  remoteRenderer:
-                                      widget.rendererListWithRefid[0]
-                                          ["rtcVideoRenderer"],
-                                )),
-                          ),
-                        ),
+                    ? DragBox(
+                        Offset(230.0, 430.0),
+                        rendererListWithRefid: widget.rendererListWithRefid,
+                        initPos: Offset(220.0, 430.0),
                       )
+                    // ? Positioned(
+                    //     right: 20.0,
+                    //     bottom: 145.0,
+                    //     // right: 20,
+                    //     child: Align(
+                    //       alignment: Alignment.bottomCenter,
+                    //       child: Container(
+                    //         height: 170,
+                    //         width: 130,
+                    //         decoration: BoxDecoration(
+                    //           color: Colors.red,
+                    //           borderRadius: BorderRadius.circular(10.0),
+                    //         ),
+                    //         child: ClipRRect(
+                    //             borderRadius: BorderRadius.circular(10.0),
+                    //             child: RemoteStream(
+                    //               remoteRenderer:
+                    //                   widget.rendererListWithRefid[0]
+                    //                       ["rtcVideoRenderer"],
+                    //             )),
+                    //       ),
+                    //     ),
+                    //   )
                     : Container(
                         // color:Colors.red
                         ),

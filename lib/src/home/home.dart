@@ -55,6 +55,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 //   bool _proximityValues = false;
 //   List<StreamSubscription<dynamic>> _streamSubscriptions = <StreamSubscription<dynamic>>[];
 
+
   List<Contact> _selectedContacts = [];
   List<String> strArr = [];
   bool isDeviceConnected = false;
@@ -1032,6 +1033,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
               rendererListWithRefid: rendererListWithRefID,
               mediatype: meidaType,
               stopRinging: stopRinging,
+              
             );
           if (callProvider.callStatus == CallStatus.CallStart) {
             return CallSttartScreen(

@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -10,8 +12,9 @@ import 'package:vdotok_stream_example/src/home/home.dart';
 import 'package:vdotok_stream_example/src/home/streams/remoteStream.dart';
 
 // ignore: must_be_immutable
-class CallReceiveScreen extends StatelessWidget {
+class CallReceiveScreen extends StatefulWidget {
   List<ParticipantsModel?>? callingto;
+
   String mediatype;
   var registerRes;
   List<Map<String, dynamic>> rendererListWithRefid = [];
@@ -32,14 +35,29 @@ class CallReceiveScreen extends StatelessWidget {
       this.groupName});
 
   @override
+  State<CallReceiveScreen> createState() => _CallReceiveScreenState();
+}
+
+class _CallReceiveScreenState extends State<CallReceiveScreen> {
+  bool _isPressed = false;
+  // bool isRadioButtonEnabble = false;
+  void _myCallback() {
+    setState(() {
+      _isPressed = true;
+      print("tap me");
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     print("here i am in separte class of Call Receive Screen");
     return Scaffold(body: OrientationBuilder(builder: (context, orientation) {
       return Stack(children: <Widget>[
-        mediatype == MediaType.video
+        widget.mediatype == MediaType.video
             ? Container(
                 child: RemoteStream(
-                remoteRenderer: rendererListWithRefid[0]["rtcVideoRenderer"],
+                remoteRenderer: widget.rendererListWithRefid[0]
+                    ["rtcVideoRenderer"],
               ))
             : Container(
                 decoration: BoxDecoration(
@@ -78,7 +96,7 @@ class CallReceiveScreen extends StatelessWidget {
                 height: 8,
               ),
               Text(
-                groupName,
+                widget.groupName,
                 style: TextStyle(
                     fontFamily: primaryFontFamily,
                     color: darkBlackColor,
@@ -124,24 +142,36 @@ class CallReceiveScreen extends StatelessWidget {
                   'assets/end.svg',
                 ),
                 onTap: () {
-                  stopRinging();
+                  widget.stopRinging();
                   signalingClient.onDeclineCall(
-                      authprovider.getUser.ref_id, registerRes["mcToken"]);
+                      widget.authprovider.getUser.ref_id,
+                      widget.registerRes["mcToken"]);
 
-                  callprovider.initial();
+                  widget.callprovider.initial();
                 },
               ),
               SizedBox(width: 64),
-              GestureDetector(
-                child: SvgPicture.asset(
-                  'assets/Accept.svg',
-                ),
-                onTap: () {
-                  stopRinging();
-                  signalingClient.createAnswer(incomingfrom);
-                  callprovider.callStart();
-                },
-              ),
+              _isPressed == false
+                  ? GestureDetector(
+                      child: SvgPicture.asset(
+                        'assets/Accept.svg',
+                      ),
+                      onTap: _isPressed == false
+                          ? () {
+                              widget.stopRinging();
+                              signalingClient.createAnswer(widget.incomingfrom);
+                              widget.callprovider.callStart();
+                              _myCallback();
+                            }
+                          : null)
+                  : TextButton(
+                      onPressed: () {},
+                      child: CircularProgressIndicator(
+                        backgroundColor: Colors.grey,
+                        color: Color.fromARGB(255, 214, 238, 3),
+                        // strokeWidth: 10,
+                      ),
+                    )
             ],
           ),
         ),
