@@ -151,27 +151,19 @@ class _CallReceiveScreenState extends State<CallReceiveScreen> {
                 },
               ),
               SizedBox(width: 64),
-              _isPressed == false
-                  ? GestureDetector(
+              GestureDetector(
                       child: SvgPicture.asset(
                         'assets/Accept.svg',
                       ),
                       onTap: _isPressed == false
                           ? () {
                               widget.stopRinging();
-                              signalingClient.createAnswer(widget.incomingfrom);
-                              widget.callprovider.callStart();
+                              // signalingClient.createAnswer(widget.incomingfrom);
+                              // widget.callprovider.callStart();
                               _myCallback();
                             }
                           : null)
-                  : TextButton(
-                      onPressed: () {},
-                      child: CircularProgressIndicator(
-                        backgroundColor: Colors.grey,
-                        color: Color.fromARGB(255, 214, 238, 3),
-                        // strokeWidth: 10,
-                      ),
-                    )
+                 
             ],
           ),
         ),
