@@ -109,7 +109,7 @@ class CallDialScreen extends StatelessWidget {
                 ),
                 onTap: () {
                   // audioPlayer.stop();
-                  signalingClient.onCancelbytheCaller(registerRes["mcToken"]);
+                  signalingClient.stopCall(registerRes["mcToken"]);
                   callprovider.initial();
                   // audioPlayer.stop();
                 },

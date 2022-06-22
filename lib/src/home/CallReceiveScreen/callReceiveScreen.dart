@@ -1,4 +1,4 @@
-import 'dart:ffi';
+
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -143,7 +143,7 @@ class _CallReceiveScreenState extends State<CallReceiveScreen> {
                 ),
                 onTap: () {
                   widget.stopRinging();
-                  signalingClient.onDeclineCall(
+                  signalingClient.declineCall(
                       widget.authprovider.getUser.ref_id,
                       widget.registerRes["mcToken"]);
 
@@ -152,18 +152,17 @@ class _CallReceiveScreenState extends State<CallReceiveScreen> {
               ),
               SizedBox(width: 64),
               GestureDetector(
-                      child: SvgPicture.asset(
-                        'assets/Accept.svg',
-                      ),
-                      onTap: _isPressed == false
-                          ? () {
-                              widget.stopRinging();
-                              // signalingClient.createAnswer(widget.incomingfrom);
-                              // widget.callprovider.callStart();
-                              _myCallback();
-                            }
-                          : null)
-                 
+                  child: SvgPicture.asset(
+                    'assets/Accept.svg',
+                  ),
+                  onTap: _isPressed == false
+                      ? () {
+                          widget.stopRinging();
+                          signalingClient.createAnswer(widget.incomingfrom);
+                          widget.callprovider.callStart();
+                          _myCallback();
+                        }
+                      : null)
             ],
           ),
         ),

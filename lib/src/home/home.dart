@@ -253,7 +253,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
         showSnackbar("No Internet Connection", whiteColor, primaryColor, true);
 
-        signalingClient.closeSocket();
+        // signalingClient.closeSocket();
       }
     };
 
@@ -440,7 +440,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       if (inPaused) {
         print("here in paused");
 
-        signalingClient.closeSocket();
+        // signalingClient.closeSocket();
       }
       if (kIsWeb) {
       } else {
@@ -448,7 +448,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           if (inInactive) {
             print("here in paused");
 
-            signalingClient.closeSocket();
+            // signalingClient.closeSocket();
           }
         }
       }
@@ -567,7 +567,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           } else {
             print("here in ininactive");
 
-            signalingClient.closeSocket();
+            // signalingClient.closeSocket();
           }
         }
         print("app in inactive");
@@ -586,7 +586,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         } else {
           print("incall false");
 
-          signalingClient.closeSocket();
+          // signalingClient.closeSocket();
         }
 
         break;
@@ -699,7 +699,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       print("I am here in stopcall if");
       _callticker.cancel();
       count = 0;
-      signalingClient.onCancelbytheCaller(registerRes["mcToken"]);
+      // signalingClient.onCancelbytheCaller(registerRes["mcToken"]);
       _callProvider.initial();
       iscallAcceptedbyuser = false;
     } else if (count == 30 && iscallAcceptedbyuser == true) {
