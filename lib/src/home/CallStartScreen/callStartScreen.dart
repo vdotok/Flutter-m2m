@@ -760,38 +760,63 @@ class _CallSttartScreenState extends State<CallSttartScreen> {
                             ),
                           )
                     : SizedBox(),
-                widget.mediatype == MediaType.video
-                    ? DragBox(
-                        Offset(230.0, 430.0),
-                        rendererListWithRefid: widget.rendererListWithRefid,
-                        initPos: Offset(220.0, 430.0),
-                      )
-                    // ? Positioned(
-                    //     right: 20.0,
-                    //     bottom: 145.0,
-                    //     // right: 20,
-                    //     child: Align(
-                    //       alignment: Alignment.bottomCenter,
-                    //       child: Container(
-                    //         height: 170,
-                    //         width: 130,
-                    //         decoration: BoxDecoration(
-                    //           color: Colors.red,
-                    //           borderRadius: BorderRadius.circular(10.0),
-                    //         ),
-                    //         child: ClipRRect(
-                    //             borderRadius: BorderRadius.circular(10.0),
-                    //             child: RemoteStream(
-                    //               remoteRenderer:
-                    //                   widget.rendererListWithRefid[0]
-                    //                       ["rtcVideoRenderer"],
-                    //             )),
-                    //       ),
-                    //     ),
-                    //   )
-                    : Container(
-                        // color:Colors.red
+                !kIsWeb
+                    ? widget.mediatype == MediaType.video
+                        ? DragBox(
+                            rendererListWithRefid: widget.rendererListWithRefid,
+                            initPos: Offset(220.0, 430.0),
+                          )
+                        // ? Positioned(
+                        //     right: 20.0,
+                        //     bottom: 145.0,
+                        //     // right: 20,
+                        //     child: Align(
+                        //       alignment: Alignment.bottomCenter,
+                        //       child: Container(
+                        //         height: 170,
+                        //         width: 130,
+                        //         decoration: BoxDecoration(
+                        //           color: Colors.red,
+                        //           borderRadius: BorderRadius.circular(10.0),
+                        //         ),
+                        //         child: ClipRRect(
+                        //             borderRadius: BorderRadius.circular(10.0),
+                        //             child: RemoteStream(
+                        //               remoteRenderer:
+                        //                   widget.rendererListWithRefid[0]
+                        //                       ["rtcVideoRenderer"],
+                        //             )),
+                        //       ),
+                        //     ),
+                        //   )
+                        : Container(
+                            // color:Colors.red
+                            )
+                    : Positioned(
+                        left: 225,
+                        bottom: 145,
+                        right: 20,
+                        child: Align(
+                          alignment: Alignment.bottomRight,
+                          child: Container(
+                            height: 100,
+                            width: 100,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10.0),
+                              child: enableCamera
+                                  ? RemoteStream(
+                                      remoteRenderer:
+                                          widget.rendererListWithRefid[0]
+                                              ["rtcVideoRenderer"],
+                                    )
+                                  : Container(),
+                            ),
+                          ),
                         ),
+                      ),
                 Container(
                   padding: EdgeInsets.only(
                     bottom: 56,

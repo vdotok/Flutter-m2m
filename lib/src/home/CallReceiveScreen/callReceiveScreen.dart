@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -39,15 +37,6 @@ class CallReceiveScreen extends StatefulWidget {
 }
 
 class _CallReceiveScreenState extends State<CallReceiveScreen> {
-  bool _isPressed = false;
-  // bool isRadioButtonEnabble = false;
-  void _myCallback() {
-    setState(() {
-      _isPressed = true;
-      print("tap me");
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     print("here i am in separte class of Call Receive Screen");
@@ -155,12 +144,14 @@ class _CallReceiveScreenState extends State<CallReceiveScreen> {
                   child: SvgPicture.asset(
                     'assets/Accept.svg',
                   ),
-                  onTap: _isPressed == false
+                  onTap: isPressed == false
                       ? () {
                           widget.stopRinging();
                           signalingClient.createAnswer(widget.incomingfrom);
                           widget.callprovider.callStart();
-                          _myCallback();
+                          setState(() {
+                            isPressed = true;
+                          });
                         }
                       : null)
             ],

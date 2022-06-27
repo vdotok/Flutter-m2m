@@ -36,10 +36,13 @@ bool switchMute = true;
 bool switchSpeaker = true;
 bool enableCamera = true;
 bool isRinging = false;
+List<Map<String, dynamic>> rendererListWithRefID = [];
 var snackBar;
 String groupName = "";
 bool isRegisteredAlready = false;
+bool isPressed = false;
 // AudioPlayer audioPlayer = AudioPlayer();
+GlobalKey forsmallView = new GlobalKey();
 
 class Home extends StatefulWidget {
   final state;
@@ -54,7 +57,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 //   List<double> _gyroscopeValues;
 //   bool _proximityValues = false;
 //   List<StreamSubscription<dynamic>> _streamSubscriptions = <StreamSubscription<dynamic>>[];
-
 
   List<Contact> _selectedContacts = [];
   List<String> strArr = [];
@@ -101,7 +103,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     }
   }
 
-  GlobalKey forsmallView = new GlobalKey();
   GlobalKey forlargView = new GlobalKey();
   GlobalKey forDialView = new GlobalKey();
   var registerRes;
@@ -188,7 +189,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   late ContactProvider _contactProvider;
   late GroupListProvider _groupListProvider;
   final _groupNameController = TextEditingController();
-  List<Map<String, dynamic>> rendererListWithRefID = [];
+
   List<ParticipantsModel?>? callingTo;
   Map<String, dynamic> forLargStream = {};
   int count = 0;
@@ -197,7 +198,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance?.addObserver(this);
     _auth = Provider.of<AuthProvider>(context, listen: false);
     _contactProvider = Provider.of<ContactProvider>(context, listen: false);
     _groupListProvider = Provider.of<GroupListProvider>(context, listen: false);
@@ -253,7 +254,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
         showSnackbar("No Internet Connection", whiteColor, primaryColor, true);
 
-        // signalingClient.closeSocket();
+        signalingClient.closeSocket();
       }
     };
 
@@ -310,6 +311,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     };
 
     signalingClient.onRegister = (res) {
+      print("here in register $res");
       setState(() {
         registerRes = res;
       });
@@ -478,6 +480,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         iscallAcceptedbyuser = false;
       }
       setState(() {
+        isPressed = false;
         inCall = false;
         iscallReConnected = false;
         isRinging = false;
@@ -1017,120 +1020,119 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     //     };
     //   }
     // }
-    if (!ResponsiveWidget.isSmallScreen(context))
-      return WebScreen();
-    else
-      return Consumer<CallProvider>(
-        builder: (context, callProvider, child) {
-          if (callProvider.callStatus == CallStatus.CallReceive)
-            return CallReceiveScreen(
-              groupName: groupName,
-              authprovider: _auth,
-              callprovider: callProvider,
-              callingto: callingTo,
-              incomingfrom: incomingfrom,
-              registerRes: registerRes,
-              rendererListWithRefid: rendererListWithRefID,
-              mediatype: meidaType,
-              stopRinging: stopRinging,
-              
-            );
-          if (callProvider.callStatus == CallStatus.CallStart) {
-            return CallSttartScreen(
-              callto: callTo,
-              registerRes: registerRes,
-              rendererListWithRefid: rendererListWithRefID,
-              onRemotestream: onRemoteStream,
-              pressduration: _pressDuration,
-              incomingfrom: incomingfrom,
-              stopcall: stopCall,
-              mediatype: meidaType,
-              contactprovider: _contactProvider,
-            );
-          }
-          if (callProvider.callStatus == CallStatus.CallDial)
-            return CallDialScreen(
-              callingto: callingTo,
-              mediatype: meidaType,
-              registerRes: registerRes,
-              rendererListWithRefid: rendererListWithRefID,
-              callprovider: callProvider,
-            );
-          else
-            return WillPopScope(
-                onWillPop: _onWillPop,
-                child: SafeArea(
-                  child: Scaffold(
-                      resizeToAvoidBottomInset: true,
-                      backgroundColor: chatRoomBackgroundColor,
-                      appBar: CustomAppBar(
-                        isConnect: isConnected,
-                        handlePress: handleCreateGroup,
-                      ),
-                      body: Consumer2<ContactProvider, GroupListProvider>(
-                        builder: (context, contact, groupProvider, child) {
-                          print("dudshjg ${groupProvider.groupListStatus}");
-                          if (groupProvider.groupListStatus ==
-                              ListStatus.Loading)
-                            return Center(
-                                child: CircularProgressIndicator(
-                              valueColor:
-                                  AlwaysStoppedAnimation<Color>(chatRoomColor),
-                            ));
-                          else if (groupProvider.groupListStatus ==
-                              ListStatus.Scussess) {
-                            if (groupProvider.groupList.groups!.length == 0) {
-                              strArr.add("Home");
-                              return NoContactsScreen(
-                                  isConnect: isConnected,
-                                  state: widget.state,
-                                  refreshList: renderList,
-                                  groupListProvider: groupProvider,
-                                  authProvider: _auth,
-                                  socket: sockett,
-                                  registerRes: registerRes,
-                                  newChatHandler: handleGroupState);
-                            } else {
-                              print("here in grou screeeen");
-                              strArr.add("Home");
-                              return GroupListScreen(
-                                  authprovider: _auth,
-                                  registerRes: registerRes,
-                                  isdev: isConnected,
-                                  sockett: sockett,
-                                  state: groupProvider.groupList,
-                                  startCall: _startCall,
-                                  showdialogdeletegroup: _showDialogDeletegroup,
-                                  mediatype: meidaType,
-                                  grouplistprovider: _groupListProvider,
-                                  groupNameController: _groupNameController,
-                                  refreshList: refreshList);
-                            }
-                          } else if (groupProvider.groupListStatus ==
-                              ListStatus.Failure) {
-                            return Center(
-                              child: Text(
-                                "${groupProvider.errorMsg}",
-                                style: TextStyle(
-                                    color: Colors.red,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            );
+    // if (!ResponsiveWidget.isSmallScreen(context)) {
+    //   print("kfshfjd");
+    //   return WebScreen();
+    // } else
+    return Consumer<CallProvider>(
+      builder: (context, callProvider, child) {
+        if (callProvider.callStatus == CallStatus.CallReceive)
+          return CallReceiveScreen(
+            groupName: groupName,
+            authprovider: _auth,
+            callprovider: callProvider,
+            callingto: callingTo,
+            incomingfrom: incomingfrom,
+            registerRes: registerRes,
+            rendererListWithRefid: rendererListWithRefID,
+            mediatype: meidaType,
+            stopRinging: stopRinging,
+          );
+        if (callProvider.callStatus == CallStatus.CallStart) {
+          return CallSttartScreen(
+            callto: callTo,
+            registerRes: registerRes,
+            rendererListWithRefid: rendererListWithRefID,
+            onRemotestream: onRemoteStream,
+            pressduration: _pressDuration,
+            incomingfrom: incomingfrom,
+            stopcall: stopCall,
+            mediatype: meidaType,
+            contactprovider: _contactProvider,
+          );
+        }
+        if (callProvider.callStatus == CallStatus.CallDial)
+          return CallDialScreen(
+            callingto: callingTo,
+            mediatype: meidaType,
+            registerRes: registerRes,
+            rendererListWithRefid: rendererListWithRefID,
+            callprovider: callProvider,
+          );
+        else
+          return WillPopScope(
+              onWillPop: _onWillPop,
+              child: SafeArea(
+                child: Scaffold(
+                    resizeToAvoidBottomInset: true,
+                    backgroundColor: chatRoomBackgroundColor,
+                    appBar: CustomAppBar(
+                      isConnect: isConnected,
+                      handlePress: handleCreateGroup,
+                    ),
+                    body: Consumer2<ContactProvider, GroupListProvider>(
+                      builder: (context, contact, groupProvider, child) {
+                        print("dudshjg ${groupProvider.groupListStatus}");
+                        if (groupProvider.groupListStatus == ListStatus.Loading)
+                          return Center(
+                              child: CircularProgressIndicator(
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(chatRoomColor),
+                          ));
+                        else if (groupProvider.groupListStatus ==
+                            ListStatus.Scussess) {
+                          if (groupProvider.groupList.groups!.length == 0) {
+                            strArr.add("Home");
+                            return NoContactsScreen(
+                                isConnect: isConnected,
+                                state: widget.state,
+                                refreshList: renderList,
+                                groupListProvider: groupProvider,
+                                authProvider: _auth,
+                                socket: sockett,
+                                registerRes: registerRes,
+                                newChatHandler: handleGroupState);
+                          } else {
+                            print("here in grou screeeen");
+                            strArr.add("Home");
+                            return GroupListScreen(
+                                authprovider: _auth,
+                                registerRes: registerRes,
+                                isdev: isConnected,
+                                sockett: sockett,
+                                state: groupProvider.groupList,
+                                startCall: _startCall,
+                                showdialogdeletegroup: _showDialogDeletegroup,
+                                mediatype: meidaType,
+                                grouplistprovider: _groupListProvider,
+                                groupNameController: _groupNameController,
+                                refreshList: refreshList);
                           }
-                          //Create group Screen
-                          else {
-                            strArr.add("ContactList");
-                            return ContactListScreen(
-                                refreshcontactList: refreshList,
-                                searchController: _searchController,
-                                selectedContact: _selectedContacts,
-                                state: contact,
-                                isConnect: isConnected);
-                          }
-                        },
-                      )),
-                ));
-        },
-      );
+                        } else if (groupProvider.groupListStatus ==
+                            ListStatus.Failure) {
+                          return Center(
+                            child: Text(
+                              "${groupProvider.errorMsg}",
+                              style: TextStyle(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          );
+                        }
+                        //Create group Screen
+                        else {
+                          strArr.add("ContactList");
+                          return ContactListScreen(
+                              refreshcontactList: refreshList,
+                              searchController: _searchController,
+                              selectedContact: _selectedContacts,
+                              state: contact,
+                              isConnect: isConnected);
+                        }
+                      },
+                    )),
+              ));
+      },
+    );
   }
 }
