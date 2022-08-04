@@ -62,7 +62,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   List<String> strArr = [];
   bool isDeviceConnected = false;
   bool isdev = true;
-  late DateTime _time;
+  DateTime ?_time;
   Timer? _ticker;
   late Timer _callticker;
   String _pressDuration = "";
@@ -80,7 +80,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   late double downstream;
   void _updateTimer() {
     var duration;
-    duration = DateTime.now().difference(_time);
+    duration = DateTime.now().difference(_time!);
     final newDuration = _formatDuration(duration);
     setState(() {
       _pressDuration = newDuration;
@@ -471,9 +471,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 // }
       //.toggle(enable: false);
       inCall = false;
-      if (_ticker != null) {
-        _ticker!.cancel();
-      }
+      
       if (_callticker != null) {
         _callticker.cancel();
         count = 0;
@@ -490,6 +488,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         upstream = 0;
         downstream = 0;
         isRinging = false;
+        if (_ticker != null) {
+      _ticker!.cancel();
+    }
+        _time = null;
       });
       _callProvider.initial();
       disposeAllRenderer();
@@ -703,6 +705,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       _callticker.cancel();
       count = 0;
       // signalingClient.onCancelbytheCaller(registerRes["mcToken"]);
+      signalingClient.stopCall(registerRes["mcToken"]);
       _callProvider.initial();
       iscallAcceptedbyuser = false;
     } else if (count == 30 && iscallAcceptedbyuser == true) {
@@ -865,7 +868,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     inCall = false;
     disposeAllRenderer();
 
-    if (!kIsWeb) stopRinging();
+    // if (!kIsWeb) stopRinging();
   }
 
   void _showDialogDeletegroup(group_id, index) {
