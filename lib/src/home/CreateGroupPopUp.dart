@@ -5,6 +5,7 @@ import 'package:vdotok_stream_example/src/core/providers/groupListProvider.dart'
 import 'package:provider/provider.dart';
 import '../core/models/contact.dart';
 import '../core/providers/auth.dart';
+
 class CreateGroupPopUp extends StatefulWidget {
   const CreateGroupPopUp({
     Key? key,
@@ -32,6 +33,7 @@ class CreateGroupPopUp extends StatefulWidget {
   @override
   _CreateGroupPopUpState createState() => _CreateGroupPopUpState();
 }
+
 class _CreateGroupPopUpState extends State<CreateGroupPopUp> {
   GroupListProvider? _groupListProvider;
   bool loading = false;
@@ -42,8 +44,10 @@ class _CreateGroupPopUpState extends State<CreateGroupPopUp> {
     }
     _groupListProvider = Provider.of<GroupListProvider>(context, listen: false);
   }
+
   @override
   Widget build(BuildContext context) {
+    print("this s s s s ss ${widget._groupNameController.text}");
     showSnakbar(
       msg,
     ) {
@@ -59,6 +63,7 @@ class _CreateGroupPopUpState extends State<CreateGroupPopUp> {
         ..hideCurrentSnackBar()
         ..showSnackBar(snackBar);
     }
+
     return GestureDetector(onTap: () {
       FocusScopeNode currentFous = FocusScope.of(context);
       if (!currentFous.hasPrimaryFocus) {

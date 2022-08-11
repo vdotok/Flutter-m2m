@@ -62,7 +62,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   List<String> strArr = [];
   bool isDeviceConnected = false;
   bool isdev = true;
-  DateTime ?_time;
+  DateTime? _time;
   Timer? _ticker;
   late Timer _callticker;
   String _pressDuration = "";
@@ -198,7 +198,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance?.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
     _auth = Provider.of<AuthProvider>(context, listen: false);
     _contactProvider = Provider.of<ContactProvider>(context, listen: false);
     _groupListProvider = Provider.of<GroupListProvider>(context, listen: false);
@@ -369,6 +369,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       // audioPlayer.stop();
     };
     signalingClient.onReceiveCallFromUser = (res, isMultiSession) async {
+      print("here in recerive call");
       Wakelock.toggle(enable: true);
       startRinging();
       inCall = true;
@@ -470,13 +471,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
 // }
       //.toggle(enable: false);
-      inCall = false;
-      
-      if (_callticker != null) {
-        _callticker.cancel();
-        count = 0;
-        iscallAcceptedbyuser = false;
-      }
+
       setState(() {
         isPressed = false;
         inCall = false;
@@ -485,13 +480,20 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         callTo = "";
         _pressDuration = "";
         iscallAcceptedbyuser = false;
+        count = 0;
         upstream = 0;
         downstream = 0;
         isRinging = false;
         if (_ticker != null) {
-      _ticker!.cancel();
-    }
-        _time = null;
+          _ticker!.cancel();
+        }
+        if (inCall) {
+          if (_callticker != null) {
+            _callticker.cancel();
+            count = 0;
+            iscallAcceptedbyuser = false;
+          }
+        }
       });
       _callProvider.initial();
       disposeAllRenderer();
@@ -643,6 +645,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   _startCall(
       GroupModel to, String mtype, String callType, String sessionType) async {
     setState(() {
+      inCall = true;
       switchMute = true;
       _pressDuration = "";
       upstream = 0;
@@ -848,27 +851,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     Wakelock.toggle(enable: false);
     print("i am here iin stopc sdsxfssd");
     signalingClient.stopCall(registerRes["mcToken"]);
-    //here
-    // _callBloc.add(CallNewEvent());
-    //audioPlayer.stop();
-    isPushed = false;
-    //  print("i am here in stop call function");
-    if (_ticker != null) {
-      _ticker!.cancel();
-    }
-    //    print("THIS IS CALL STATUS ${_callProvider.callStatus}");
-    setState(() {
-      callTo = "";
-      _pressDuration = "";
-      upstream = 0;
-      downstream = 0;
-    });
-    _callProvider.initial();
-
-    inCall = false;
-    disposeAllRenderer();
-
-    // if (!kIsWeb) stopRinging();
   }
 
   void _showDialogDeletegroup(group_id, index) {
