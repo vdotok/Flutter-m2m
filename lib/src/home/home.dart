@@ -487,7 +487,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         if (_ticker != null) {
           _ticker!.cancel();
         }
-        if (inCall) {
+       if (inCall) {
           if (_callticker != null) {
             _callticker.cancel();
             count = 0;
