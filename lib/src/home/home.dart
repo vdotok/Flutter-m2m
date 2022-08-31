@@ -332,7 +332,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       });
     };
     signalingClient.onRemoteStream = (stream, refid) async {
-      print("HI1 i am here in remote stream");
+      print("HI1 i am here in remote stream $refid $stream ${stream.id} ");
       Map<String, dynamic> temp = {
         "refID": refid,
         "rtcVideoRenderer": new RTCVideoRenderer(),
@@ -483,6 +483,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         count = 0;
         upstream = 0;
         downstream = 0;
+          
         isRinging = false;
         if (_ticker != null) {
           _ticker!.cancel();
@@ -490,8 +491,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
        if (inCall) {
           if (_callticker != null) {
             _callticker.cancel();
-            count = 0;
-            iscallAcceptedbyuser = false;
+          
           }
         }
       });
