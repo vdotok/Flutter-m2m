@@ -28,9 +28,15 @@ class _WidgetHeaderState extends State<SignInButtonFile> {
     return new SizedBox(
       width: 300.0,
       height: 48.0,
-      child: RaisedButton(
-        shape: new RoundedRectangleBorder(
-            borderRadius: new BorderRadius.circular(5.0)),
+      child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+             primary: greenColor,
+             shape: new RoundedRectangleBorder(
+            borderRadius: new BorderRadius.circular(5.0),
+          ),
+           ),
+        // shape: new RoundedRectangleBorder(
+        //     borderRadius: new BorderRadius.circular(5.0)),
         onPressed: () async {
           // if (widget.name == "Sign UP")
           //   Navigator.pushNamed(context, "/register");
@@ -50,8 +56,8 @@ class _WidgetHeaderState extends State<SignInButtonFile> {
               color: whiteColor),
           textAlign: TextAlign.center,
         ),
-        textColor: Colors.white,
-        color: redColor,
+        // textColor: Colors.white,
+        // color: redColor,
       ),
     );
   }

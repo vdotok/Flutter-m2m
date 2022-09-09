@@ -59,7 +59,7 @@ class _NoGroupScreenState extends State<NoGroupScreen> {
                     width: 3,
                   ),
                 ),
-                child: FlatButton(
+                child: TextButton(
                   onPressed: () {
                     print("in new chat button");
                     widget.handleNewCreate();
@@ -126,7 +126,7 @@ class _NoGroupScreenState extends State<NoGroupScreen> {
                   ),
                 ),
                 child: Center(
-                    child: FlatButton(
+                    child: TextButton(
                   onPressed: () {
                     // _showDialog();
                     print("in Refresh button");

@@ -39,6 +39,7 @@ bool isRinging = false;
 List<Map<String, dynamic>> rendererListWithRefID = [];
 var snackBar;
 String groupName = "";
+DateTime? time;
 bool isRegisteredAlready = false;
 bool isPressed = false;
 // AudioPlayer audioPlayer = AudioPlayer();
@@ -62,10 +63,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   List<String> strArr = [];
   bool isDeviceConnected = false;
   bool isdev = true;
-  DateTime? _time;
+
   Timer? _ticker;
   late Timer _callticker;
-  String _pressDuration = "";
+  String pressDuration = "";
   late DateTime _callTime;
   bool iscalloneto1 = false;
   bool inCall = false;
@@ -80,10 +81,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   late double downstream;
   void _updateTimer() {
     var duration;
-    duration = DateTime.now().difference(_time!);
+    duration = DateTime.now().difference(time!);
     final newDuration = _formatDuration(duration);
     setState(() {
-      _pressDuration = newDuration;
+      pressDuration = newDuration;
     });
   }
 
@@ -258,20 +259,21 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       }
     };
 
-    signalingClient.onError = (code, res) {
+    signalingClient.onError = (code, res) async {
       print("onError $code $res");
 
       if (code == 1001 || code == 1002) {
-        print("fk9tt");
+        print("fk9tt ${registerRes["mctoken"]}");
 
-        //  isInternetConnect = true;
-        // signalingClient.connect(project_id, authProvider.completeAddress);
-        signalingClient.sendPing(registerRes["mctoken"]);
         setState(() {
           sockett = false;
 
           isRegisteredAlready = false;
         });
+        bool connectionFlag = await signalingClient.checkInternetConnectivity();
+        if (connectionFlag) {
+          signalingClient.connect(project_id, _auth.completeAddress);
+        }
       } else if (code == 401) {
         print("here in 401");
         setState(() {
@@ -292,9 +294,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             // isRegisteredAlready=false;
           });
           if (isResumed) {
-            // if (_auth.loggedInStatus == Status.LoggedOut) {
-            // } else {
-            if (isConnected && sockett == false && !isRegisteredAlready) {
+            bool connectionFlag =
+                await signalingClient.checkInternetConnectivity();
+            if (connectionFlag && sockett == false && !isRegisteredAlready) {
               print("i am in connect in 1005");
               signalingClient.connect(project_id, _auth.completeAddress);
 
@@ -339,35 +341,39 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         "remoteVideoFlag": meidaType == MediaType.video ? 1 : 0,
         "remoteAudioFlag": 1
       };
-      await initRenderers(temp["rtcVideoRenderer"]);
-      setState(() {
-        temp["rtcVideoRenderer"].srcObject = stream;
-        if (iscallReConnected == false) {
-          _time = DateTime.now();
-          _callTime = DateTime.now();
-        } else {
-          _ticker!.cancel();
-          _time = _callTime;
-          iscallReConnected = false;
-        }
-        _updateTimer();
-        _ticker = Timer.periodic(Duration(seconds: 1), (_) => _updateTimer());
-        rendererListWithRefID.add(temp);
-        forLargStream = temp;
-        onRemoteStream = true;
-      });
-      if (forLargStream.isEmpty) {
+      temp["rtcVideoRenderer"].initialize().then((value) {
         setState(() {
+          temp["rtcVideoRenderer"].srcObject = stream;
+          if (iscallReConnected == false) {
+            time = DateTime.now();
+            _callTime = DateTime.now();
+          } else {
+            _ticker!.cancel();
+            time = _callTime;
+            iscallReConnected = false;
+          }
+          _updateTimer();
+          _ticker = Timer.periodic(Duration(seconds: 1), (_) => _updateTimer());
+          rendererListWithRefID.add(temp);
           forLargStream = temp;
+          onRemoteStream = true;
         });
-      }
-      if (_callticker != null) {
-        _callticker.cancel();
-        count = 0;
-        iscallAcceptedbyuser = true;
-      }
+        if (forLargStream.isEmpty) {
+          setState(() {
+            forLargStream = temp;
+          });
+        }
+        if (_callticker != null) {
+          _callticker.cancel();
+          count = 0;
+          iscallAcceptedbyuser = true;
+        }
+      });
+      //await initRenderers(temp["rtcVideoRenderer"]);
+
       // audioPlayer.stop();
     };
+
     signalingClient.onReceiveCallFromUser = (res, isMultiSession) async {
       print("here in recerive call");
       Wakelock.toggle(enable: true);
@@ -378,7 +384,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       setState(() {
         groupName = res["data"]["groupName"];
         onRemoteStream = false;
-        _pressDuration = "";
+        pressDuration = "";
         upstream = 0;
         downstream = 0;
         incomingfrom = res["from"];
@@ -417,17 +423,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     signalingClient.onCallAcceptedByUser = () async {
       inCall = true;
       iscallAcceptedbyuser = true;
-      // audioPlayer.stop();
-      // if (iscallReConnected == false) {
-      //   _time = DateTime.now();
-      //   _callTime = DateTime.now();
-      // } else {
-      //   _ticker.cancel();
-      //   _time = _callTime;
-      //   iscallReConnected = false;
-      // }
-      // _updateTimer();
-      // _ticker = Timer.periodic(Duration(seconds: 1), (_) => _updateTimer());
+      
       _callProvider.callStart();
     };
     signalingClient.insufficientBalance = (res) {
@@ -442,8 +438,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       // audioPlayer.stop();
       if (inPaused) {
         print("here in paused");
-
-        // signalingClient.closeSocket();
       }
       if (kIsWeb) {
       } else {
@@ -451,49 +445,32 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           if (inInactive) {
             print("here in paused");
 
-            // signalingClient.closeSocket();
+            signalingClient.closeSocket();
           }
         }
       }
-
-      // if (Platform.isIOS) {
-      //   if (inInactive) {
-      //     print("here in paused");
-
-      //     signalingClient.closeSocket();
-      //   }
-      // }
-//       if (inPaused) {
-
-// print("here in paused");
-
-// signalingClient.closeSocket();
-
-// }
-      //.toggle(enable: false);
-
+    if (inCall) {
+          if (_callticker != null) {
+            _callticker.cancel();
+          }
+        }
       setState(() {
         isPressed = false;
         inCall = false;
         iscallReConnected = false;
         isRinging = false;
         callTo = "";
-        _pressDuration = "";
+        pressDuration = "";
         iscallAcceptedbyuser = false;
         count = 0;
         upstream = 0;
         downstream = 0;
-          
+
         isRinging = false;
         if (_ticker != null) {
           _ticker!.cancel();
         }
-       if (inCall) {
-          if (_callticker != null) {
-            _callticker.cancel();
-          
-          }
-        }
+    
       });
       _callProvider.initial();
       disposeAllRenderer();
@@ -510,8 +487,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       int index = rendererListWithRefID
           .indexWhere((element) => element["refID"] == refID);
       setState(() {
-        rendererListWithRefID[index]["remoteVideoFlag"] = videoFlag;
-        rendererListWithRefID[index]["remoteAudioFlag"] = audioFlag;
+        if (index != -1) {
+          rendererListWithRefID[index]["remoteVideoFlag"] = videoFlag;
+          rendererListWithRefID[index]["remoteAudioFlag"] = audioFlag;
+        } else {}
       });
     };
   }
@@ -574,7 +553,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           } else {
             print("here in ininactive");
 
-            // signalingClient.closeSocket();
+            signalingClient.closeSocket();
           }
         }
         print("app in inactive");
@@ -593,7 +572,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         } else {
           print("incall false");
 
-          // signalingClient.closeSocket();
+          signalingClient.closeSocket();
         }
 
         break;
@@ -610,11 +589,15 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   }
 
   disposeAllRenderer() async {
+    print("here in disposeallrenderer");
     for (int i = 0; i < rendererListWithRefID.length; i++) {
       if (i == 0) {
+        print("indisposerenderer");
         rendererListWithRefID[i]["rtcVideoRenderer"].srcObject = null;
-      } else
+      } else {
+        print("this is disposessss");
         await rendererListWithRefID[i]["rtcVideoRenderer"].dispose();
+      }
     }
     if (rendererListWithRefID.length > 1) {
       rendererListWithRefID.removeRange(1, (rendererListWithRefID.length));
@@ -647,7 +630,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     setState(() {
       inCall = true;
       switchMute = true;
-      _pressDuration = "";
+      pressDuration = "";
       upstream = 0;
       downstream = 0;
       enableCamera = true;
@@ -865,11 +848,11 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  FlatButton(
+                  TextButton(
                       onPressed: () => Navigator.of(context).pop(),
                       child: Text('CANCEL',
                           style: TextStyle(color: chatRoomColor))),
-                  FlatButton(
+                  TextButton(
                       onPressed: () async {
                         Navigator.of(context).pop();
                         await _groupListProvider.deleteGroup(
@@ -1029,7 +1012,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             registerRes: registerRes,
             rendererListWithRefid: rendererListWithRefID,
             onRemotestream: onRemoteStream,
-            pressduration: _pressDuration,
+            pressduration: pressDuration,
             incomingfrom: incomingfrom,
             stopcall: stopCall,
             mediatype: meidaType,

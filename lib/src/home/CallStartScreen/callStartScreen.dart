@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -36,6 +38,62 @@ class CallSttartScreen extends StatefulWidget {
 }
 
 class _CallSttartScreenState extends State<CallSttartScreen> {
+  //   String _pressDuration = "00:00";
+  //     DateTime? time;
+  //      Timer? _ticker;
+
+  // @override
+  // void initState() {
+  //   // TODO: implement initState
+  //   super.initState();
+
+    
+  //   print("this is time in Call Accept Screen $_time");
+  //   if (_time == null) {
+  //     time = DateTime.now();
+  //   } else {
+  //     time = _time;
+  //   }
+
+  //   _updateTimer();
+  //   _ticker = Timer.periodic(Duration(seconds: 1), (_) => _updateTimer());
+  //   print("IS A INDEX ${widget.incomingfrom}");
+   
+  // }
+
+  // void _updateTimer() {
+  //   //_time = DateTime.now();
+  //   final duration = DateTime.now().difference(time!);
+  //   final newDuration = _formatDuration(duration);
+  //   //if (mounted) {
+
+  //   setState(() {
+  //     // Your state change code goes here
+  //     _pressDuration = newDuration;
+  //     //number=  double.parse((statsval).toStringAsFixed(2));
+  //     print("IN SET STATE SINGNALING CLIENT>PRESS DURATION $time");
+ 
+  //   });
+  //   //}
+  //   //  setState(() {
+
+  //   //   });
+  // }
+  // String _formatDuration(Duration duration) {
+  //   String twoDigits(int n) {
+  //     if (n >= 10) return "$n";
+  //     return "0$n";
+  //   }
+
+  //   String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+  //   String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
+  //   String twoDigitHours = twoDigits(duration.inHours);
+  //   if (twoDigitHours == "00")
+  //     return "$twoDigitMinutes:$twoDigitSeconds";
+  //   else {
+  //     return "${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
+  //   }
+  // }
   Future<bool> _onWillPop() async {
     print("this is string last ");
     // print("this is incall vaiableee $inCall");

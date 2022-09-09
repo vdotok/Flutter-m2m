@@ -21,15 +21,21 @@ class _ReusableButtonState extends State<ReusableButton> {
         height: 48,
         width: 160,
         // padding: EdgeInsets.symmetric(horizontal: 65),
-        child: RaisedButton(
+        child: ElevatedButton(
           // elevation: 10.0,
-          color: greenColor,
+         // color: greenColor,
           onPressed: () {
             widget.handlePress();
           },
-          shape: new RoundedRectangleBorder(
+           style: ElevatedButton.styleFrom(
+             primary: greenColor,
+             shape: new RoundedRectangleBorder(
             borderRadius: new BorderRadius.circular(5.0),
           ),
+           ),
+          // shape: new RoundedRectangleBorder(
+          //   borderRadius: new BorderRadius.circular(5.0),
+          // ),
 
           // child: Container(
           //   constraints: BoxConstraints(maxWidth: 400.0, minHeight: 50.0),

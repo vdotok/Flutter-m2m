@@ -155,8 +155,11 @@ class _CreateGroupPopUpState extends State<CreateGroupPopUp> {
                       Consumer<GroupListProvider>(
                         builder: (context, grouplistp, child) {
                           if (loading == false) {
-                            return FlatButton(
-                                color: doneButtonColor,
+                            return TextButton(
+    //                            style: TextButton.styleFrom(
+    //   primary: doneButtonColor,
+    // ),
+                               //color: doneButtonColor,
                                 onPressed: () async {
                                   if (widget.editGroupName) {
                                     print("here");

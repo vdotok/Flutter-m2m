@@ -436,7 +436,7 @@ class _GroupListScreenState extends State<GroupListScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Container(
-                              child: FlatButton(
+                              child: TextButton(
                                 onPressed: () {
                                   if (isRegisteredAlready) {
                                     ScaffoldMessenger.of(context)
