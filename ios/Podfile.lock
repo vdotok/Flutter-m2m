@@ -34,12 +34,14 @@ PODS:
     - Flutter
   - shared_preferences_ios (0.0.1):
     - Flutter
+  - SocketRocket (0.6.0)
   - vdotok_stream (0.0.1):
     - Flutter
     - Libyuv (= 1703)
     - MMWormhole
     - VdoTokStreaming
-  - VdoTokStreaming (1.1.2)
+  - VdoTokStreaming (1.1.17):
+    - SocketRocket
   - vibration (1.7.5):
     - Flutter
   - wakelock (0.0.1):
@@ -73,6 +75,7 @@ SPEC REPOS:
     - Libyuv
     - MMWormhole
     - ReachabilitySwift
+    - SocketRocket
     - VdoTokStreaming
 
 EXTERNAL SOURCES:
@@ -134,12 +137,13 @@ SPEC CHECKSUMS:
   ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
   replay_kit_launcher: 828739da18c9785d5e9aafd4f075ea11d6b61499
   shared_preferences_ios: 548a61f8053b9b8a49ac19c1ffbc8b92c50d68ad
+  SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
   vdotok_stream: 80373297324ed9af4297d5e2f8423a2f6ae9899e
-  VdoTokStreaming: 90bd2375943a54625f796913c205a138bd87ab6c
+  VdoTokStreaming: 020891c3ec5f5a9e35deed9a2e3de32a87c93afb
   vibration: 7d883d141656a1c1a6d8d238616b2042a51a1241
   wakelock: d0fc7c864128eac40eba1617cb5264d9c940b46f
   wifi_info_flutter: 55d4c2469034f5b5c38063ccefa62f708a503a2b
 
-PODFILE CHECKSUM: d0540e80e16127665e8877f6dac60dc1174ec2fe
+PODFILE CHECKSUM: c262cc4e3e433349ea49d449ecfccf331094f9f4
 
-COCOAPODS: 1.10.1
+COCOAPODS: 1.11.3

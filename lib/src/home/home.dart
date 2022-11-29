@@ -72,6 +72,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   bool inCall = false;
   bool isPushed = false;
   bool iscallReConnected = false;
+  bool isConnectedtoCall = false;
   late double upstream;
   bool isResumed = true;
   bool inPaused = false;
@@ -223,6 +224,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     signalingClient.internetConnectivityCallBack = (mesg) {
       if (mesg == "Connected") {
         setState(() {
+            if (isConnectedtoCall == true) {
+            print("fdjhfjd");
+            iscallReConnected = true;
+          }
           isConnected = true;
         });
 
@@ -258,7 +263,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         signalingClient.closeSocket();
       }
     };
+signalingClient.onMissedCall=(mesg){
+  print("here in onmissedcall");
 
+};
     signalingClient.onError = (code, res) async {
       print("onError $code $res");
 
@@ -297,7 +305,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             bool connectionFlag =
                 await signalingClient.checkInternetConnectivity();
             if (connectionFlag && sockett == false && !isRegisteredAlready) {
-              print("i am in connect in 1005");
+              print("i am in connect in 1005 $connectionFlag ${!isRegisteredAlready}");
               signalingClient.connect(project_id, _auth.completeAddress);
 
               // signalingClient.register(_auth.getUser.toJson(), project_id);
@@ -344,6 +352,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       temp["rtcVideoRenderer"].initialize().then((value) {
         setState(() {
           temp["rtcVideoRenderer"].srcObject = stream;
+          if (isConnectedtoCall) {
+          iscallReConnected = true;
+        }
           if (iscallReConnected == false) {
             time = DateTime.now();
             _callTime = DateTime.now();
@@ -355,6 +366,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           _updateTimer();
           _ticker = Timer.periodic(Duration(seconds: 1), (_) => _updateTimer());
           rendererListWithRefID.add(temp);
+           isConnectedtoCall = true;
           forLargStream = temp;
           onRemoteStream = true;
         });
@@ -465,6 +477,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         count = 0;
         upstream = 0;
         downstream = 0;
+        isConnectedtoCall = false;
 
         isRinging = false;
         if (_ticker != null) {

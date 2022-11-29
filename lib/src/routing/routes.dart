@@ -1,5 +1,4 @@
 import "package:flutter/material.dart";
-import 'package:vdotok_stream_example/src/callingModule/CallingScreen.dart';
 import 'package:vdotok_stream_example/src/contactList/ContactList.dart';
 import '../../src/login/SignInScreen.dart';
 import '../../src/register/SignUpScreen.dart';
