@@ -326,21 +326,54 @@ signalingClient.onMissedCall=(mesg){
         registerRes = res;
       });
     };
+    // Map<String, dynamic> temp = {
+    //   "refID": _auth.getUser.ref_id,
+    //   "rtcVideoRenderer": new RTCVideoRenderer(),
+    //   "remoteVideoFlag": 1,
+    //   "remoteAudioFlag": 1
+    // };
+    // initRenderers(temp["rtcVideoRenderer"]);
+    // setState(() {
+    //   rendererListWithRefID.add(temp);
+    // });
+    signalingClient.onLocalStream = (stream) {
+      print("this is local streammmm");
     Map<String, dynamic> temp = {
       "refID": _auth.getUser.ref_id,
       "rtcVideoRenderer": new RTCVideoRenderer(),
-      "remoteVideoFlag": 1,
+      "remoteVideoFlag":meidaType == MediaType.video ? 1 : 0,
       "remoteAudioFlag": 1
     };
-    initRenderers(temp["rtcVideoRenderer"]);
-    setState(() {
-      rendererListWithRefID.add(temp);
-    });
-    signalingClient.onLocalStream = (stream) {
-      setState(() {
-        rendererListWithRefID[0]["rtcVideoRenderer"].srcObject = stream;
+     temp["rtcVideoRenderer"].initialize().then((value) {
+setState(() {
+ rendererListWithRefID.add(temp);
+rendererListWithRefID[0]["rtcVideoRenderer"].srcObject=stream;
+
+
       });
+
+     });
+    
     };
+//     signalingClient.onDisposeRenderer=(key){
+//       print("this is keyyyy $key ${rendererListWithRefID}");
+//        int index = rendererListWithRefID
+//             .indexWhere((element) => element["refID"] == key);
+//            if(index!=-1){
+//             rendererListWithRefID[index]["rtcVideoRenderer"].srcObject=null;
+//             rendererListWithRefID[index]["rtcVideoRenderer"].dispose();
+//              rendererListWithRefID.removeAt(index);
+
+//            }
+//            print("this is length of list ${rendererListWithRefID.length}");
+//            if(rendererListWithRefID.isEmpty)
+            
+//            {
+//             print("this is empty lissstttt");
+//            }
+
+//  //rendererListWithRefID[i]["rtcVideoRenderer"].srcObject = null;
+//     };
     signalingClient.onRemoteStream = (stream, refid) async {
       print("HI1 i am here in remote stream $refid $stream ${stream.id} ");
       Map<String, dynamic> temp = {
@@ -349,7 +382,9 @@ signalingClient.onMissedCall=(mesg){
         "remoteVideoFlag": meidaType == MediaType.video ? 1 : 0,
         "remoteAudioFlag": 1
       };
-      temp["rtcVideoRenderer"].initialize().then((value) {
+     
+      await initRenderers(temp["rtcVideoRenderer"]);
+      //temp["rtcVideoRenderer"].initialize().then((value) {
         setState(() {
           temp["rtcVideoRenderer"].srcObject = stream;
           if (isConnectedtoCall) {
@@ -380,20 +415,32 @@ signalingClient.onMissedCall=(mesg){
           count = 0;
           iscallAcceptedbyuser = true;
         }
-      });
+  //    });
       //await initRenderers(temp["rtcVideoRenderer"]);
 
       // audioPlayer.stop();
     };
 
     signalingClient.onReceiveCallFromUser = (res, isMultiSession) async {
-      print("here in recerive call");
+      print("here in recerive call $res");
+    //   Map<String, dynamic> temp = {
+    //   "refID": _auth.getUser.ref_id,
+    //   "rtcVideoRenderer": new RTCVideoRenderer(),
+    //   "remoteVideoFlag":meidaType == MediaType.video ? 1 : 0,
+    //   "remoteAudioFlag": 1
+    // };
+    //  temp["rtcVideoRenderer"].initialize().then((value) {
+// rendererListWithRefID.add(temp);
+
+    
+     
       Wakelock.toggle(enable: true);
       startRinging();
       inCall = true;
       iscalloneto1 = res["call_type"] == "one_to_one" ? true : false;
       print("ugdghfghf ${res["groupName"]}");
       setState(() {
+        
         groupName = res["data"]["groupName"];
         onRemoteStream = false;
         pressDuration = "";
@@ -409,6 +456,8 @@ signalingClient.onMissedCall=(mesg){
       });
       _callProvider.callReceive();
       _callticker = Timer.periodic(Duration(seconds: 1), (_) => _callcheck());
+    // });
+    
     };
     signalingClient.onTargetAlerting = () {
       setState(() {
@@ -461,7 +510,7 @@ signalingClient.onMissedCall=(mesg){
           }
         }
       }
-    if (inCall) {
+         if (inCall) {
           if (_callticker != null) {
             _callticker.cancel();
           }
@@ -485,9 +534,11 @@ signalingClient.onMissedCall=(mesg){
         }
     
       });
-      _callProvider.initial();
-      disposeAllRenderer();
+  
+        disposeAllRenderer();
+         _callProvider.initial();
       stopRinging();
+     
     };
     signalingClient.onCallBusyCallback = () {
       Wakelock.toggle(enable: false);
@@ -603,18 +654,29 @@ signalingClient.onMissedCall=(mesg){
 
   disposeAllRenderer() async {
     print("here in disposeallrenderer");
+    print("this is list before dispose ${rendererListWithRefID.length}");
+    // for(int i=0 ;i<rendererListWithRefID.length;i++){
+    //   rendererListWithRefID[i]["rtcVideoRenderer"].srcObject=null;
+    //   await rendererListWithRefID[i]["rtcVideoRenderer"].dispose();
+      
+
+    // }
+    // rendererListWithRefID.clear();
+  
     for (int i = 0; i < rendererListWithRefID.length; i++) {
       if (i == 0) {
         print("indisposerenderer");
-        rendererListWithRefID[i]["rtcVideoRenderer"].srcObject = null;
+     rendererListWithRefID[i]["rtcVideoRenderer"].srcObject = null;
       } else {
         print("this is disposessss");
         await rendererListWithRefID[i]["rtcVideoRenderer"].dispose();
       }
     }
-    if (rendererListWithRefID.length > 1) {
-      rendererListWithRefID.removeRange(1, (rendererListWithRefID.length));
-    }
+    // if (rendererListWithRefID.length > 1) {
+    //   rendererListWithRefID.removeRange(1, (rendererListWithRefID.length));
+    // }
+    rendererListWithRefID.clear();
+      print("this is list after dispose ${rendererListWithRefID.length}");
   }
 
   Future<void> listenSensor() async {
@@ -640,7 +702,17 @@ signalingClient.onMissedCall=(mesg){
 
   _startCall(
       GroupModel to, String mtype, String callType, String sessionType) async {
-    setState(() {
+
+//  Map<String, dynamic> temp = {
+//       "refID": _auth.getUser.ref_id,
+//       "rtcVideoRenderer": new RTCVideoRenderer(),
+//       "remoteVideoFlag":meidaType == MediaType.video ? 1 : 0,
+//       "remoteAudioFlag": 1
+//     };
+//      temp["rtcVideoRenderer"].initialize().then((value) {
+ 
+  setState(() {
+   // rendererListWithRefID.add(temp);
       inCall = true;
       switchMute = true;
       pressDuration = "";
@@ -673,8 +745,8 @@ signalingClient.onMissedCall=(mesg){
     callingTo = to.participants;
     callingTo!
         .removeWhere((element) => element!.ref_id == _auth.getUser.ref_id);
-    rendererListWithRefID.first["remoteVideoFlag"] =
-        mtype == MediaType.video ? 1 : 0;
+    // rendererListWithRefID.first["remoteVideoFlag"] =
+    //     mtype == MediaType.video ? 1 : 0;
     print("i am here in call chck ${to.group_title}");
     customData = {
       "calleName": "",
@@ -690,9 +762,15 @@ signalingClient.onMissedCall=(mesg){
         callType: callType,
         sessionType: sessionType);
     _callProvider.callDial();
+     
+
+
+  //   });
+  
   }
 
   initRenderers(RTCVideoRenderer rtcRenderer) async {
+    print("here unnnnnn");
     await rtcRenderer.initialize();
   }
 

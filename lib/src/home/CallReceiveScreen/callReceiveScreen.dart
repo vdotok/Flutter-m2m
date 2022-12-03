@@ -39,12 +39,16 @@ class CallReceiveScreen extends StatefulWidget {
 class _CallReceiveScreenState extends State<CallReceiveScreen> {
   @override
   Widget build(BuildContext context) {
-    print("here i am in separte class of Call Receive Screen");
+  //  print("here i am in separte class of Call Receive Screen ${widget.mediatype} ${widget.rendererListWithRefid[0]}");
     return Scaffold(body: OrientationBuilder(builder: (context, orientation) {
       return Stack(children: <Widget>[
         widget.mediatype == MediaType.video
             ? Container(
-                child: RemoteStream(
+                child: 
+                   widget.rendererListWithRefid.length==0?
+Text("hsahgsdghvdsghfgfhddgh")
+                    :
+                RemoteStream(
                 remoteRenderer: widget.rendererListWithRefid[0]
                     ["rtcVideoRenderer"],
               ))

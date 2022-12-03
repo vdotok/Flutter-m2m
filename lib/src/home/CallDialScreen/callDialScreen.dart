@@ -32,7 +32,10 @@ class CallDialScreen extends StatelessWidget {
                     //margin: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
                     width: MediaQuery.of(context).size.width,
                     height: MediaQuery.of(context).size.height,
-                    child: RemoteStream(
+                    child: 
+                    rendererListWithRefid.length==0?
+Text("hsahgsdghvdsghfgfhddgh")
+                    :RemoteStream(
                       remoteRenderer: rendererListWithRefid[0]
                           ["rtcVideoRenderer"],
                     ))

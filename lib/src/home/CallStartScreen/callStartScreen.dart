@@ -58,7 +58,9 @@ class _CallSttartScreenState extends State<CallSttartScreen> {
             return Container(
               child: Stack(children: <Widget>[
                 widget.onRemotestream
-                    ? widget.rendererListWithRefid.length == 1
+                    ? 
+                    widget.rendererListWithRefid.isEmpty?Container():
+                    widget.rendererListWithRefid.length == 1
                         ? Container(
                             //color:Colors.red
                             // child:
