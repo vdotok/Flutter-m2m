@@ -32,7 +32,7 @@ dependencies:
   json_annotation: ^4.5.0
   device_info: ^2.0.0
   path_provider: ^2.0.1
-  provider: ^5.0.0
+  provider: ^6.0.0
   flutter_svg: 
   data_connection_checker: ^0.3.4
   vdotok_stream: 
@@ -54,6 +54,9 @@ dependencies:
   move_to_background: ^1.0.2
   permission_handler:
   draggable_widget: ^2.0.0
+
+  fluttertoast: ^8.1.1
+ 
   #assets_audio_player: 
 
 dev_dependencies:

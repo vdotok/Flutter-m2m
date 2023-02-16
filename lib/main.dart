@@ -37,43 +37,27 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+   String _desc = '';
   @override
   void initState() {
     super.initState();
 
     rootScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
-//  netConnectivityCallBack = (mesg) {
 
-// if (mesg == "Connected") {
+  }
 
-// setState(() {
 
-// isConnected = true;
+@override 
+void deactivate(){
+super.deactivate();
+print("this is deactivated of main");
 
-// });
-
-// showSnackbar("Internet Connected", whiteColor, Colors.green, false);
-
-// } else {
-
-// print("no internet connection");
-
-// setState(() {
-
-// isConnected = false;
-
-// });
-
-// showSnackbar("No Internet Connection", whiteColor, primaryColor, true);
-
-// }
-
-// };
-
-//checkStatus();
-
-//checkConnectivity();
+}
+  @override
+  void dispose() {
+    super.dispose();
+    print("main dispose method");
   }
 
   @override
@@ -99,16 +83,68 @@ class _MyAppState extends State<MyApp> {
             colorScheme:
                 ColorScheme.fromSwatch().copyWith(secondary: primaryColor)),
         onGenerateRoute: Routers.generateRoute,
-        home: Consumer<AuthProvider>(
-          builder: (context, auth, child) {
-            if (auth.loggedInStatus == Status.Authenticating)
-              return SplashScreen();
-            else if (auth.loggedInStatus == Status.LoggedIn) {
-             //return Test();
-              return HomeIndex();
-            } else
-              return SignInScreen();
-          },
+        home: 
+        // GestureDetector(
+        //      onTap: () {
+        //   setState(() {
+        //     _desc = 'tap';
+        //     print("$_desc");
+        //   });
+        // },
+        // onDoubleTap: () {
+        //   setState(() {
+        //     _desc = 'double tap';
+        //      print("$_desc");
+        //   });
+        // },
+        // onVerticalDragStart: (DragStartDetails details) {
+        //   setState(() {
+        //     _desc = 'drag start';
+        //      print("$_desc");
+        //   });
+        // },
+        // onVerticalDragUpdate: (DragUpdateDetails details) {
+        //   setState(() {
+        //     _desc = 'drag update';
+        //      print("$_desc");
+        //   });
+        // },
+        // onVerticalDragEnd: (DragEndDetails details) {
+        //   setState(() {
+        //     _desc = 'drag end';
+        //      print("$_desc");
+        //   });
+        // },
+        // onHorizontalDragStart: (DragStartDetails details) {
+        //   setState(() {
+        //     _desc = 'drag start';
+        //      print("$_desc");
+        //   });
+        // },
+        // onHorizontalDragUpdate: (DragUpdateDetails details) {
+        //   setState(() {
+        //     _desc = 'drag update';
+        //      print("$_desc");
+        //   });
+        // },
+        // onHorizontalDragEnd: (DragEndDetails details) {
+        //   setState(() {
+        //     _desc = 'drag end';
+        //      print("$_desc");
+        //   });
+        // },
+        //   child: 
+          Consumer<AuthProvider>(
+            builder: (context, auth, child) {
+              if (auth.loggedInStatus == Status.Authenticating)
+                return SplashScreen();
+              else if (auth.loggedInStatus == Status.LoggedIn) {
+                //return Test();
+                return HomeIndex();
+              } else
+                return SignInScreen();
+            },
+         // ),
         ),
       ),
     );
@@ -180,7 +216,7 @@ class _TestState extends State<Test> {
 
           // print("this is remoterendere ${remoteRenderer1.srcObject}");
         } else if (remoteRenderer2.srcObject == null) {
-           remoteRenderer2 = new RTCVideoRenderer();
+          remoteRenderer2 = new RTCVideoRenderer();
           remoteRenderer2.initialize().then((value) {
             remoteRenderer2.srcObject = stream;
             print("this is remoterendere 2nd ${remoteRenderer2.srcObject}");
@@ -188,7 +224,7 @@ class _TestState extends State<Test> {
             print("this is error on initialization of 2nd $onError");
           });
         } else {
-           remoteRenderer3 = new RTCVideoRenderer();
+          remoteRenderer3 = new RTCVideoRenderer();
           remoteRenderer3.initialize().then((value) {
             remoteRenderer3.srcObject = stream;
             print("this is remoterendere 3rd ${remoteRenderer3.srcObject}");

@@ -19,7 +19,7 @@ class CallReceiveScreen extends StatefulWidget {
   CallProvider callprovider;
   AuthProvider authprovider;
   String? incomingfrom;
-  final stopRinging;
+  //final stopRinging;
   final groupName;
   CallReceiveScreen(
       {required this.callingto,
@@ -29,7 +29,7 @@ class CallReceiveScreen extends StatefulWidget {
       required this.callprovider,
       required this.authprovider,
       required this.incomingfrom,
-      this.stopRinging,
+     // this.stopRinging,
       this.groupName});
 
   @override
@@ -135,7 +135,7 @@ Text("hsahgsdghvdsghfgfhddgh")
                   'assets/end.svg',
                 ),
                 onTap: () {
-                  widget.stopRinging();
+                  //widget.stopRinging();
                   signalingClient.declineCall(
                       widget.authprovider.getUser.ref_id,
                       widget.registerRes["mcToken"]);
@@ -150,7 +150,7 @@ Text("hsahgsdghvdsghfgfhddgh")
                   ),
                   onTap: isPressed == false
                       ? () {
-                          widget.stopRinging();
+                         // widget.stopRinging();
                           signalingClient.createAnswer(widget.incomingfrom);
                           widget.callprovider.callStart();
                           setState(() {
