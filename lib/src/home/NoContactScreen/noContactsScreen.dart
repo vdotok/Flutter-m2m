@@ -156,6 +156,11 @@ class NoContactsScreen extends StatelessWidget {
                     color: isConnect && socket ? Colors.green : Colors.red,
                     shape: BoxShape.circle),
               ),
+                  errorcode!=""?
+                                 Container(
+                                  height:40,
+                          width: 40,
+                          child:Text('$errorcode')):Container()
             ],
           ),
           Container(

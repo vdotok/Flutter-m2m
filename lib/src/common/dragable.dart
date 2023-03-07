@@ -33,8 +33,12 @@ class DragBoxState extends State<DragBox> {
       child: Container(
         height: 150,
         width: 100,
-        child: enableCamera
-            ? RTCVideoView(
+        child: 
+         rendererListWithRefID.length==0?Container():
+        enableCamera
+            ? 
+            
+            RTCVideoView(
 
                    rendererListWithRefID[0]["rtcVideoRenderer"],
 

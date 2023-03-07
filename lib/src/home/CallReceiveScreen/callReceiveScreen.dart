@@ -19,7 +19,7 @@ class CallReceiveScreen extends StatefulWidget {
   CallProvider callprovider;
   AuthProvider authprovider;
   String? incomingfrom;
-  final stopRinging;
+  //final stopRinging;
   final groupName;
   CallReceiveScreen(
       {required this.callingto,
@@ -29,7 +29,7 @@ class CallReceiveScreen extends StatefulWidget {
       required this.callprovider,
       required this.authprovider,
       required this.incomingfrom,
-      this.stopRinging,
+     // this.stopRinging,
       this.groupName});
 
   @override
@@ -39,12 +39,16 @@ class CallReceiveScreen extends StatefulWidget {
 class _CallReceiveScreenState extends State<CallReceiveScreen> {
   @override
   Widget build(BuildContext context) {
-    print("here i am in separte class of Call Receive Screen");
+  //  print("here i am in separte class of Call Receive Screen ${widget.mediatype} ${widget.rendererListWithRefid[0]}");
     return Scaffold(body: OrientationBuilder(builder: (context, orientation) {
       return Stack(children: <Widget>[
         widget.mediatype == MediaType.video
             ? Container(
-                child: RemoteStream(
+                child: 
+                   widget.rendererListWithRefid.length==0?
+Text("hsahgsdghvdsghfgfhddgh")
+                    :
+                RemoteStream(
                 remoteRenderer: widget.rendererListWithRefid[0]
                     ["rtcVideoRenderer"],
               ))
@@ -131,7 +135,7 @@ class _CallReceiveScreenState extends State<CallReceiveScreen> {
                   'assets/end.svg',
                 ),
                 onTap: () {
-                  widget.stopRinging();
+                  //widget.stopRinging();
                   signalingClient.declineCall(
                       widget.authprovider.getUser.ref_id,
                       widget.registerRes["mcToken"]);
@@ -146,7 +150,7 @@ class _CallReceiveScreenState extends State<CallReceiveScreen> {
                   ),
                   onTap: isPressed == false
                       ? () {
-                          widget.stopRinging();
+                         // widget.stopRinging();
                           signalingClient.createAnswer(widget.incomingfrom);
                           widget.callprovider.callStart();
                           setState(() {

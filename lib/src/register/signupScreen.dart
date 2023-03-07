@@ -54,7 +54,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // SystemChrome.
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+
       statusBarColor: Colors.transparent, // status bar color
       statusBarBrightness: Brightness.light, //status bar brigtness
       statusBarIconBrightness: Brightness.dark, //status barIcon Brightness

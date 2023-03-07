@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:vdotok_stream_example/constant.dart';
@@ -468,6 +469,11 @@ class _GroupListScreenState extends State<GroupListScreen> {
                                     : Colors.red,
                               ),
                             ),
+                                errorcode!=""?
+                                 Container(
+                                  height:40,
+                          width: 40,
+                          child:Text('$errorcode')):Container()
                           ]),
                     ),
                     Container(
@@ -478,6 +484,7 @@ class _GroupListScreenState extends State<GroupListScreen> {
           ),
         ),
       ),
+    
     );
   }
 }
