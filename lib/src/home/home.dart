@@ -33,7 +33,7 @@ import '../core/providers/call_provider.dart';
 import '../core/providers/contact_provider.dart';
 
 
-SignalingClient signalingClient = SignalingClient.instance..checkConnectivity();
+SignalingClient signalingClient = SignalingClient.instance;
 //SignalingClient signalingClient = SignalingClient.instance;
 String callTo = "";
 bool switchMute = true;
@@ -228,7 +228,11 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     // InternetConnectivity();
 
     print("i AM here in home init");
-    signalingClient.connect(project_id, _auth.completeAddress);
+    signalingClient.connect(
+        project_id,
+        _auth.completeAddress,
+        _auth.getUser.authorization_token.toString(),
+        _auth.getUser.ref_id.toString());
     signalingClient.onConnect = (res) {
       print("i am here in onconnect functiono $res");
 
@@ -239,126 +243,218 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         errorcode = "";
       }
 
-      signalingClient.register(_auth.getUser.toJson(), project_id);
+     // signalingClient.register(_auth.getUser.toJson(), project_id);
     };
-    signalingClient.internetConnectivityCallBack = (mesg) {
-      print("This is messg from internet call back $mesg");
+    // signalingClient.internetConnectivityCallBack = (mesg) {
+    //   print("This is messg from internet call back $mesg");
+    //   if (mesg == "Connected") {
+    //     setState(() {
+    //       if (isConnectedtoCall == true) {
+    //         print("fdjhfjd");
+    //         iscallReConnected = true;
+    //       }
+    //       isConnected = true;
+    //     });
+    //     if(isResumed)
+    //   {   Fluttertoast.showToast(
+    //                     msg: "Connected to Internet.",
+    //                     toastLength: Toast.LENGTH_SHORT,
+    //                     gravity: ToastGravity.TOP_RIGHT,
+    //                     timeInSecForIosWeb: 1,
+    //                     backgroundColor: Colors.black,
+    //                     textColor: Colors.white,
+    //                     fontSize: 14.0);}
+      
+
+    //     if (sockett == false) {
+    //      signalingClient.connect(
+    //     project_id,
+    //     _auth.completeAddress,
+    //     _auth.getUser.authorization_token.toString(),
+    //     _auth.getUser.ref_id.toString());
+    //       errorcode = "";
+    //       print("I am in Re Reregister");
+
+    //       remoteVideoFlag = true;
+
+    //       print("here in init state register");
+
+
+    //     }
+
+    //     if (inCall == true) {
+    //       iscallReConnected = true;
+    //     }
+    //   } else {
+    //     print("onError no internet connection");
+
+    //     setState(() {
+    //       isConnected = false;
+
+    //       sockett = false;
+    //     });
+    //     if(isResumed)
+    //     { Fluttertoast.showToast(
+    //                     msg: "Waiting for Internet.",
+    //                     toastLength: Toast.LENGTH_SHORT,
+    //                     gravity: ToastGravity.TOP_RIGHT,
+    //                     timeInSecForIosWeb: 1,
+    //                     backgroundColor: Colors.black,
+    //                     textColor: Colors.white,
+    //                     fontSize: 14.0);}
+
+    //    // signalingClient.closeSocket();
+    //   }
+    // };
+      signalingClient.internetConnectivityCallBack = (mesg) {
       if (mesg == "Connected") {
-        setState(() {
+           setState(() {
           if (isConnectedtoCall == true) {
             print("fdjhfjd");
             iscallReConnected = true;
           }
           isConnected = true;
         });
-        if(isResumed)
-      {   Fluttertoast.showToast(
-                        msg: "Connected to Internet.",
-                        toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.TOP_RIGHT,
-                        timeInSecForIosWeb: 1,
-                        backgroundColor: Colors.black,
-                        textColor: Colors.white,
-                        fontSize: 14.0);}
+        // if (isResumed) {
+        Fluttertoast.showToast(
+            msg: "Connected to Internet.",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.TOP_RIGHT,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.black,
+            textColor: Colors.white,
+            fontSize: 14.0);
+        // }
       
-
         if (sockett == false) {
-          signalingClient.connect(project_id, _auth.completeAddress);
-          errorcode = "";
-          print("I am in Re Reregister");
-
+          // signalingClient.connect(
+          //     _auth.projectId,
+          //     _auth.completeAddress,
+          //     _auth.getUser.authorization_token.toString(),
+          //     _auth.getUser.ref_id.toString());
+          print("I am in Re Reregister ");
           remoteVideoFlag = true;
-
           print("here in init state register");
-
-
-        }
-
-        if (inCall == true) {
-          iscallReConnected = true;
         }
       } else {
         print("onError no internet connection");
-
         setState(() {
           isConnected = false;
-
           sockett = false;
         });
-        if(isResumed)
-        { Fluttertoast.showToast(
-                        msg: "Waiting for Internet.",
-                        toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.TOP_RIGHT,
-                        timeInSecForIosWeb: 1,
-                        backgroundColor: Colors.black,
-                        textColor: Colors.white,
-                        fontSize: 14.0);}
+        //  if (isResumed) {
+        Fluttertoast.showToast(
+            msg: "Waiting for Internet.",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.TOP_RIGHT,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.black,
+            textColor: Colors.white,
+            fontSize: 14.0);
+        // }
+        signalingClient.closeSocket();
 
-       // signalingClient.closeSocket();
+        print("uyututuir");
       }
     };
     signalingClient.onMissedCall = (mesg) {
       print("here in onmissedcall");
     };
-    signalingClient.onError = (code, res) async {
-      print("onError $code $res");
+       signalingClient.onError = (code, reason) async {
+      print("this is socket error $code $reason");
+      if (!mounted) {
+        return;
+      }
       setState(() {
-        errorcode = code.toString();
         sockett = false;
-        //  isInternetConnect = false;
-        isRegisteredAlready = false;
       });
-      if (code == 1001 || code == 1002) {
-        print("fk9tt ${registerRes["mctoken"]}");
 
-        // setState(() {
-        //   sockett = false;
-
-        //   isRegisteredAlready = false;
-        // });
-        bool connectionFlag = await signalingClient.checkInternetConnectivity();
-        if (connectionFlag) {
-          signalingClient.connect(project_id, _auth.completeAddress);
-        }
-      } else if (code == 401) {
-        print("here in 401");
-        setState(() {
-          sockett = false;
-          isRegisteredAlready = true;
-
-          snackBar = SnackBar(
-            content: Text('$res'),
-            duration: Duration(days: 365),
-          );
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-        });
+      if (_auth.loggedInStatus == Status.LoggedOut) {
       } else {
-        if (_auth.loggedInStatus == Status.LoggedOut) {
+        bool status = await signalingClient.getInternetStatus();
+
+        print("this is internet status $status");
+
+        if (sockett == false && status == true) {
+          print("here in onerrorrrrrr ");
+
+          // signalingClient.connect(
+          //     _auth.projectId,
+          //     _auth.completeAddress,
+          //     _auth.getUser.authorization_token.toString(),
+          //     _auth.getUser.ref_id.toString());
         } else {
-          setState(() {
-            sockett = false;
-            // isRegisteredAlready=false;
-          });
-          if (isResumed) {
-            bool connectionFlag =
-                await signalingClient.checkInternetConnectivity();
-            if (connectionFlag && sockett == false) {
-              print(
-                  "i am in connect in 1005 $connectionFlag ${isRegisteredAlready}");
-              signalingClient.connect(project_id, _auth.completeAddress);
-
-              // signalingClient.register(_auth.getUser.toJson(), project_id);
-
-              // sockett = true;
-            } else {
-              //  sockett = false;
-            }
-            //}
-          } else {}
+          print("else condition");
         }
       }
     };
+
+    // signalingClient.onError = (code, res) async {
+    //   print("onError $code $res");
+    //   setState(() {
+    //     errorcode = code.toString();
+    //     sockett = false;
+    //     //  isInternetConnect = false;
+    //     isRegisteredAlready = false;
+    //   });
+    //   if (code == 1001 || code == 1002) {
+    //     print("fk9tt ${registerRes["mctoken"]}");
+
+    //     // setState(() {
+    //     //   sockett = false;
+
+    //     //   isRegisteredAlready = false;
+    //     // });
+    //     bool connectionFlag = await signalingClient.getInternetStatus();
+    //     if (connectionFlag) {
+    //      signalingClient.connect(
+    //     project_id,
+    //     _auth.completeAddress,
+    //     _auth.getUser.authorization_token.toString(),
+    //     _auth.getUser.ref_id.toString());
+    //     }
+    //   } else if (code == 401) {
+    //     print("here in 401");
+    //     setState(() {
+    //       sockett = false;
+    //       isRegisteredAlready = true;
+
+    //       snackBar = SnackBar(
+    //         content: Text('$res'),
+    //         duration: Duration(days: 365),
+    //       );
+    //       ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    //     });
+    //   } else {
+    //     if (_auth.loggedInStatus == Status.LoggedOut) {
+    //     } else {
+    //       setState(() {
+    //         sockett = false;
+    //         // isRegisteredAlready=false;
+    //       });
+    //       if (isResumed) {
+    //         bool connectionFlag =
+    //             await signalingClient.getInternetStatus();
+    //         if (connectionFlag && sockett == false) {
+    //           print(
+    //               "i am in connect in 1005 $connectionFlag ${isRegisteredAlready}");
+    //           signalingClient.connect(
+    //     project_id,
+    //     _auth.completeAddress,
+    //     _auth.getUser.authorization_token.toString(),
+    //     _auth.getUser.ref_id.toString());
+
+    //           // signalingClient.register(_auth.getUser.toJson(), project_id);
+
+    //           // sockett = true;
+    //         } else {
+    //           //  sockett = false;
+    //         }
+    //         //}
+    //       } else {}
+    //     }
+    //   }
+    // };
 
     signalingClient.onRegister = (res) {
       print("here in register $res");
@@ -652,43 +748,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         inInactive = false;
         inPaused = false;
 
-        if (_auth.loggedInStatus == Status.LoggedOut) {
-        } else {
-          print("this is variable for resume $sockett $isConnected");
-          bool status=await signalingClient.checkInternetConnectivity();
-          
-          if(status==false)
-        {  Fluttertoast.showToast(
-                        msg: "Waiting for Internet.",
-                        toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.TOP_RIGHT,
-                        timeInSecForIosWeb: 1,
-                        backgroundColor: Colors.black,
-                        textColor: Colors.white,
-                        fontSize: 14.0);}
-                        else{
-                          Fluttertoast.showToast(
-                        msg: "Connected to Internet.",
-                        toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.TOP_RIGHT,
-                        timeInSecForIosWeb: 1,
-                        backgroundColor: Colors.black,
-                        textColor: Colors.white,
-                        fontSize: 14.0);
-                        }
-                          if(status==true &&sockett == false){
-                signalingClient.connect(project_id, _auth.completeAddress);
-              }
-//           bool status=await signalingClient.checkInternetConnectivity();
-//           print("this is statussss $status");
-// if(isConnected==false){
-// showSnackbar("No Internet Connection", whiteColor, primaryColor, true);
-// }
-// else{
-//    showSnackbar("Internet Connected", whiteColor, Colors.green, false);
-// }
-          //signalingClient.sendPing(registerRes["mcToken"]);
-        }
+       
 
         break;
 
@@ -987,12 +1047,16 @@ print("this is deactivated of home");
       _contactProvider.getContacts(_auth.getUser.auth_token);
       _selectedContacts.clear();
     }
-      bool connectionFlag = await signalingClient.checkInternetConnectivity();
+      bool connectionFlag = await signalingClient.getInternetStatus();
       print("this is connectionflag $connectionFlag $sockett");
     if (sockett == false && connectionFlag) {
       print("i am in refresh list connection");
 
-      signalingClient.connect(project_id, _auth.completeAddress);
+      signalingClient.connect(
+        project_id,
+        _auth.completeAddress,
+        _auth.getUser.authorization_token.toString(),
+        _auth.getUser.ref_id.toString());
 
 //signalingClient.register(_auth.getUser.toJson(), project_id);
 

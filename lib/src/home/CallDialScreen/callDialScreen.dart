@@ -26,20 +26,22 @@ class CallDialScreen extends StatelessWidget {
       body: OrientationBuilder(builder: (context, orientation) {
         return Stack(
           children: [
-            mediatype == MediaType.video
-                ? Container(
-                    // color: Colors.red,
-                    //margin: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height,
-                    child: 
-                    rendererListWithRefid.length==0?
-Text("hsahgsdghvdsghfgfhddgh")
-                    :RemoteStream(
-                      remoteRenderer: rendererListWithRefid[0]
-                          ["rtcVideoRenderer"],
-                    ))
-                : Container(
+//             mediatype == MediaType.video
+//                 ? Container(
+//                     // color: Colors.red,
+//                     //margin: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
+//                     width: MediaQuery.of(context).size.width,
+//                     height: MediaQuery.of(context).size.height,
+//                     child: 
+//                     rendererListWithRefid.length==0?
+// Text("hsahgsdghvdsghfgfhddgh")
+//                     :RemoteStream(
+//                       remoteRenderer: rendererListWithRefid[0]
+//                           ["rtcVideoRenderer"],
+//                     ))
+//                 :
+                
+                 Container(
                     decoration: BoxDecoration(
                         gradient: LinearGradient(
                       colors: [
