@@ -1,9 +1,5 @@
 PODS:
   - _NIODataStructures (2.40.0)
-  - audioplayers_darwin (0.0.1):
-    - Flutter
-  - battery (0.0.1):
-    - Flutter
   - battery_plus (1.0.0):
     - Flutter
   - CNIOAtomics (2.40.0)
@@ -18,10 +14,6 @@ PODS:
   - device_info_plus (0.0.1):
     - Flutter
   - Flutter (1.0.0)
-  - flutter_background_service_ios (0.0.3):
-    - Flutter
-  - flutter_ringtone_player (0.0.1):
-    - Flutter
   - flutter_statusbarcolor (0.0.1):
     - Flutter
   - fluttertoast (0.0.2):
@@ -84,23 +76,15 @@ PODS:
   - VdoTokStreaming (1.1.21):
     - SocketRocket
     - SwiftNIO
-  - vibration (1.7.5):
-    - Flutter
   - wakelock (0.0.1):
-    - Flutter
-  - wifi_info_flutter (0.0.1):
     - Flutter
 
 DEPENDENCIES:
-  - audioplayers_darwin (from `.symlinks/plugins/audioplayers_darwin/ios`)
-  - battery (from `.symlinks/plugins/battery/ios`)
   - battery_plus (from `.symlinks/plugins/battery_plus/ios`)
   - connectivity_plus (from `.symlinks/plugins/connectivity_plus/ios`)
   - device_info (from `.symlinks/plugins/device_info/ios`)
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - Flutter (from `Flutter`)
-  - flutter_background_service_ios (from `.symlinks/plugins/flutter_background_service_ios/ios`)
-  - flutter_ringtone_player (from `.symlinks/plugins/flutter_ringtone_player/ios`)
   - flutter_statusbarcolor (from `.symlinks/plugins/flutter_statusbarcolor/ios`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - move_to_background (from `.symlinks/plugins/move_to_background/ios`)
@@ -109,9 +93,7 @@ DEPENDENCIES:
   - replay_kit_launcher (from `.symlinks/plugins/replay_kit_launcher/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/ios`)
   - vdotok_stream (from `.symlinks/plugins/vdotok_stream/ios`)
-  - vibration (from `.symlinks/plugins/vibration/ios`)
   - wakelock (from `.symlinks/plugins/wakelock/ios`)
-  - wifi_info_flutter (from `.symlinks/plugins/wifi_info_flutter/ios`)
 
 SPEC REPOS:
   trunk:
@@ -133,10 +115,6 @@ SPEC REPOS:
     - VdoTokStreaming
 
 EXTERNAL SOURCES:
-  audioplayers_darwin:
-    :path: ".symlinks/plugins/audioplayers_darwin/ios"
-  battery:
-    :path: ".symlinks/plugins/battery/ios"
   battery_plus:
     :path: ".symlinks/plugins/battery_plus/ios"
   connectivity_plus:
@@ -147,10 +125,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/device_info_plus/ios"
   Flutter:
     :path: Flutter
-  flutter_background_service_ios:
-    :path: ".symlinks/plugins/flutter_background_service_ios/ios"
-  flutter_ringtone_player:
-    :path: ".symlinks/plugins/flutter_ringtone_player/ios"
   flutter_statusbarcolor:
     :path: ".symlinks/plugins/flutter_statusbarcolor/ios"
   fluttertoast:
@@ -167,17 +141,11 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/shared_preferences_foundation/ios"
   vdotok_stream:
     :path: ".symlinks/plugins/vdotok_stream/ios"
-  vibration:
-    :path: ".symlinks/plugins/vibration/ios"
   wakelock:
     :path: ".symlinks/plugins/wakelock/ios"
-  wifi_info_flutter:
-    :path: ".symlinks/plugins/wifi_info_flutter/ios"
 
 SPEC CHECKSUMS:
   _NIODataStructures: 3d45d8e70a1d17a15b1dc59d102c63dbc0525ffd
-  audioplayers_darwin: 877d9a4d06331c5c374595e46e16453ac7eafa40
-  battery: 6b19dafdbba590f03b1f0cd2f1224e3ffedadbe6
   battery_plus: 7851ab482c336dd101ae735dc9363f01e1223c7c
   CNIOAtomics: 8edf08644e5e6fa0f021c239be9e8beb1cd9ef18
   CNIODarwin: 93850990d29f2626b05306c6c9309f9be0d74c2f
@@ -187,8 +155,6 @@ SPEC CHECKSUMS:
   device_info: d7d233b645a32c40dfdc212de5cf646ca482f175
   device_info_plus: e5c5da33f982a436e103237c0c85f9031142abed
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
-  flutter_background_service_ios: e30e0d3ee69e4cee66272d0c78eacd48c2e94aac
-  flutter_ringtone_player: 15eba85187230b87b2512f0e1b92225618bc03e7
   flutter_statusbarcolor: 8afb1071ed8c58be929f1e32b36c629771fd2259
   fluttertoast: eb263d302cc92e04176c053d2385237e9f43fad0
   Libyuv: 5f79ced0ee66e60a612ca97de1e6ccacd187a437
@@ -208,9 +174,7 @@ SPEC CHECKSUMS:
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
   vdotok_stream: 80373297324ed9af4297d5e2f8423a2f6ae9899e
   VdoTokStreaming: dc11eb208bca863e0e0f2de34e85c56de1a10fa0
-  vibration: 7d883d141656a1c1a6d8d238616b2042a51a1241
   wakelock: d0fc7c864128eac40eba1617cb5264d9c940b46f
-  wifi_info_flutter: 55d4c2469034f5b5c38063ccefa62f708a503a2b
 
 PODFILE CHECKSUM: c262cc4e3e433349ea49d449ecfccf331094f9f4
 

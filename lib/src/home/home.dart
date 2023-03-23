@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
+
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:move_to_background/move_to_background.dart';
 import 'package:vdotok_stream/vdotok_stream.dart';
@@ -19,11 +19,11 @@ import 'package:vdotok_stream_example/src/common/customAppBar.dart';
 import 'package:vdotok_stream_example/src/core/models/GroupModel.dart';
 import 'package:vdotok_stream_example/src/core/models/ParticipantsModel.dart';
 import 'package:vdotok_stream_example/src/core/providers/groupListProvider.dart';
-import 'package:vdotok_stream_example/src/home/WebScreen/webScreen.dart';
+
 import 'package:vdotok_stream_example/src/home/CreateGroupPopUp.dart';
-import 'package:vdotok_stream_example/src/home/responsiveWidget.dart';
+
 import 'package:provider/provider.dart';
-import 'package:vibration/vibration.dart';
+
 import 'package:wakelock/wakelock.dart';
 import 'dart:io' show File, Platform, sleep;
 import '../../constant.dart';
@@ -245,67 +245,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
      // signalingClient.register(_auth.getUser.toJson(), project_id);
     };
-    // signalingClient.internetConnectivityCallBack = (mesg) {
-    //   print("This is messg from internet call back $mesg");
-    //   if (mesg == "Connected") {
-    //     setState(() {
-    //       if (isConnectedtoCall == true) {
-    //         print("fdjhfjd");
-    //         iscallReConnected = true;
-    //       }
-    //       isConnected = true;
-    //     });
-    //     if(isResumed)
-    //   {   Fluttertoast.showToast(
-    //                     msg: "Connected to Internet.",
-    //                     toastLength: Toast.LENGTH_SHORT,
-    //                     gravity: ToastGravity.TOP_RIGHT,
-    //                     timeInSecForIosWeb: 1,
-    //                     backgroundColor: Colors.black,
-    //                     textColor: Colors.white,
-    //                     fontSize: 14.0);}
-      
-
-    //     if (sockett == false) {
-    //      signalingClient.connect(
-    //     project_id,
-    //     _auth.completeAddress,
-    //     _auth.getUser.authorization_token.toString(),
-    //     _auth.getUser.ref_id.toString());
-    //       errorcode = "";
-    //       print("I am in Re Reregister");
-
-    //       remoteVideoFlag = true;
-
-    //       print("here in init state register");
-
-
-    //     }
-
-    //     if (inCall == true) {
-    //       iscallReConnected = true;
-    //     }
-    //   } else {
-    //     print("onError no internet connection");
-
-    //     setState(() {
-    //       isConnected = false;
-
-    //       sockett = false;
-    //     });
-    //     if(isResumed)
-    //     { Fluttertoast.showToast(
-    //                     msg: "Waiting for Internet.",
-    //                     toastLength: Toast.LENGTH_SHORT,
-    //                     gravity: ToastGravity.TOP_RIGHT,
-    //                     timeInSecForIosWeb: 1,
-    //                     backgroundColor: Colors.black,
-    //                     textColor: Colors.white,
-    //                     fontSize: 14.0);}
-
-    //    // signalingClient.closeSocket();
-    //   }
-    // };
+  
       signalingClient.internetConnectivityCallBack = (mesg) {
       if (mesg == "Connected") {
            setState(() {
@@ -389,94 +329,15 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       }
     };
 
-    // signalingClient.onError = (code, res) async {
-    //   print("onError $code $res");
-    //   setState(() {
-    //     errorcode = code.toString();
-    //     sockett = false;
-    //     //  isInternetConnect = false;
-    //     isRegisteredAlready = false;
-    //   });
-    //   if (code == 1001 || code == 1002) {
-    //     print("fk9tt ${registerRes["mctoken"]}");
-
-    //     // setState(() {
-    //     //   sockett = false;
-
-    //     //   isRegisteredAlready = false;
-    //     // });
-    //     bool connectionFlag = await signalingClient.getInternetStatus();
-    //     if (connectionFlag) {
-    //      signalingClient.connect(
-    //     project_id,
-    //     _auth.completeAddress,
-    //     _auth.getUser.authorization_token.toString(),
-    //     _auth.getUser.ref_id.toString());
-    //     }
-    //   } else if (code == 401) {
-    //     print("here in 401");
-    //     setState(() {
-    //       sockett = false;
-    //       isRegisteredAlready = true;
-
-    //       snackBar = SnackBar(
-    //         content: Text('$res'),
-    //         duration: Duration(days: 365),
-    //       );
-    //       ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    //     });
-    //   } else {
-    //     if (_auth.loggedInStatus == Status.LoggedOut) {
-    //     } else {
-    //       setState(() {
-    //         sockett = false;
-    //         // isRegisteredAlready=false;
-    //       });
-    //       if (isResumed) {
-    //         bool connectionFlag =
-    //             await signalingClient.getInternetStatus();
-    //         if (connectionFlag && sockett == false) {
-    //           print(
-    //               "i am in connect in 1005 $connectionFlag ${isRegisteredAlready}");
-    //           signalingClient.connect(
-    //     project_id,
-    //     _auth.completeAddress,
-    //     _auth.getUser.authorization_token.toString(),
-    //     _auth.getUser.ref_id.toString());
-
-    //           // signalingClient.register(_auth.getUser.toJson(), project_id);
-
-    //           // sockett = true;
-    //         } else {
-    //           //  sockett = false;
-    //         }
-    //         //}
-    //       } else {}
-    //     }
-    //   }
-    // };
 
     signalingClient.onRegister = (res) {
       print("here in register $res");
       setState(() {
         registerRes = res;
       });
-      // if (noInternetCallHungUp == true) {
-      //   print('this issussus $noInternetCallHungUp');
-      //     //signalingClient.stopCall(registerRes["mcToken"]);
-      //   signalingClient.closeSession(true);
-      // }
+    
     };
-    // Map<String, dynamic> temp = {
-    //   "refID": _auth.getUser.ref_id,
-    //   "rtcVideoRenderer": new RTCVideoRenderer(),
-    //   "remoteVideoFlag": 1,
-    //   "remoteAudioFlag": 1
-    // };
-    // initRenderers(temp["rtcVideoRenderer"]);
-    // setState(() {
-    //   rendererListWithRefID.add(temp);
-    // });
+  
     signalingClient.onLocalStream = (stream) async {
       print("this is local streammmm");
       Map<String, dynamic> temp = {
@@ -546,12 +407,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           iscallAcceptedbyuser = true;
         }
       });
-      //temp["rtcVideoRenderer"].initialize().then((value) {
-
-      //    });
-      //await initRenderers(temp["rtcVideoRenderer"]);
-
-      // audioPlayer.stop();
+    
     };
 
  signalingClient.onCallDial=(){
@@ -563,17 +419,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     signalingClient.onReceiveCallFromUser = (res, isMultiSession) async {
       inCall = true;
       print("here in recerive call $res");
-      //   Map<String, dynamic> temp = {
-      //   "refID": _auth.getUser.ref_id,
-      //   "rtcVideoRenderer": new RTCVideoRenderer(),
-      //   "remoteVideoFlag":meidaType == MediaType.video ? 1 : 0,
-      //   "remoteAudioFlag": 1
-      // };
-      //  temp["rtcVideoRenderer"].initialize().then((value) {
-// rendererListWithRefID.add(temp);
-
+     
       Wakelock.toggle(enable: true);
-     // startRinging();
+     
 
       iscalloneto1 = res["call_type"] == "one_to_one" ? true : false;
       print("ugdghfghf ${res["data"]["groupName"]}");
@@ -599,7 +447,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         _callticker = Timer.periodic(Duration(seconds: 1), (_) => _callcheck());
       }
 
-      // });
+      
     };
     signalingClient.onTargetAlerting = () {
       setState(() {
@@ -639,7 +487,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     };
     signalingClient.onCallHungUpByUser = (isLocal) {
       print("this is on call hung by the user $_ticker $inCall $_callticker");
-      // audioPlayer.stop();
+    
       if (inPaused) {
         print("here in paused");
       }
@@ -649,7 +497,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           if (inInactive) {
             print("here in paused");
 
-            // signalingClient.closeSocket();
+           
           }
         }
       }
@@ -789,30 +637,17 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
       case AppLifecycleState.detached:
         print("app in detached");
-      //  signalingClient.stopCall(registerRes["mcToken"]);
-    //  setState(() {
-    //    isDetached=true;
-    //  });
-        //signalingClient.closeSocket();
+    
 
         break;
     }
 
-// super.didChangeAppLifecycleState(state);
-
-// _isInForeground = state == AppLifecycleState.resumed;
   }
 
   Future<void> disposeAllRenderer() async {
     print("here in before thennnnn");
     print("this is list before dispose ${rendererListWithRefID.length}");
-    // for(int i=0 ;i<rendererListWithRefID.length;i++){
-    //   rendererListWithRefID[i]["rtcVideoRenderer"].srcObject=null;
-    //   await rendererListWithRefID[i]["rtcVideoRenderer"].dispose();
-
-    // }
-    // rendererListWithRefID.clear();
-
+  
     for (int i = 0; i < rendererListWithRefID.length; i++) {
       if (i == 0) {
         print("indisposerenderer");
@@ -822,9 +657,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         await rendererListWithRefID[i]["rtcVideoRenderer"].dispose();
       }
     }
-    // if (rendererListWithRefID.length > 1) {
-    //   rendererListWithRefID.removeRange(1, (rendererListWithRefID.length));
-    // }
+  
     rendererListWithRefID.clear();
     print("this is list after dispose ${rendererListWithRefID.length}");
   }
@@ -843,38 +676,14 @@ print("this is deactivated of home");
  //  _valueNotifier.value = widget.value;
   }
   Future<void> listenSensor() async {
-    // FlutterError.onError = (FlutterErrorDetails details) {
-    //   FlutterError.dumpErrorToConsole(details);
-    // };
-    // _streamSubscription = ProximitySensor.events.listen((int event) {
-    //   print(event);
-    //   if (event > 0) {
-    //     Screen.keepOn(false);
-    //     Screen.keepOn(true);
-    //   } else {}
-    //   //   setState(() {
-    //   //     _isNear = (event > 0) ? true : false;
-    //   //      if(_isNear){
-    //   //   print("i am here is screen hand true $_isNear");
-    //   //   Screen.setBrightness(0);
-    //   //   Screen.keepOn(false);
-    //   // }
-    //   //   });
-    // });
+   
   }
 
   _startCall(
       GroupModel to, String mtype, String callType, String sessionType) async {
-//  Map<String, dynamic> temp = {
-//       "refID": _auth.getUser.ref_id,
-//       "rtcVideoRenderer": new RTCVideoRenderer(),
-//       "remoteVideoFlag":meidaType == MediaType.video ? 1 : 0,
-//       "remoteAudioFlag": 1
-//     };
-//      temp["rtcVideoRenderer"].initialize().then((value) {
 
     setState(() {
-      // rendererListWithRefID.add(temp);
+     
       inCall = true;
       switchMute = true;
       pressDuration = "";
@@ -962,43 +771,11 @@ print("this is deactivated of home");
     } else {}
   }
 
-  void callbackDispatcher() {
-    print('callbackDispatcher');
-    FlutterRingtonePlayer.play(
-      android: AndroidSounds.notification,
-      ios: IosSounds.glass,
-      looping: false,
-      // Android only - API >= 28
-      volume: 1,
-      // Android only - API >= 28
-      asAlarm: true, // Android only - all APIs
-    );
+  
 
-    // return Future.value(true);
-    //});
-  }
+  
 
-  // startRinging() async {
-  //   if (Platform.isAndroid) {
-  //     // if (await Vibration.hasVibrator()) {
-  //     Vibration.vibrate(pattern: vibrationList);
-
-  //     // }
-  //   }
-  //   FlutterRingtonePlayer.play(
-  //     android: AndroidSounds.ringtone,
-  //     ios: IosSounds.glass,
-  //     looping: true, // Android only - API >= 28
-  //     volume: 1.0, // Android only - API >= 28
-  //     asAlarm: false, // Android only - all APIs
-  //   );
-  // }
-
-  // stopRinging() {
-  //   vibrationList.clear();
-  //   Vibration.cancel();
-  //   FlutterRingtonePlayer.stop();
-  // }
+ 
 
   @override
   void dispose() {
