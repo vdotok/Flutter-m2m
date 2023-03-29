@@ -34,7 +34,7 @@ import '../core/providers/contact_provider.dart';
 
 
 SignalingClient signalingClient = SignalingClient.instance;
-//SignalingClient signalingClient = SignalingClient.instance;
+
 String callTo = "";
 bool switchMute = true;
 bool switchSpeaker = true;
