@@ -423,7 +423,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       Wakelock.toggle(enable: true);
      
 
-      iscalloneto1 = res["call_type"] == "one_to_one" ? true : false;
+      iscalloneto1 = res["callType"] == "one_to_one" ? true : false;
       print("ugdghfghf ${res["data"]["groupName"]}");
       setState(() {
         groupName = res["data"]["groupName"];
@@ -432,10 +432,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         upstream = 0;
         downstream = 0;
         incomingfrom = res["from"];
-        meidaType = res["media_type"];
+        meidaType = res["mediaType"];
         switchMute = true;
         enableCamera = true;
-        switchSpeaker = res["media_type"] == MediaType.audio ? true : false;
+        switchSpeaker = res["mediaType"] == MediaType.audio ? true : false;
         remoteVideoFlag = true;
         remoteAudioFlag = true;
       });
