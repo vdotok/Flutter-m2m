@@ -190,15 +190,8 @@ class _GroupListScreenState extends State<GroupListScreen> {
                                         icon:
                                             SvgPicture.asset('assets/call.svg'),
                                         onPressed: !widget.isdev
-                                            ? (!isRegisteredAlready)
-                                                ? () {
-                                                    // buildShowDialog(
-                                                    //     context,
-                                                    //     "No Internet Connection",
-                                                    //     "Make sure your device has internet.");
-                                                  }
-                                                : () {}
-                                            : isRegisteredAlready
+                                            ? () {}
+                                            : isPressed
                                                 ? () {}
                                                 : () {
                                                     groupName =
@@ -224,15 +217,8 @@ class _GroupListScreenState extends State<GroupListScreen> {
                                         icon: SvgPicture.asset(
                                             'assets/videocallicon.svg'),
                                         onPressed: !widget.isdev
-                                            ? (!isRegisteredAlready)
-                                                ? () {
-                                                    // buildShowDialog(
-                                                    //     context,
-                                                    //     "No Internet Connection",
-                                                    //     "Make sure your device has internet.");
-                                                  }
-                                                : () {}
-                                            : isRegisteredAlready
+                                            ? () {}
+                                            : isPressed
                                                 ? () {}
                                                 : () {
                                                     groupName =
@@ -469,11 +455,12 @@ class _GroupListScreenState extends State<GroupListScreen> {
                                     : Colors.red,
                               ),
                             ),
-                                errorcode!=""?
-                                 Container(
-                                  height:40,
-                          width: 40,
-                          child:Text('$errorcode')):Container()
+                            errorcode != ""
+                                ? Container(
+                                    height: 40,
+                                    width: 40,
+                                    child: Text('$errorcode'))
+                                : Container()
                           ]),
                     ),
                     Container(
@@ -484,7 +471,6 @@ class _GroupListScreenState extends State<GroupListScreen> {
           ),
         ),
       ),
-    
     );
   }
 }

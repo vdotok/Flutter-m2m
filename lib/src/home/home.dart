@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:move_to_background/move_to_background.dart';
 import 'package:vdotok_stream/vdotok_stream.dart';
@@ -32,15 +31,12 @@ import '../core/providers/auth.dart';
 import '../core/providers/call_provider.dart';
 import '../core/providers/contact_provider.dart';
 
-
 SignalingClient signalingClient = SignalingClient.instance;
-//SignalingClient signalingClient = SignalingClient.instance;
 String callTo = "";
 bool switchMute = true;
 bool switchSpeaker = true;
 bool enableCamera = true;
 bool isRinging = false;
-bool isDetached=false;
 List<Map<String, dynamic>> rendererListWithRefID = [];
 var snackBar;
 String errorcode = "";
@@ -50,7 +46,6 @@ DateTime? time;
 bool isConnected = true;
 bool isRegisteredAlready = false;
 bool isPressed = false;
-// AudioPlayer audioPlayer = AudioPlayer();
 GlobalKey forsmallView = new GlobalKey();
 
 class Home extends StatefulWidget {
@@ -61,22 +56,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> with WidgetsBindingObserver {
-//  List<double> _accelerometerValues;
-//   List<double> _userAccelerometerValues;
-//   List<double> _gyroscopeValues;
-//   bool _proximityValues = false;
-//   List<StreamSubscription<dynamic>> _streamSubscriptions = <StreamSubscription<dynamic>>[];
-
-  
-  
-    
-      
-  
   List<Contact> _selectedContacts = [];
   List<String> strArr = [];
-  bool isDeviceConnected = false;
-  bool isdev = true;
-
   Timer? _ticker;
   Timer? _callticker;
   String pressDuration = "";
@@ -86,50 +67,27 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   bool isPushed = false;
   bool iscallReConnected = false;
   bool isConnectedtoCall = false;
-  late double upstream;
   bool isResumed = true;
   bool inPaused = false;
-  bool iscallAcceptedbyuser = false;
   bool inInactive = false;
-
-  late double downstream;
-  void _updateTimer() {
-    var duration;
-    duration = DateTime.now().difference(time!);
-    final newDuration = _formatDuration(duration);
-    setState(() {
-      pressDuration = newDuration;
-    });
-  }
-
-  String _formatDuration(Duration duration) {
-    String twoDigits(int n) {
-      if (n >= 10) return "$n";
-      return "0$n";
-    }
-
-    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
-    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
-    String twoDigitHours = twoDigits(duration.inHours);
-    if (twoDigitHours == "00")
-      return "$twoDigitMinutes:$twoDigitSeconds";
-    else {
-      return "${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
-    }
-  }
-
+  String meidaType = MediaType.video;
+  bool remoteVideoFlag = true;
+  late Map<String, dynamic> customData;
+  bool remoteAudioFlag = true;
+  bool onRemoteStream = false;
+  late ContactProvider _contactProvider;
+  late GroupListProvider _groupListProvider;
+  final _groupNameController = TextEditingController();
+  List<ParticipantsModel?>? callingTo;
+  Map<String, dynamic> forLargStream = {};
   GlobalKey forlargView = new GlobalKey();
   GlobalKey forDialView = new GlobalKey();
   var registerRes;
   String? incomingfrom;
   late CallProvider _callProvider;
   late AuthProvider _auth;
-  bool secondRemoteVideo = false;
-
-  var number;
   final _searchController = new TextEditingController();
   bool sockett = true;
-  bool isSocketregis = false;
   List<int> vibrationList = [
     500,
     1000,
@@ -196,24 +154,32 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     500,
     1000
   ];
-  String meidaType = MediaType.video;
-  bool remoteVideoFlag = true;
-  late Map<String, dynamic> customData;
-  bool remoteAudioFlag = true;
-  bool onRemoteStream = false;
-  late ContactProvider _contactProvider;
-  late GroupListProvider _groupListProvider;
-  final _groupNameController = TextEditingController();
 
-  List<ParticipantsModel?>? callingTo;
-  Map<String, dynamic> forLargStream = {};
-  int count = 0;
+  void _updateTimer() {
+    var duration;
+    duration = DateTime.now().difference(time!);
+    final newDuration = _formatDuration(duration);
+    setState(() {
+      pressDuration = newDuration;
+    });
+  }
 
+  String _formatDuration(Duration duration) {
+    String twoDigits(int n) {
+      if (n >= 10) return "$n";
+      return "0$n";
+    }
 
-// @override
-// void didChangeWindowFocus(){
-//   super.didChangeWindowFocus();
-// }
+    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
+    String twoDigitHours = twoDigits(duration.inHours);
+    if (twoDigitHours == "00")
+      return "$twoDigitMinutes:$twoDigitSeconds";
+    else {
+      return "${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -243,12 +209,12 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         errorcode = "";
       }
 
-     // signalingClient.register(_auth.getUser.toJson(), project_id);
+      // signalingClient.register(_auth.getUser.toJson(), project_id);
     };
-  
-      signalingClient.internetConnectivityCallBack = (mesg) {
+
+    signalingClient.internetConnectivityCallBack = (mesg) {
       if (mesg == "Connected") {
-           setState(() {
+        setState(() {
           if (isConnectedtoCall == true) {
             print("fdjhfjd");
             iscallReConnected = true;
@@ -265,7 +231,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             textColor: Colors.white,
             fontSize: 14.0);
         // }
-      
+
         if (sockett == false) {
           // signalingClient.connect(
           //     _auth.projectId,
@@ -300,7 +266,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     signalingClient.onMissedCall = (mesg) {
       print("here in onmissedcall");
     };
-       signalingClient.onError = (code, reason) async {
+    signalingClient.onError = (code, reason) async {
       print("this is socket error $code $reason");
       if (!mounted) {
         return;
@@ -329,15 +295,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       }
     };
 
-
     signalingClient.onRegister = (res) {
       print("here in register $res");
       setState(() {
         registerRes = res;
       });
-    
     };
-  
+
     signalingClient.onLocalStream = (stream) async {
       print("this is local streammmm");
       Map<String, dynamic> temp = {
@@ -348,26 +312,25 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       };
       await initRenderers(temp["rtcVideoRenderer"]).then((value) {
         setState(() {
-         if(rendererListWithRefID.isEmpty)
-        {  rendererListWithRefID.add(temp);
-          rendererListWithRefID[0]["rtcVideoRenderer"].srcObject = stream;}
-          else{
+          if (rendererListWithRefID.isEmpty) {
+            rendererListWithRefID.add(temp);
+            rendererListWithRefID[0]["rtcVideoRenderer"].srcObject = stream;
+          } else {
             print("9e472894y74");
           }
         });
       });
     };
 
-
     signalingClient.onRemoteStream = (stream, refid) async {
-
-       if (noInternetCallHungUp == true) {
+      if (noInternetCallHungUp == true) {
         print('this issussus $noInternetCallHungUp');
-          signalingClient.stopCall(registerRes["mcToken"]);
-          return;
+        signalingClient.stopCall(registerRes["mcToken"]);
+        return;
         //signalingClient.closeSession(true);
       }
-      print("HI1 i am here in remote stream ${rendererListWithRefID.length} $refid $stream ${stream.id} ");
+      print(
+          "HI1 i am here in remote stream ${rendererListWithRefID.length} $refid $stream ${stream.id} ");
       Map<String, dynamic> temp = {
         "refID": refid,
         "rtcVideoRenderer": new RTCVideoRenderer(),
@@ -389,13 +352,14 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             time = _callTime;
             iscallReConnected = false;
           }
-          _updateTimer();
-          _ticker = Timer.periodic(Duration(seconds: 1), (_) => _updateTimer());
+
           rendererListWithRefID.add(temp);
           isConnectedtoCall = true;
           forLargStream = temp;
           onRemoteStream = true;
         });
+        _updateTimer();
+        _ticker = Timer.periodic(Duration(seconds: 1), (_) => _updateTimer());
         if (forLargStream.isEmpty) {
           setState(() {
             forLargStream = temp;
@@ -403,25 +367,19 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         }
         if (_callticker != null) {
           _callticker!.cancel();
-          count = 0;
-          iscallAcceptedbyuser = true;
         }
       });
-    
     };
 
- signalingClient.onCallDial=(){
-     // if(ispublicbroadcast==false){
-        _callProvider.callDial();
-      
-
+    signalingClient.onCallDial = () {
+      // if(ispublicbroadcast==false){
+      _callProvider.callDial();
     };
     signalingClient.onReceiveCallFromUser = (res, isMultiSession) async {
       inCall = true;
       print("here in recerive call $res");
-     
+
       Wakelock.toggle(enable: true);
-     
 
       iscalloneto1 = res["callType"] == "one_to_one" ? true : false;
       print("ugdghfghf ${res["data"]["groupName"]}");
@@ -429,8 +387,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         groupName = res["data"]["groupName"];
         onRemoteStream = false;
         pressDuration = "";
-        upstream = 0;
-        downstream = 0;
         incomingfrom = res["from"];
         meidaType = res["mediaType"];
         switchMute = true;
@@ -442,12 +398,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       _callProvider.callReceive();
       if (_callticker != null) {
         _callticker!.cancel();
-        _callticker = Timer.periodic(Duration(seconds: 1), (_) => _callcheck());
+        _callticker = Timer.periodic(Duration(seconds: 30), (_) => _callcheck());
       } else {
-        _callticker = Timer.periodic(Duration(seconds: 1), (_) => _callcheck());
+        _callticker = Timer.periodic(Duration(seconds: 30), (_) => _callcheck());
       }
-
-      
     };
     signalingClient.onTargetAlerting = () {
       setState(() {
@@ -474,7 +428,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     };
     signalingClient.onCallAcceptedByUser = () async {
       inCall = true;
-      iscallAcceptedbyuser = true;
 
       _callProvider.callStart();
     };
@@ -487,7 +440,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     };
     signalingClient.onCallHungUpByUser = (isLocal) {
       print("this is on call hung by the user $_ticker $inCall $_callticker");
-    
+
       if (inPaused) {
         print("here in paused");
       }
@@ -496,8 +449,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         if (Platform.isIOS) {
           if (inInactive) {
             print("here in paused");
-
-           
           }
         }
       }
@@ -511,13 +462,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         inCall = false;
         iscallReConnected = false;
         isRinging = false;
-        noInternetCallHungUp=false;
+        noInternetCallHungUp = false;
         callTo = "";
         pressDuration = "";
-        iscallAcceptedbyuser = false;
-        count = 0;
-        upstream = 0;
-        downstream = 0;
         isConnectedtoCall = false;
 
         isRinging = false;
@@ -534,7 +481,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         print("this is error on disposing $onError");
       });
 
-    //  stopRinging();
+      //  stopRinging();
     };
     signalingClient.onCallBusyCallback = () {
       Wakelock.toggle(enable: false);
@@ -558,7 +505,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   showSnackbar(text, Color color, Color backgroundColor, bool check) {
     print("Hi!!! i am here in snackbar $check");
 // if(isResumed)
-//    { 
+//    {
     if (check == false) {
       rootScaffoldMessengerKey!.currentState!
         ..hideCurrentSnackBar()
@@ -580,12 +527,12 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           backgroundColor: backgroundColor,
           duration: Duration(days: 365),
         ));
-   // }
+      // }
     }
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state)async {
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
     print("this is changeapplifecyclestate $state");
 
     switch (state) {
@@ -595,8 +542,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         isResumed = true;
         inInactive = false;
         inPaused = false;
-
-       
 
         break;
 
@@ -637,58 +582,51 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
       case AppLifecycleState.detached:
         print("app in detached");
-    
 
         break;
     }
-
   }
 
   Future<void> disposeAllRenderer() async {
     print("here in before thennnnn");
     print("this is list before dispose ${rendererListWithRefID.length}");
-  
+
     for (int i = 0; i < rendererListWithRefID.length; i++) {
-      if (i == 0) {
-        print("indisposerenderer");
-        rendererListWithRefID[i]["rtcVideoRenderer"].srcObject = null;
-      } else {
-        print("this is disposessss");
+      // if (i == 0) {
+      //   print("indisposerenderer");
+         rendererListWithRefID[i]["rtcVideoRenderer"].srcObject = null;
+      // // } else {
+      //   print("this is disposessss");
         await rendererListWithRefID[i]["rtcVideoRenderer"].dispose();
-      }
+     // }
     }
-  
+
     rendererListWithRefID.clear();
     print("this is list after dispose ${rendererListWithRefID.length}");
   }
 
-@override 
-void deactivate(){
-super.deactivate();
-print("this is deactivated of home");
+  @override
+  void deactivate() {
+    super.deactivate();
+    print("this is deactivated of home");
+  }
 
-}
-@override
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     print("this is didchange depenedencidessss");
     // The previous oldWidget.value != newWidget.value is done by ValueNotifier itself
- //  _valueNotifier.value = widget.value;
+    //  _valueNotifier.value = widget.value;
   }
-  Future<void> listenSensor() async {
-   
-  }
+
+  Future<void> listenSensor() async {}
 
   _startCall(
       GroupModel to, String mtype, String callType, String sessionType) async {
-
     setState(() {
-     
       inCall = true;
       switchMute = true;
       pressDuration = "";
-      upstream = 0;
-      downstream = 0;
       enableCamera = true;
       onRemoteStream = false;
       switchSpeaker = mtype == MediaType.audio ? true : false;
@@ -711,13 +649,11 @@ print("this is deactivated of home");
     });
     if (_callticker != null) {
       _callticker!.cancel();
-      _callticker = Timer.periodic(Duration(seconds: 1), (_) => _callcheck());
+      _callticker = Timer.periodic(Duration(seconds: 30), (_) => _callcheck());
     } else {
-      _callticker = Timer.periodic(Duration(seconds: 1), (_) => _callcheck());
+      _callticker = Timer.periodic(Duration(seconds: 30), (_) => _callcheck());
     }
-    // _callticker = Timer.periodic(Duration(seconds: 1), (_) => _callcheck());
-    // count=count+1;
-    //  print("i am here in start call timerrrrr $count.....$iscallAcceptedbyuser");
+
     callingTo = to.participants;
     callingTo!
         .removeWhere((element) => element!.ref_id == _auth.getUser.ref_id);
@@ -737,7 +673,7 @@ print("this is deactivated of home");
         meidaType: mtype,
         callType: callType,
         sessionType: sessionType);
-   // _callProvider.callDial();
+    // _callProvider.callDial();
 
     //   });
   }
@@ -748,34 +684,8 @@ print("this is deactivated of home");
   }
 
   _callcheck() {
-    print("i am here in call chck  function $count $iscallAcceptedbyuser");
-    count = count + 1;
-    if (count == 30 && iscallAcceptedbyuser == false) {
-      print("I am here in stopcall if");
-      _callticker!.cancel();
-      count = 0;
-      // signalingClient.onCancelbytheCaller(registerRes["mcToken"]);
-      signalingClient.stopCall(registerRes["mcToken"]);
-      _callProvider.initial();
-      iscallAcceptedbyuser = false;
-    } else if (count == 30 && iscallAcceptedbyuser == true) {
-      _callticker!.cancel();
-      count = 0;
-      print("I am here in stopcall call accept true");
-      iscallAcceptedbyuser = false;
-    } else if (iscallAcceptedbyuser == true) {
-      _callticker!.cancel();
-      print("I am here in emptyyyyyyyyyy stopcall call accept true");
-      count = 0;
-      iscallAcceptedbyuser = false;
-    } else {}
+    signalingClient.stopCall(registerRes["mcToken"]);
   }
-
-  
-
-  
-
- 
 
   @override
   void dispose() {
@@ -789,7 +699,7 @@ print("this is deactivated of home");
 
   Future<Null> refreshList() async {
     print("this is in refresh list $isConnected....$sockett");
-    
+
     renderList();
     return;
   }
@@ -817,28 +727,27 @@ print("this is deactivated of home");
     return false;
   }
 
-  renderList()async {
-    if (_groupListProvider.groupListStatus == ListStatus.Scussess)
-   {   _groupListProvider.getGroupList(_auth.getUser.auth_token);}
-    else {
+  renderList() async {
+    if (_groupListProvider.groupListStatus == ListStatus.Scussess) {
+      _groupListProvider.getGroupList(_auth.getUser.auth_token);
+    } else {
       _contactProvider.getContacts(_auth.getUser.auth_token);
       _selectedContacts.clear();
     }
-      bool connectionFlag = await signalingClient.getInternetStatus();
-      print("this is connectionflag $connectionFlag $sockett");
+    bool connectionFlag = await signalingClient.getInternetStatus();
+    print("this is connectionflag $connectionFlag $sockett");
     if (sockett == false && connectionFlag) {
       print("i am in refresh list connection");
 
       signalingClient.connect(
-        project_id,
-        _auth.completeAddress,
-        _auth.getUser.authorization_token.toString(),
-        _auth.getUser.ref_id.toString());
+          project_id,
+          _auth.completeAddress,
+          _auth.getUser.authorization_token.toString(),
+          _auth.getUser.ref_id.toString());
 
 //signalingClient.register(_auth.getUser.toJson(), project_id);
 
 // sockett = true;
-
     }
   }
 
@@ -985,10 +894,8 @@ print("this is deactivated of home");
       statusBarBrightness: Brightness.light, //status bar brigtness
       statusBarIconBrightness: Brightness.dark, //status barIcon Brightness
     ));
-  
-    return
-      
-        Consumer<CallProvider>(
+
+    return Consumer<CallProvider>(
       builder: (context, callProvider, child) {
         print("callstatusss ${callProvider.callStatus}");
         if (callProvider.callStatus == CallStatus.CallReceive)
@@ -1001,7 +908,7 @@ print("this is deactivated of home");
             registerRes: registerRes,
             rendererListWithRefid: rendererListWithRefID,
             mediatype: meidaType,
-           // stopRinging: stopRinging,
+            // stopRinging: stopRinging,
           );
         if (callProvider.callStatus == CallStatus.CallStart) {
           return CallSttartScreen(
@@ -1138,4 +1045,3 @@ print("this is deactivated of home");
     );
   }
 }
-
