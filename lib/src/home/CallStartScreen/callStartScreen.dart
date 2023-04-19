@@ -831,7 +831,7 @@ class _CallSttartScreenState extends State<CallSttartScreen> {
                               noInternetCallHungUp = true;
                             });
 
-                            widget.callprovider.initial();
+                           // widget.callprovider.initial();
                           } else {
                             widget.stopcall();
                           }

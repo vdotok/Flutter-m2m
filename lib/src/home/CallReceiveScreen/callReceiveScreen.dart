@@ -141,7 +141,7 @@ class _CallReceiveScreenState extends State<CallReceiveScreen> {
                       widget.authprovider.getUser.ref_id,
                       widget.registerRes["mcToken"]);
 
-                  widget.callprovider.initial();
+                 // widget.callprovider.initial();
                 },
               ),
               SizedBox(width: 64),

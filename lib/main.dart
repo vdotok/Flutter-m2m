@@ -1,12 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:vdotok_stream/vdotok_stream.dart';
-import 'package:vdotok_stream_example/src/core/models/GroupListModel.dart';
 import 'package:vdotok_stream_example/src/core/providers/call_provider.dart';
 import 'package:vdotok_stream_example/src/core/providers/contact_provider.dart';
 import 'package:vdotok_stream_example/src/core/providers/groupListProvider.dart';
-import 'src/core/config/config.dart';
-import 'src/core/models/GroupModel.dart';
 import 'src/core/providers/auth.dart';
 import 'src/home/homeIndex.dart';
 import 'src/login/SignInScreen.dart';
@@ -84,56 +80,7 @@ print("this is deactivated of main");
                 ColorScheme.fromSwatch().copyWith(secondary: primaryColor)),
         onGenerateRoute: Routers.generateRoute,
         home: 
-        // GestureDetector(
-        //      onTap: () {
-        //   setState(() {
-        //     _desc = 'tap';
-        //     print("$_desc");
-        //   });
-        // },
-        // onDoubleTap: () {
-        //   setState(() {
-        //     _desc = 'double tap';
-        //      print("$_desc");
-        //   });
-        // },
-        // onVerticalDragStart: (DragStartDetails details) {
-        //   setState(() {
-        //     _desc = 'drag start';
-        //      print("$_desc");
-        //   });
-        // },
-        // onVerticalDragUpdate: (DragUpdateDetails details) {
-        //   setState(() {
-        //     _desc = 'drag update';
-        //      print("$_desc");
-        //   });
-        // },
-        // onVerticalDragEnd: (DragEndDetails details) {
-        //   setState(() {
-        //     _desc = 'drag end';
-        //      print("$_desc");
-        //   });
-        // },
-        // onHorizontalDragStart: (DragStartDetails details) {
-        //   setState(() {
-        //     _desc = 'drag start';
-        //      print("$_desc");
-        //   });
-        // },
-        // onHorizontalDragUpdate: (DragUpdateDetails details) {
-        //   setState(() {
-        //     _desc = 'drag update';
-        //      print("$_desc");
-        //   });
-        // },
-        // onHorizontalDragEnd: (DragEndDetails details) {
-        //   setState(() {
-        //     _desc = 'drag end';
-        //      print("$_desc");
-        //   });
-        // },
-        //   child: 
+       
           Consumer<AuthProvider>(
             builder: (context, auth, child) {
               if (auth.loggedInStatus == Status.Authenticating)

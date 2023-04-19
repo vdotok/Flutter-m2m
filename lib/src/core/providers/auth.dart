@@ -41,6 +41,9 @@ class AuthProvider with ChangeNotifier {
   late String _completeAddress;
   String get completeAddress => _completeAddress;
 
+  String? _deviceId;
+  String? get deviceId => _deviceId;
+
   Future<bool> register(String email, username, password) async {
     _registeredInStatus = Status.Loading;
     notifyListeners();
@@ -88,9 +91,12 @@ class AuthProvider with ChangeNotifier {
       notifyListeners();
       return false;
     } else {
+       final now = DateTime.now();
+      _deviceId = now.microsecondsSinceEpoch.toString();
       _completeAddress = response['media_server_map']['complete_address'];
       SharedPref sharedPref = SharedPref();
       sharedPref.save("authUser", response);
+      sharedPref.save("deviceId", deviceId);
       _registeredInStatus = Status.Registered;
       _loggedInStatus = Status.LoggedIn;
       _user = User.fromJson(response);
@@ -115,10 +121,13 @@ class AuthProvider with ChangeNotifier {
       _loginErrorMsg = response['message'];
       notifyListeners();
     } else {
+       final now = DateTime.now();
+      _deviceId = now.microsecondsSinceEpoch.toString();
       _completeAddress = response['media_server_map']['complete_address'];
       print("this is complete address ${_completeAddress}");
       SharedPref sharedPref = SharedPref();
       sharedPref.save("authUser", response);
+      sharedPref.save("deviceId", deviceId);
       _loggedInStatus = Status.LoggedIn;
       _user = User.fromJson(response);
       notifyListeners();
@@ -128,6 +137,7 @@ class AuthProvider with ChangeNotifier {
   logout() {
     SharedPref sharedPref = SharedPref();
     sharedPref.remove("authUser");
+     sharedPref.remove("deviceId");
     _loggedInStatus = Status.LoggedOut;
     // _user = /;
     notifyListeners();
@@ -232,7 +242,7 @@ class AuthProvider with ChangeNotifier {
       _loggedInStatus = Status.LoggedIn;
       _completeAddress =
           jsonDecode(authUser)['media_server_map']['complete_address'];
-
+  _deviceId = deviceId;
       _user = User.fromJson(jsonDecode(authUser));
       notifyListeners();
     }
