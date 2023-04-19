@@ -194,7 +194,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     // InternetConnectivity();
 
     print("i AM here in home init");
-    signalingClient.connect(
+    signalingClient.connect( _auth.deviceId,
         project_id,
         _auth.completeAddress,
         _auth.getUser.authorization_token.toString(),
@@ -592,13 +592,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     print("this is list before dispose ${rendererListWithRefID.length}");
 
     for (int i = 0; i < rendererListWithRefID.length; i++) {
-      // if (i == 0) {
-      //   print("indisposerenderer");
+      if (i == 0) {
+        print("indisposerenderer");
          rendererListWithRefID[i]["rtcVideoRenderer"].srcObject = null;
-      // // } else {
-      //   print("this is disposessss");
+      } else {
+        print("this is disposessss");
         await rendererListWithRefID[i]["rtcVideoRenderer"].dispose();
-     // }
+     }
     }
 
     rendererListWithRefID.clear();
@@ -670,7 +670,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         from: _auth.getUser.ref_id,
         to: groupRefIDS,
         mcToken: registerRes["mcToken"],
-        meidaType: mtype,
+        mediaType: mtype,
         callType: callType,
         sessionType: sessionType);
     // _callProvider.callDial();
@@ -740,6 +740,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       print("i am in refresh list connection");
 
       signalingClient.connect(
+         _auth.deviceId,
           project_id,
           _auth.completeAddress,
           _auth.getUser.authorization_token.toString(),
