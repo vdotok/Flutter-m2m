@@ -88,6 +88,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   late AuthProvider _auth;
   final _searchController = new TextEditingController();
   bool sockett = true;
+  bool iscallAcceptedbyuser = false;
   List<int> vibrationList = [
     500,
     1000,
@@ -279,7 +280,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       } else {
         bool status = await signalingClient.getInternetStatus();
 
-        print("this is internet status $status");
+        print("this is internet status $status"); 
 
         if (sockett == false && status == true) {
           print("here in onerrorrrrrr ");
@@ -367,6 +368,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         }
         if (_callticker != null) {
           _callticker!.cancel();
+          iscallAcceptedbyuser = true;
         }
       });
     };
@@ -427,9 +429,12 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       _auth.logout();
     };
     signalingClient.onCallAcceptedByUser = () async {
-      inCall = true;
-
+      setState(() {
+        inCall = true;
+         iscallAcceptedbyuser = true;
+      });
       _callProvider.callStart();
+       
     };
     signalingClient.insufficientBalance = (res) {
       print("here in insufficient balance");
@@ -466,7 +471,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         callTo = "";
         pressDuration = "";
         isConnectedtoCall = false;
-
+  iscallAcceptedbyuser = false;
         isRinging = false;
         if (_ticker != null) {
           _ticker!.cancel();
@@ -684,7 +689,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   }
 
   _callcheck() {
-    signalingClient.stopCall(registerRes["mcToken"]);
+    if(iscallAcceptedbyuser==false)
+{    signalingClient.stopCall(registerRes["mcToken"]);}
   }
 
   @override
