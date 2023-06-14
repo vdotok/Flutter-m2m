@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:move_to_background/move_to_background.dart';
@@ -195,7 +196,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     // InternetConnectivity();
 
     print("i AM here in home init");
-    signalingClient.connect( _auth.deviceId,
+    signalingClient.connect(
+        _auth.deviceId,
         project_id,
         _auth.completeAddress,
         _auth.getUser.authorization_token.toString(),
@@ -259,7 +261,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             textColor: Colors.white,
             fontSize: 14.0);
         // }
-        signalingClient.closeSocket();
+        //  signalingClient.closeSocket();
 
         print("uyututuir");
       }
@@ -280,7 +282,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       } else {
         bool status = await signalingClient.getInternetStatus();
 
-        print("this is internet status $status"); 
+        print("this is internet status $status");
 
         if (sockett == false && status == true) {
           print("here in onerrorrrrrr ");
@@ -400,10 +402,16 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       _callProvider.callReceive();
       if (_callticker != null) {
         _callticker!.cancel();
-        _callticker = Timer.periodic(Duration(seconds: 30), (_) => _callcheck());
+        _callticker =
+            Timer.periodic(Duration(seconds: 30), (_) => _callcheck());
       } else {
-        _callticker = Timer.periodic(Duration(seconds: 30), (_) => _callcheck());
+        _callticker =
+            Timer.periodic(Duration(seconds: 30), (_) => _callcheck());
       }
+      FlutterRingtonePlayer.play(  
+ fromAsset: "assets/ringtone.wav", // will be the sound on Android
+ ios: IosSounds.glass 			   // will be the sound on iOS
+ );  
     };
     signalingClient.onTargetAlerting = () {
       setState(() {
@@ -431,10 +439,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     signalingClient.onCallAcceptedByUser = () async {
       setState(() {
         inCall = true;
-         iscallAcceptedbyuser = true;
+        iscallAcceptedbyuser = true;
       });
       _callProvider.callStart();
-       
     };
     signalingClient.insufficientBalance = (res) {
       print("here in insufficient balance");
@@ -471,14 +478,16 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         callTo = "";
         pressDuration = "";
         isConnectedtoCall = false;
-  iscallAcceptedbyuser = false;
+        iscallAcceptedbyuser = false;
         isRinging = false;
         if (_ticker != null) {
           _ticker!.cancel();
         }
       });
 
-      disposeAllRenderer().then((value) {
+      disposeAllRenderer()
+
+      .then((value) {
         print("here in before then");
         _callProvider.initial();
         print("callprovider initial");
@@ -490,7 +499,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     };
     signalingClient.onCallBusyCallback = () {
       Wakelock.toggle(enable: false);
+     // print("ism2mmm $isM2M");
+    //  if(isM2M==false) {
       _callProvider.initial();
+     // }
       snackBar = SnackBar(content: Text('User is busy with another call.'));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
       setState(() {});
@@ -593,17 +605,11 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   }
 
   Future<void> disposeAllRenderer() async {
-    print("here in before thennnnn");
-    print("this is list before dispose ${rendererListWithRefID.length}");
-
     for (int i = 0; i < rendererListWithRefID.length; i++) {
-      if (i == 0) {
-        print("indisposerenderer");
-         rendererListWithRefID[i]["rtcVideoRenderer"].srcObject = null;
-      } else {
-        print("this is disposessss");
-        await rendererListWithRefID[i]["rtcVideoRenderer"].dispose();
-     }
+      print("indisposerenderer");
+    
+      await rendererListWithRefID[i]["rtcVideoRenderer"].dispose();
+     // rendererListWithRefID[i]["rtcVideoRenderer"] = null;
     }
 
     rendererListWithRefID.clear();
@@ -689,8 +695,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   }
 
   _callcheck() {
-    if(iscallAcceptedbyuser==false)
-{    signalingClient.stopCall(registerRes["mcToken"]);}
+    if (iscallAcceptedbyuser == false) {
+      signalingClient.stopCall(registerRes["mcToken"]);
+    }
   }
 
   @override
@@ -746,7 +753,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       print("i am in refresh list connection");
 
       signalingClient.connect(
-         _auth.deviceId,
+          _auth.deviceId,
           project_id,
           _auth.completeAddress,
           _auth.getUser.authorization_token.toString(),

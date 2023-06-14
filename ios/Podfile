@@ -33,12 +33,8 @@ target 'Runner' do
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
-# target 'ScreenShare' do
-#   use_frameworks!
-#   pod 'MMWormhole'
-#   pod 'VdoTokStreaming'
-#  #pod 'VdoTokStreaming', :git => 'https://github.com/vdotok/VdoTokStreaming.git'
-# end
+
+#pod 'VdoTokStreaming', :git => 'https://github.com/vdotok/VdoTokStreaming.git'
 
 post_install do |installer|
   installer.pods_project.targets.each do |target|

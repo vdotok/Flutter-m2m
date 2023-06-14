@@ -36,6 +36,7 @@ dependencies:
   move_to_background: ^1.0.2
   draggable_widget: ^2.0.0
   fluttertoast: ^8.1.1
+  flutter_ringtone_player: ^3.2.0
 
 
 dev_dependencies:
