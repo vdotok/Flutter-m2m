@@ -630,53 +630,24 @@ class _CallSttartScreenState extends State<CallSttartScreen> {
                           children: [
                             Container(
                               // padding: EdgeInsets.only(top: 85, left: 50),
-                              child: Text(
-                                '${groupName}',
-                                //'${widget.groupListprovider.groupList.groups[widget.contactProvider.contactList.users.length].group_title}',
-                                style: TextStyle(
-                                    fontSize: 24,
-                                    decoration: TextDecoration.none,
-                                    fontFamily: primaryFontFamily,
-                                    fontWeight: FontWeight.w700,
-                                    fontStyle: FontStyle.normal,
-                                    color: darkBlackColor),
+                              child: Expanded(
+                               
+                                child: FittedBox(
+                                  child: Text(
+                                    '$groupName',
+                                    //'${widget.groupListprovider.groupList.groups[widget.contactProvider.contactList.users.length].group_title}',
+                                    style: TextStyle(
+                                        fontSize: 24,
+                                        decoration: TextDecoration.none,
+                                        fontFamily: primaryFontFamily,
+                                        fontWeight: FontWeight.w700,
+                                        fontStyle: FontStyle.normal,
+                                        color: darkBlackColor),
+                                  ),
+                                ),
                               ),
                             ),
-                            // (widget.callto == "")
-                            //     ? Consumer<ContactProvider>(
-                            //         builder: (context, contact, child) {
-                            //         if (contact.contactState ==
-                            //             ContactStates.Success) {
-                            //           int index = contact.contactList.users
-                            //               .indexWhere((element) =>
-                            //                   element.ref_id == widget.incomingfrom);
-                            //           print("i am here------- $index");
-                            //           return Text(
-                            //             //"${widget.incomingfrom}",
-                            //            contact.contactList.users[index].full_name,
-                            //             style: TextStyle(
-                            //                 fontFamily: primaryFontFamily,
-                            //                 color: darkBlackColor,
-                            //                 decoration: TextDecoration.none,
-                            //                 fontWeight: FontWeight.w700,
-                            //                 fontStyle: FontStyle.normal,
-                            //                 fontSize: 24),
-                            //           );
-                            //         } else {
-                            //           return Container();
-                            //         }
-                            //       })
-                            //     : Text(
-                            //         widget.callto,
-                            //         style: TextStyle(
-                            //             fontFamily: primaryFontFamily,
-                            //             // background: Paint()..color = yellowColor,
-                            //             color: darkBlackColor,
-                            //             decoration: TextDecoration.none,
-                            //             fontWeight: FontWeight.w700,
-                            //             fontStyle: FontStyle.normal,
-                            //             fontSize: 24),
-                            //       ),
+                       SizedBox(width:20),
 
                             Text(
                               widget.pressduration,
@@ -697,6 +668,7 @@ class _CallSttartScreenState extends State<CallSttartScreen> {
                 !kIsWeb
                     ? widget.mediatype == MediaType.video
                         ? Container(
+                         // height: MediaQuery.of(context).size.height,
                             // color: Colors.red,
                             child: Align(
                             alignment: Alignment.topRight,

@@ -408,10 +408,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         _callticker =
             Timer.periodic(Duration(seconds: 30), (_) => _callcheck());
       }
-      FlutterRingtonePlayer.play(  
- fromAsset: "assets/ringtone.wav", // will be the sound on Android
- ios: IosSounds.glass 			   // will be the sound on iOS
- );  
+  
     };
     signalingClient.onTargetAlerting = () {
       setState(() {
