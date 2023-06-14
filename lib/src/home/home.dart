@@ -300,6 +300,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
     signalingClient.onRegister = (res) {
       print("here in register $res");
+      if (!mounted) {
+        return;
+      }
       setState(() {
         registerRes = res;
       });
@@ -1006,6 +1009,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                       else {
                         strArr.add("ContactList");
                         return ContactListScreen(
+                          auth:_auth,
                             refreshcontactList: refreshList,
                             searchController: _searchController,
                             selectedContact: _selectedContacts,

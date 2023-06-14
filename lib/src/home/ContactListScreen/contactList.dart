@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vdotok_stream_example/constant.dart';
 import 'package:vdotok_stream_example/src/core/models/contact.dart';
+import 'package:vdotok_stream_example/src/core/providers/auth.dart';
 import 'package:vdotok_stream_example/src/core/providers/contact_provider.dart';
 
 class ContactListScreen extends StatefulWidget {
@@ -10,12 +11,14 @@ class ContactListScreen extends StatefulWidget {
   final searchController;
   final isConnect;
   final refreshcontactList;
+  final AuthProvider auth;
   ContactListScreen(
       {required this.state,
       required this.selectedContact,
       this.searchController,
       this.refreshcontactList,
-      this.isConnect});
+      this.isConnect,
+      required this.auth});
   @override
   _ContactListScreenState createState() => _ContactListScreenState();
 }
@@ -53,6 +56,13 @@ class _ContactListScreenState extends State<ContactListScreen> {
         )),
       );
     else
+    {
+      var userIndex = widget.state.contactList.users!.indexWhere((element) => element!.ref_id == widget.auth.getUser.ref_id);
+    print("This is the userindex $userIndex");
+    if (userIndex != -1) {
+      widget.state.contactList.users!.removeAt(userIndex);
+    }
+    
       return Scaffold(
         body: RefreshIndicator(
           onRefresh: widget.refreshcontactList,
@@ -198,5 +208,6 @@ class _ContactListScreenState extends State<ContactListScreen> {
           ),
         ),
       );
+    }
   }
 }
