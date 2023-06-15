@@ -630,21 +630,16 @@ class _CallSttartScreenState extends State<CallSttartScreen> {
                           children: [
                             Container(
                               // padding: EdgeInsets.only(top: 85, left: 50),
-                              child: Expanded(
-                               
-                                child: FittedBox(
-                                  child: Text(
-                                    '$groupName',
-                                    //'${widget.groupListprovider.groupList.groups[widget.contactProvider.contactList.users.length].group_title}',
-                                    style: TextStyle(
-                                        fontSize: 24,
-                                        decoration: TextDecoration.none,
-                                        fontFamily: primaryFontFamily,
-                                        fontWeight: FontWeight.w700,
-                                        fontStyle: FontStyle.normal,
-                                        color: darkBlackColor),
-                                  ),
-                                ),
+                              child: Text(
+                                '$groupName',
+                                //'${widget.groupListprovider.groupList.groups[widget.contactProvider.contactList.users.length].group_title}',
+                                style: TextStyle(
+                                    fontSize: 24,
+                                    decoration: TextDecoration.none,
+                                    fontFamily: primaryFontFamily,
+                                    fontWeight: FontWeight.w700,
+                                    fontStyle: FontStyle.normal,
+                                    color: darkBlackColor),
                               ),
                             ),
                        SizedBox(width:20),
