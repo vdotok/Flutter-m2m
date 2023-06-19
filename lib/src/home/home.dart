@@ -28,6 +28,7 @@ import 'package:wakelock/wakelock.dart';
 import 'dart:io' show File, Platform, sleep;
 import '../../constant.dart';
 import '../../main.dart';
+import '../../qrocde/qrcode.dart';
 import '../core/providers/auth.dart';
 import '../core/providers/call_provider.dart';
 import '../core/providers/contact_provider.dart';
@@ -193,12 +194,14 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     _callProvider = Provider.of<CallProvider>(context, listen: false);
     _contactProvider.getContacts(_auth.getUser.auth_token);
     _groupListProvider.getGroupList(_auth.getUser.auth_token);
+    project_id = _auth.projectId;
+    tenant_api_url = _auth.tenantUrl;
     // InternetConnectivity();
 
     print("i AM here in home init");
     signalingClient.connect(
         _auth.deviceId,
-        project_id,
+        _auth.projectId,
         _auth.completeAddress,
         _auth.getUser.authorization_token.toString(),
         _auth.getUser.ref_id.toString());
@@ -435,6 +438,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     };
     signalingClient.unRegisterSuccessfullyCallBack = () {
       _auth.logout();
+       project_id = null;
+      tenant_api_url = null;
+
     };
     signalingClient.onCallAcceptedByUser = () async {
       setState(() {
@@ -754,7 +760,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
       signalingClient.connect(
           _auth.deviceId,
-          project_id,
+          _auth.projectId,
           _auth.completeAddress,
           _auth.getUser.authorization_token.toString(),
           _auth.getUser.ref_id.toString());

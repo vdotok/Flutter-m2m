@@ -4,8 +4,7 @@ import 'dart:io';
 
 import 'package:device_info/device_info.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:vdotok_stream_example/src/core/config/config.dart';
+import '../../../qrocde/qrcode.dart';
 import '../../../src/core/services/server.dart';
 
 import '../models/user.dart';
@@ -40,7 +39,10 @@ class AuthProvider with ChangeNotifier {
   String get registerErrorMsg => _registerErrorMsg;
   late String _completeAddress;
   String get completeAddress => _completeAddress;
-
+  String? _projectId;
+  String? get projectId => _projectId;
+  String? _tenantUrl;
+  String? get tenantUrl => _tenantUrl;
   String? _deviceId;
   String? get deviceId => _deviceId;
 
@@ -91,12 +93,21 @@ class AuthProvider with ChangeNotifier {
       notifyListeners();
       return false;
     } else {
-       final now = DateTime.now();
+      final now = DateTime.now();
       _deviceId = now.microsecondsSinceEpoch.toString();
       _completeAddress = response['media_server_map']['complete_address'];
+      _projectId =
+          //projectid;
+          project_id;
+      _tenantUrl =
+          //URL;
+          tenant_api_url;
       SharedPref sharedPref = SharedPref();
       sharedPref.save("authUser", response);
       sharedPref.save("deviceId", deviceId);
+      sharedPref.save("project_id", project_id);
+      sharedPref.save("tenant_url", tenant_api_url);
+     
       _registeredInStatus = Status.Registered;
       _loggedInStatus = Status.LoggedIn;
       _user = User.fromJson(response);
@@ -121,13 +132,22 @@ class AuthProvider with ChangeNotifier {
       _loginErrorMsg = response['message'];
       notifyListeners();
     } else {
-       final now = DateTime.now();
+      final now = DateTime.now();
       _deviceId = now.microsecondsSinceEpoch.toString();
       _completeAddress = response['media_server_map']['complete_address'];
+      _projectId =
+          //projectid;
+          project_id;
+      _tenantUrl =
+          //URL;
+          tenant_api_url;
       print("this is complete address ${_completeAddress}");
       SharedPref sharedPref = SharedPref();
       sharedPref.save("authUser", response);
       sharedPref.save("deviceId", deviceId);
+      sharedPref.save("project_id", project_id);
+      sharedPref.save("tenant_url", tenant_api_url);
+    
       _loggedInStatus = Status.LoggedIn;
       _user = User.fromJson(response);
       notifyListeners();
@@ -137,7 +157,9 @@ class AuthProvider with ChangeNotifier {
   logout() {
     SharedPref sharedPref = SharedPref();
     sharedPref.remove("authUser");
-     sharedPref.remove("deviceId");
+    sharedPref.remove("deviceId");
+    sharedPref.remove("project_id");
+    sharedPref.remove("tenant_url");
     _loggedInStatus = Status.LoggedOut;
     // _user = /;
     notifyListeners();
@@ -148,93 +170,12 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // Future<Map<String, dynamic>> login(String email, String password) async {
-  //   var result;
-  //
-  //   final Map<String, dynamic> loginData = {
-  //     'user': {'email': email, 'password': password}
-  //   };
-  //
-  //   _loggedInStatus = Status.Authenticating;
-  //   notifyListeners();
-  //
-  //   Response response = await post(
-  //     AppUrl.login,
-  //     body: json.encode(loginData),
-  //     headers: {'Content-Type': 'application/json'},
-  //   );
-  //
-  //   if (response.statusCode == 200) {
-  //     final Map<String, dynamic> responseData = json.decode(response.body);
-  //
-  //     var userData = responseData['data'];
-  //
-  //     User authUser = User.fromJson(userData);
-  //
-  //     UserPreferences().saveUser(authUser);
-  //
-  //     _loggedInStatus = Status.LoggedIn;
-  //     notifyListeners();
-  //
-  //     result = {'status': true, 'message': 'Successful', 'user': authUser};
-  //   } else {
-  //     _loggedInStatus = Status.NotLoggedIn;
-  //     notifyListeners();
-  //     result = {
-  //       'status': false,
-  //       'message': json.decode(response.body)['error']
-  //     };
-  //   }
-  //   return result;
-  // }
-
-  // Future<Map<String, dynamic>> register(
-  //     String email, String password, String passwordConfirmation) async {
-  //   final Map<String, dynamic> registrationData = {
-  //     'user': {
-  //       'email': email,
-  //       'password': password,
-  //       'password_confirmation': passwordConfirmation
-  //     }
-  //   };
-  //   return await post(AppUrl.register,
-  //           body: json.encode(registrationData),
-  //           headers: {'Content-Type': 'application/json'})
-  //       .then(onValue)
-  //       .catchError(onError);
-  // }
-
-//   static Future<FutureOr> onValue(Response response) async {
-//     var result;
-//     final Map<String, dynamic> responseData = json.decode(response.body);
-//
-//     print(response.statusCode);
-//     if (response.statusCode == 200) {
-//       var userData = responseData['data'];
-//
-//       User authUser = User.fromJson(userData);
-//
-//       UserPreferences().saveUser(authUser);
-//       result = {
-//         'status': true,
-//         'message': 'Successfully registered',
-//         'data': authUser
-//       };
-//     } else {
-// //      if (response.statusCode == 401) Get.toNamed("/login");
-//       result = {
-//         'status': false,
-//         'message': 'Registration failed',
-//         'data': responseData
-//       };
-//     }
-//
-//     return result;
-//   }
-
   isUserLogedIn() async {
     final authUser = await _sharedPref.read("authUser");
-    print("this is authUser $authUser");
+    final projId = await _sharedPref.read("project_id");
+    final tenantURL = await _sharedPref.read("tenant_url");
+    final deviceId = await _sharedPref.read("deviceId");
+    print("this is authUser $authUser $projId $tenantURL");
     if (authUser == null) {
       _loggedInStatus = Status.NotLoggedIn;
       notifyListeners();
@@ -242,7 +183,10 @@ class AuthProvider with ChangeNotifier {
       _loggedInStatus = Status.LoggedIn;
       _completeAddress =
           jsonDecode(authUser)['media_server_map']['complete_address'];
-  _deviceId = deviceId;
+      _projectId = jsonDecode(projId.toString());
+      _tenantUrl = jsonDecode(tenantURL.toString());
+      print("this is data----- $_projectId $_tenantUrl");
+      _deviceId = deviceId;
       _user = User.fromJson(jsonDecode(authUser));
       notifyListeners();
     }

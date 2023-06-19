@@ -2,12 +2,12 @@ import 'dart:async';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../../../src/core/config/config.dart';
 
+import '../config/config.dart';
 // The function take will take the user request and verfies it with the api. in this case it will authenticate the user
 Future<dynamic> callAPI(datarequest, myurl, authToken) async {
-  print("this is url.......... $URL");
-  final url = Uri.parse("${URL + myurl}");
+  print("this is url.......... $tenantUrl");
+  final url = Uri.parse("${tenantUrl! + myurl}");
   print("this is api call $datarequest $url  $authToken");
   try {
     final response = await http.post(Uri.parse('$url'),
@@ -36,7 +36,7 @@ Future<dynamic> callAPI(datarequest, myurl, authToken) async {
 }
 
 Future<dynamic> getAPI(myurl, authToken) async {
-  final url = Uri.parse("${URL  + myurl}");
+  final url = Uri.parse("${tenantUrl!  + myurl}");
   print('this is url $url');
   try {
     final response = await http.get(

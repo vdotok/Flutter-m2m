@@ -206,6 +206,7 @@ class _GroupListScreenState extends State<GroupListScreen> {
                                                           element.group_title;
                                                       widget.mediatype =
                                                           MediaType.audio;
+                                                          isPressed= true;
                                                     });
                                                     print(
                                                         "three dot icon pressed");
@@ -234,6 +235,7 @@ class _GroupListScreenState extends State<GroupListScreen> {
 
                                                       widget.mediatype =
                                                           MediaType.video;
+                                                            isPressed= true;
                                                     });
                                                     print(
                                                         "three dot icon pressed");
