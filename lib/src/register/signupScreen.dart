@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:vdotok_stream_example/src/core/config/config.dart';
 import '../../qrocde/qrcode.dart';
 import '../../src/common/logo.dart';
 import '../../src/common/custombutton.dart';
@@ -30,14 +31,37 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Size? size;
 
   handlePress() async {
-    if (_nameController.text.isNotEmpty && _emailController.text.isNotEmpty &&
+    if (_nameController.text.isNotEmpty &&
+        _emailController.text.isNotEmpty &&
         _passwordController.text.isNotEmpty) {
-      if (project_id == null || tenant_api_url == null) {
-        snackBar = SnackBar(
-          content: Text("Please scan QR first"),
-          duration: Duration(seconds: 2),
-        );
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      if (tenant_url == "" || project_id == "") {
+        if (url == "" || project == "") {
+          snackBar = SnackBar(
+            content:
+                Text("Please scan/manually add configurations in config file."),
+            duration: Duration(seconds: 2),
+          );
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        } else {
+          if (_registerformkey.currentState!.validate()) {
+            AuthProvider auth =
+                Provider.of<AuthProvider>(context, listen: false);
+            bool res = await auth.register(_emailController.text,
+                _nameController.text, _passwordController.text);
+            if (auth.getUser.auth_token == null) {
+              setState(() {
+                _autoValidate = true;
+              });
+            }
+            if (res) {
+              Navigator.pop(context);
+            }
+          } else {
+            setState(() {
+              _autoValidate = true;
+            });
+          }
+        }
       } else {
         if (_registerformkey.currentState!.validate()) {
           AuthProvider auth = Provider.of<AuthProvider>(context, listen: false);
@@ -51,33 +75,32 @@ class _SignUpScreenState extends State<SignUpScreen> {
           if (res) {
             Navigator.pop(context);
           }
-          ;
         } else {
           setState(() {
             _autoValidate = true;
           });
         }
       }
-    }
-    
-    else{if (_registerformkey.currentState!.validate()) {
-      AuthProvider auth = Provider.of<AuthProvider>(context, listen: false);
-      bool res = await auth.register(_emailController.text,
-          _nameController.text, _passwordController.text);
-      if (auth.getUser.auth_token == null) {
+    } else {
+      if (_registerformkey.currentState!.validate()) {
+        AuthProvider auth = Provider.of<AuthProvider>(context, listen: false);
+        bool res = await auth.register(_emailController.text,
+            _nameController.text, _passwordController.text);
+        if (auth.getUser.auth_token == null) {
+          setState(() {
+            _autoValidate = true;
+          });
+        }
+        if (res) {
+          Navigator.pop(context);
+        }
+        ;
+      } else {
         setState(() {
           _autoValidate = true;
         });
       }
-      if (res) {
-        Navigator.pop(context);
-      }
-      ;
-    } else {
-      setState(() {
-        _autoValidate = true;
-      });
-    }}
+    }
   }
 
   handleButton() {
@@ -121,7 +144,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   child: Container(
                     alignment: Alignment.center,
                     padding: EdgeInsets.only(left: 42, right: 42),
-                    child: Column(mainAxisAlignment: MainAxisAlignment.center,
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         // crossAxisAlignment: CrossAxisAlignment.center,
 
                         // mainAxisSize: MainAxisSize.min,
@@ -147,7 +171,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   //     MainAxisAlignment.spaceBetween,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                     //Container(height:30),
+                                    //Container(height:30),
                                     IconButton(
                                       iconSize: 30,
                                       icon: const Icon(Icons.qr_code_2_sharp),

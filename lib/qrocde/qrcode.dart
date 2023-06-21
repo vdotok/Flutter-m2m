@@ -6,13 +6,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:vdotok_stream_example/src/core/config/config.dart';
 
 import '../src/home/home.dart';
 
 
-
-String? project_id;
-String? tenant_api_url;
+ 
+String project = "";
+String url = "";
 Barcode? result;
 bool snackBarShowed = false;
 
@@ -107,10 +108,9 @@ class _QRViewExampleState extends State<QRViewExample> {
           }
 
           Map<String, dynamic> map = json.decode(result!.code!);
-          project_id = map["project_id"].toString();
-          tenant_api_url = map["tenant_api_url"].toString();
-          
-          print("this is result $project_id $tenant_api_url ${map["project_id"]} ${map["tenant_api_url"]}");
+          project = map["project_id"].toString();
+          url = map["tenant_api_url"].toString();
+          print("this is result ${map["project_id"]} ${map["tenant_api_url"]}");
 
           snackBar = SnackBar(
             content: Text(
