@@ -50,7 +50,6 @@ bool isRegisteredAlready = false;
 bool isPressed = false;
 GlobalKey forsmallView = new GlobalKey();
 
-
 class Home extends StatefulWidget {
   final state;
   Home({this.state});
@@ -158,6 +157,19 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     500,
     1000
   ];
+  void playRingingbyD() async {
+    FlutterRingtonePlayer.play(
+      android: AndroidSounds.ringtone,
+      ios: IosSounds.electronic,
+      looping: true,
+      volume: 1.0,
+    );
+  }
+
+  void stopRingingbyD() {
+    FlutterRingtonePlayer.stop();
+    print('Stopping ringing android');
+  }
 
   void _updateTimer() {
     var duration;
@@ -195,7 +207,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     _callProvider = Provider.of<CallProvider>(context, listen: false);
     _contactProvider.getContacts(_auth.getUser.auth_token);
     _groupListProvider.getGroupList(_auth.getUser.auth_token);
-   
+
     // InternetConnectivity();
 
     print("i AM here in home init");
@@ -332,6 +344,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     };
 
     signalingClient.onRemoteStream = (stream, refid) async {
+      stopRingingbyD();
       if (noInternetCallHungUp == true) {
         print('this issussus $noInternetCallHungUp');
         signalingClient.stopCall(registerRes["mcToken"]);
@@ -388,7 +401,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     signalingClient.onReceiveCallFromUser = (res, isMultiSession) async {
       inCall = true;
       print("here in recerive call $res");
-
+      playRingingbyD();
       Wakelock.toggle(enable: true);
 
       iscalloneto1 = res["callType"] == "one_to_one" ? true : false;
@@ -414,7 +427,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         _callticker =
             Timer.periodic(Duration(seconds: 30), (_) => _callcheck());
       }
-  
     };
     signalingClient.onTargetAlerting = () {
       setState(() {
@@ -438,11 +450,11 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     };
     signalingClient.unRegisterSuccessfullyCallBack = () {
       _auth.logout();
-        project = "";
+      project = "";
       url = "";
-
     };
     signalingClient.onCallAcceptedByUser = () async {
+      stopRingingbyD();
       setState(() {
         inCall = true;
         iscallAcceptedbyuser = true;
@@ -457,6 +469,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     };
     signalingClient.onCallHungUpByUser = (isLocal) {
+      stopRingingbyD();
       print("this is on call hung by the user $_ticker $inCall $_callticker");
 
       if (inPaused) {
@@ -491,9 +504,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         }
       });
 
-      disposeAllRenderer()
-
-      .then((value) {
+      disposeAllRenderer().then((value) {
         print("here in before then");
         _callProvider.initial();
         print("callprovider initial");
@@ -504,11 +515,12 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       //  stopRinging();
     };
     signalingClient.onCallBusyCallback = () {
+      stopRingingbyD();
       Wakelock.toggle(enable: false);
-     // print("ism2mmm $isM2M");
-    //  if(isM2M==false) {
+      // print("ism2mmm $isM2M");
+      //  if(isM2M==false) {
       _callProvider.initial();
-     // }
+      // }
       snackBar = SnackBar(content: Text('User is busy with another call.'));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
       setState(() {});
@@ -613,9 +625,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   Future<void> disposeAllRenderer() async {
     for (int i = 0; i < rendererListWithRefID.length; i++) {
       print("indisposerenderer");
-    
+
       await rendererListWithRefID[i]["rtcVideoRenderer"].dispose();
-     // rendererListWithRefID[i]["rtcVideoRenderer"] = null;
+      // rendererListWithRefID[i]["rtcVideoRenderer"] = null;
     }
 
     rendererListWithRefID.clear();
@@ -1015,7 +1027,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                       else {
                         strArr.add("ContactList");
                         return ContactListScreen(
-                          auth:_auth,
+                            auth: _auth,
                             refreshcontactList: refreshList,
                             searchController: _searchController,
                             selectedContact: _selectedContacts,
