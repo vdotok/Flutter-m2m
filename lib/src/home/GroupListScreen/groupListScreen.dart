@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
+// import 'package:flutterm2m/constant.dart';
+// import 'package:flutterm2m/src/core/models/GroupListModel.dart';
+// import 'package:flutterm2m/src/core/models/GroupModel.dart';
+// import 'package:flutterm2m/src/core/providers/auth.dart';
+// import 'package:flutterm2m/src/core/providers/groupListProvider.dart';
+// import 'package:flutterm2m/src/home/CreateGroupPopUp.dart';
+// import 'package:flutterm2m/src/home/home.dart';
 import 'package:provider/provider.dart';
 import 'package:vdotok_stream_example/constant.dart';
 import 'package:vdotok_stream_example/src/core/models/GroupListModel.dart';
@@ -9,6 +16,13 @@ import 'package:vdotok_stream_example/src/core/providers/auth.dart';
 import 'package:vdotok_stream_example/src/core/providers/groupListProvider.dart';
 import 'package:vdotok_stream_example/src/home/CreateGroupPopUp.dart';
 import 'package:vdotok_stream_example/src/home/home.dart';
+// import 'package:vdotok_stream_example/constant.dart';
+// import 'package:vdotok_stream_example/src/core/models/GroupListModel.dart';
+// import 'package:vdotok_stream_example/src/core/models/GroupModel.dart';
+// import 'package:vdotok_stream_example/src/core/providers/auth.dart';
+// import 'package:vdotok_stream_example/src/core/providers/groupListProvider.dart';
+// import 'package:vdotok_stream_example/src/home/CreateGroupPopUp.dart';
+// import 'package:vdotok_stream_example/src/home/home.dart';
 
 class GroupListScreen extends StatefulWidget {
   GroupListModel state;
@@ -206,7 +220,7 @@ class _GroupListScreenState extends State<GroupListScreen> {
                                                           element.group_title;
                                                       widget.mediatype =
                                                           MediaType.audio;
-                                                          isPressed= true;
+                                                      isPressed = true;
                                                     });
                                                     print(
                                                         "three dot icon pressed");
@@ -235,7 +249,7 @@ class _GroupListScreenState extends State<GroupListScreen> {
 
                                                       widget.mediatype =
                                                           MediaType.video;
-                                                            isPressed= true;
+                                                      isPressed = true;
                                                     });
                                                     print(
                                                         "three dot icon pressed");
@@ -427,13 +441,13 @@ class _GroupListScreenState extends State<GroupListScreen> {
                             Container(
                               child: TextButton(
                                 onPressed: () {
+                                  print('onLogout---');
                                   if (isRegisteredAlready) {
                                     ScaffoldMessenger.of(context)
                                         .hideCurrentSnackBar();
                                     isRegisteredAlready = false;
                                   }
-                                  signalingClient.unRegister(
-                                      widget.registerRes["mcToken"]);
+                                  signalingClient.unRegister();
                                 },
                                 child: Text(
                                   "LOG OUT",

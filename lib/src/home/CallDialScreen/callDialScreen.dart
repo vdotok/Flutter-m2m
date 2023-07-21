@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+// import 'package:flutterm2m/src/core/models/ParticipantsModel.dart';
+// import 'package:flutterm2m/src/core/providers/call_provider.dart';
+// import 'package:flutterm2m/src/home/home.dart';
 import 'package:vdotok_stream_example/src/core/models/ParticipantsModel.dart';
 import 'package:vdotok_stream_example/src/core/providers/call_provider.dart';
 import 'package:vdotok_stream_example/src/home/home.dart';
-import 'package:vdotok_stream_example/src/home/streams/remoteStream.dart';
+// import 'package:vdotok_stream_example/src/core/models/ParticipantsModel.dart';
+// import 'package:vdotok_stream_example/src/core/providers/call_provider.dart';
+// import 'package:vdotok_stream_example/src/home/home.dart';
+// import 'package:vdotok_stream_example/src/home/streams/remoteStream.dart';
 
 import '../../../constant.dart';
 
@@ -11,13 +17,13 @@ class CallDialScreen extends StatelessWidget {
   List<ParticipantsModel?>? callingto;
   String mediatype;
   var registerRes;
-  List<Map<String, dynamic>> rendererListWithRefid = [];
+  // List<Map<String, dynamic>> rendererListWithRefid = [];
   CallProvider callprovider;
   CallDialScreen(
       {required this.callingto,
       required this.mediatype,
       this.registerRes,
-      required this.rendererListWithRefid,
+      // required this.rendererListWithRefid,
       required this.callprovider});
 
   @override
@@ -32,7 +38,7 @@ class CallDialScreen extends StatelessWidget {
 //                     //margin: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
 //                     width: MediaQuery.of(context).size.width,
 //                     height: MediaQuery.of(context).size.height,
-//                     child: 
+//                     child:
 //                     rendererListWithRefid.length==0?
 // Text("hsahgsdghvdsghfgfhddgh")
 //                     :RemoteStream(
@@ -40,25 +46,25 @@ class CallDialScreen extends StatelessWidget {
 //                           ["rtcVideoRenderer"],
 //                     ))
 //                 :
-                
-                 Container(
-                    decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                      colors: [
-                        backgroundAudioCallDark,
-                        backgroundAudioCallLight,
-                        backgroundAudioCallLight,
-                        backgroundAudioCallLight,
-                      ],
-                      begin: Alignment.topCenter,
-                      end: Alignment(0.0, 0.0),
-                    )),
-                    child: Center(
-                      child: SvgPicture.asset(
-                        'assets/userIconCall.svg',
-                      ),
-                    ),
-                  ),
+
+            Container(
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                colors: [
+                  backgroundAudioCallDark,
+                  backgroundAudioCallLight,
+                  backgroundAudioCallLight,
+                  backgroundAudioCallLight,
+                ],
+                begin: Alignment.topCenter,
+                end: Alignment(0.0, 0.0),
+              )),
+              child: Center(
+                child: SvgPicture.asset(
+                  'assets/userIconCall.svg',
+                ),
+              ),
+            ),
             Container(
                 padding: EdgeInsets.only(top: 120),
                 alignment: Alignment.center,
@@ -113,8 +119,10 @@ class CallDialScreen extends StatelessWidget {
                   'assets/end.svg',
                 ),
                 onTap: () {
+                  signalingClient.bye();
+                  // callprovider.initial();
                   // audioPlayer.stop();
-                  signalingClient.stopCall(registerRes["mcToken"]);
+                  // signalingClient.stopCall(registerRes["mcToken"]);
                   //callprovider.initial();
                   // audioPlayer.stop();
                 },

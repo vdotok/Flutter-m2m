@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:vdotok_stream_example/src/core/config/config.dart';
+// import 'package:flutterm2m/src/core/config/config.dart';
+
 import '../../../qrocde/qrcode.dart';
 import '../../../src/core/services/server.dart';
 import '../models/user.dart';
@@ -29,7 +31,11 @@ class AuthProvider with ChangeNotifier {
 
   User _user = new User(full_name: '', auth_token: '');
   User get getUser => _user;
-
+  // for m2m
+  late String _stungIP;
+  String get StungIP => _stungIP;
+  late String _stungPort;
+  String get StungPort => _stungPort;
   late String _completeAddress;
   String get completeAddress => _completeAddress;
 
@@ -103,6 +109,8 @@ class AuthProvider with ChangeNotifier {
       final now = DateTime.now();
       _deviceId = now.microsecondsSinceEpoch.toString();
       _completeAddress = response['media_server_map']['complete_address'];
+      _stungIP = response['stun_server_map']['host'];
+      _stungPort = response['stun_server_map']['port'];
       SharedPref sharedPref = SharedPref();
       sharedPref.save("authUser", response);
       sharedPref.save("deviceId", deviceId);
@@ -144,6 +152,8 @@ class AuthProvider with ChangeNotifier {
       final now = DateTime.now();
       _deviceId = now.microsecondsSinceEpoch.toString();
       _completeAddress = response['media_server_map']['complete_address'];
+      _stungIP = response['stun_server_map']['host'];
+      _stungPort = response['stun_server_map']['port'];
       print("this issss $project  $url");
 
       print("this is complete address ${_completeAddress}");
@@ -186,6 +196,8 @@ class AuthProvider with ChangeNotifier {
           jsonDecode(authUser)['media_server_map']['complete_address'];
       _projectId = jsonDecode(projId.toString());
       _tenantUrl = jsonDecode(tenantURL.toString());
+      _stungIP = jsonDecode(authUser)['stun_server_map']['host'];
+      _stungPort = jsonDecode(authUser)['stun_server_map']['port'];
       _deviceId = deviceId;
       _loggedInStatus = Status.LoggedIn;
       _user = User.fromJson(jsonDecode(authUser));

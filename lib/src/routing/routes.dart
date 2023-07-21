@@ -1,5 +1,5 @@
 import "package:flutter/material.dart";
-import 'package:vdotok_stream_example/src/contactList/ContactList.dart';
+// import 'package:vdotok_stream_example/src/contactList/ContactList.dart';
 import '../../src/login/SignInScreen.dart';
 import '../../src/register/SignUpScreen.dart';
 import '../../src/home/homeIndex.dart';
@@ -19,18 +19,17 @@ class Routers {
       case '/register':
         return PageTransition(
             child: SignUpScreen(), type: PageTransitionType.rightToLeft);
-        
+
       case '/signin':
         return PageTransition(
             child: SignInScreen(), type: PageTransitionType.rightToLeft);
-        
+
       case '/home':
         return PageTransition(
             child: HomeIndex(
                 // user: args,
                 ),
             type: PageTransitionType.rightToLeft);
-       
 
       // case '/call':
       //   return PageTransition(

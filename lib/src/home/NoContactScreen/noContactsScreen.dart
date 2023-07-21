@@ -2,8 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+// import 'package:flutterm2m/src/core/providers/groupListProvider.dart';
+// import 'package:flutterm2m/src/home/home.dart';
 import 'package:vdotok_stream_example/src/core/providers/groupListProvider.dart';
 import 'package:vdotok_stream_example/src/home/home.dart';
+// import 'package:vdotok_stream_example/src/core/providers/groupListProvider.dart';
+// import 'package:vdotok_stream_example/src/home/home.dart';
 import '../../core/providers/auth.dart';
 
 import '../../../constant.dart';
@@ -136,7 +140,7 @@ class NoContactsScreen extends StatelessWidget {
                         ScaffoldMessenger.of(context).hideCurrentSnackBar();
                         isRegisteredAlready = false;
                       }
-                      signalingClient.unRegister(registerRes["mcToken"]);
+                      signalingClient.unRegister();
                     },
                     child: Text(
                       "LOG OUT",
@@ -156,11 +160,9 @@ class NoContactsScreen extends StatelessWidget {
                     color: isConnect && socket ? Colors.green : Colors.red,
                     shape: BoxShape.circle),
               ),
-                  errorcode!=""?
-                                 Container(
-                                  height:40,
-                          width: 40,
-                          child:Text('$errorcode')):Container()
+              errorcode != ""
+                  ? Container(height: 40, width: 40, child: Text('$errorcode'))
+                  : Container()
             ],
           ),
           Container(

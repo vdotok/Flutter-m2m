@@ -2,12 +2,12 @@ import 'package:draggable_widget/draggable_widget.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_svg/svg.dart';
-import 'package:vdotok_stream/core/interface/enums.dart';
-import 'package:vdotok_stream/flutter_webrtc.dart';
+// import 'package:vdotok_stream/core/interface/enums.dart';
+// import 'package:vdotok_stream/flutter_webrtc.dart';
+import 'package:vdotok_stream/vdotok_stream.dart';
 
 import '../../constant.dart';
 import '../home/home.dart';
-
 
 class DragBox extends StatefulWidget {
   @override
@@ -15,6 +15,12 @@ class DragBox extends StatefulWidget {
 }
 
 class DragBoxState extends State<DragBox> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
   final dragController = DragController();
 
   @override
@@ -33,40 +39,31 @@ class DragBoxState extends State<DragBox> {
       child: Container(
         height: 150,
         width: 100,
-        child: 
-         rendererListWithRefID.length==0?Container():
-        enableCamera
-            ? 
-            
-            RTCVideoView(
-
-                   rendererListWithRefID[0]["rtcVideoRenderer"],
-
+        child: localRenderer != null
+            ? enableCamera
+                ? RTCVideoView(localRenderer!,
                     key: forsmallView,
-
                     mirror: true,
-
-                    objectFit:
-
-                        RTCVideoViewObjectFit.RTCVideoViewObjectFitCover)
-            : Container(
-                decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                  colors: [
-                    backgroundAudioCallDark,
-                    backgroundAudioCallLight,
-                    backgroundAudioCallLight,
-                    backgroundAudioCallLight,
-                  ],
-                  begin: Alignment.topCenter,
-                  end: Alignment(0.0, 0.0),
-                )),
-                child: Center(
-                  child: SvgPicture.asset(
-                    'assets/userIconCall.svg',
-                  ),
-                ),
-              ),
+                    objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover)
+                : Container(
+                    decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                      colors: [
+                        backgroundAudioCallDark,
+                        backgroundAudioCallLight,
+                        backgroundAudioCallLight,
+                        backgroundAudioCallLight,
+                      ],
+                      begin: Alignment.topCenter,
+                      end: Alignment(0.0, 0.0),
+                    )),
+                    child: Center(
+                      child: SvgPicture.asset(
+                        'assets/userIconCall.svg',
+                      ),
+                    ),
+                  )
+            : Container(),
       ),
     );
   }

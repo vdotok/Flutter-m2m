@@ -1,13 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+// import 'package:flutterm2m/constant.dart';
+// import 'package:flutterm2m/src/core/models/ParticipantsModel.dart';
+// import 'package:flutterm2m/src/core/providers/auth.dart';
+// import 'package:flutterm2m/src/core/providers/call_provider.dart';
+// import 'package:flutterm2m/src/home/home.dart';
 import 'package:provider/provider.dart';
 import 'package:vdotok_stream_example/constant.dart';
 import 'package:vdotok_stream_example/src/core/models/ParticipantsModel.dart';
 import 'package:vdotok_stream_example/src/core/providers/auth.dart';
 import 'package:vdotok_stream_example/src/core/providers/call_provider.dart';
-import 'package:vdotok_stream_example/src/core/providers/contact_provider.dart';
 import 'package:vdotok_stream_example/src/home/home.dart';
-import 'package:vdotok_stream_example/src/home/streams/remoteStream.dart';
+// import 'package:vdotok_stream_example/constant.dart';
+// import 'package:vdotok_stream_example/src/core/models/ParticipantsModel.dart';
+// import 'package:vdotok_stream_example/src/core/providers/auth.dart';
+// import 'package:vdotok_stream_example/src/core/providers/call_provider.dart';
+// import 'package:vdotok_stream_example/src/core/providers/contact_provider.dart';
+// import 'package:vdotok_stream_example/src/home/home.dart';
+// import 'package:vdotok_stream_example/src/home/streams/remoteStream.dart';
 
 // ignore: must_be_immutable
 class CallReceiveScreen extends StatefulWidget {
@@ -15,7 +25,7 @@ class CallReceiveScreen extends StatefulWidget {
 
   String mediatype;
   var registerRes;
-  List<Map<String, dynamic>> rendererListWithRefid = [];
+  // List<Map<String, dynamic>> rendererListWithRefid = [];
   CallProvider callprovider;
   AuthProvider authprovider;
   String? incomingfrom;
@@ -25,11 +35,11 @@ class CallReceiveScreen extends StatefulWidget {
       {required this.callingto,
       required this.mediatype,
       this.registerRes,
-      required this.rendererListWithRefid,
+      // required this.rendererListWithRefid,
       required this.callprovider,
       required this.authprovider,
       required this.incomingfrom,
-     // this.stopRinging,
+      // this.stopRinging,
       this.groupName});
 
   @override
@@ -37,14 +47,19 @@ class CallReceiveScreen extends StatefulWidget {
 }
 
 class _CallReceiveScreenState extends State<CallReceiveScreen> {
+  _reject() {
+    // if (_session != null) {
+    //   signalingClient.reject(_session!);
+    // }
+  }
   @override
   Widget build(BuildContext context) {
-  //  print("here i am in separte class of Call Receive Screen ${widget.mediatype} ${widget.rendererListWithRefid[0]}");
+    //  print("here i am in separte class of Call Receive Screen ${widget.mediatype} ${widget.rendererListWithRefid[0]}");
     return Scaffold(body: OrientationBuilder(builder: (context, orientation) {
       return Stack(children: <Widget>[
 //         widget.mediatype == MediaType.video
 //             ? Container(
-//                 child: 
+//                 child:
 //                    widget.rendererListWithRefid.length==0?
 // Text("hsahgsdghvdsghfgfhddgh")
 //                     :
@@ -52,25 +67,25 @@ class _CallReceiveScreenState extends State<CallReceiveScreen> {
 //                 remoteRenderer: widget.rendererListWithRefid[0]
 //                     ["rtcVideoRenderer"],
 //               ))
-//             : 
-            Container(
-                decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                  colors: [
-                    backgroundAudioCallDark,
-                    backgroundAudioCallLight,
-                    backgroundAudioCallLight,
-                    backgroundAudioCallLight,
-                  ],
-                  begin: Alignment.topCenter,
-                  end: Alignment(0.0, 0.0),
-                )),
-                child: Center(
-                  child: SvgPicture.asset(
-                    'assets/userIconCall.svg',
-                  ),
-                ),
-              ),
+//             :
+        Container(
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+            colors: [
+              backgroundAudioCallDark,
+              backgroundAudioCallLight,
+              backgroundAudioCallLight,
+              backgroundAudioCallLight,
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment(0.0, 0.0),
+          )),
+          child: Center(
+            child: SvgPicture.asset(
+              'assets/userIconCall.svg',
+            ),
+          ),
+        ),
         Container(
           padding: EdgeInsets.only(top: 120),
           alignment: Alignment.center,
@@ -136,12 +151,14 @@ class _CallReceiveScreenState extends State<CallReceiveScreen> {
                   'assets/end.svg',
                 ),
                 onTap: () {
-                  //widget.stopRinging();
-                  signalingClient.declineCall(
-                      widget.authprovider.getUser.ref_id,
-                      widget.registerRes["mcToken"]);
+                  // _regect();
 
-                 // widget.callprovider.initial();
+                  // widget.stopRinging();
+
+                  signalingClient.reject();
+                  // widget.authprovider.getUser.ref_id,
+                  // widget.registerRes["mcToken"]);
+                  // widget.callprovider.initial();
                 },
               ),
               SizedBox(width: 64),
@@ -151,9 +168,10 @@ class _CallReceiveScreenState extends State<CallReceiveScreen> {
                   ),
                   onTap: isPressed == false
                       ? () {
-                         // widget.stopRinging();
-                          signalingClient.createAnswer(widget.incomingfrom);
+                          // widget.stopRinging();
+                          // signalingClient.createAnswer(widget.incomingfrom);
                           widget.callprovider.callStart();
+                          signalingClient.accept();
                           setState(() {
                             isPressed = true;
                           });

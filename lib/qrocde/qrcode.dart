@@ -6,17 +6,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
-import 'package:vdotok_stream_example/src/core/config/config.dart';
+// import 'package:vdotok_stream_example/src/core/config/config.dart';
 
 import '../src/home/home.dart';
 
-
- 
 String project = "";
 String url = "";
 Barcode? result;
 bool snackBarShowed = false;
-
 
 class QRViewExample extends StatefulWidget {
   const QRViewExample({Key? key}) : super(key: key);

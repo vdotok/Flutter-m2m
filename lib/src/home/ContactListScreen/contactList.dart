@@ -4,6 +4,14 @@ import 'package:vdotok_stream_example/constant.dart';
 import 'package:vdotok_stream_example/src/core/models/contact.dart';
 import 'package:vdotok_stream_example/src/core/providers/auth.dart';
 import 'package:vdotok_stream_example/src/core/providers/contact_provider.dart';
+// import 'package:flutterm2m/constant.dart';
+// import 'package:flutterm2m/src/core/models/contact.dart';
+// import 'package:flutterm2m/src/core/providers/auth.dart';
+// import 'package:flutterm2m/src/core/providers/contact_provider.dart';
+// import 'package:vdotok_stream_example/constant.dart';
+// import 'package:vdotok_stream_example/src/core/models/contact.dart';
+// import 'package:vdotok_stream_example/src/core/providers/auth.dart';
+// import 'package:vdotok_stream_example/src/core/providers/contact_provider.dart';
 
 class ContactListScreen extends StatefulWidget {
   ContactProvider state;
@@ -55,14 +63,14 @@ class _ContactListScreenState extends State<ContactListScreen> {
           valueColor: AlwaysStoppedAnimation<Color>(chatRoomColor),
         )),
       );
-    else
-    {
-      var userIndex = widget.state.contactList.users!.indexWhere((element) => element!.ref_id == widget.auth.getUser.ref_id);
-    print("This is the userindex $userIndex");
-    if (userIndex != -1) {
-      widget.state.contactList.users!.removeAt(userIndex);
-    }
-    
+    else {
+      var userIndex = widget.state.contactList.users!.indexWhere(
+          (element) => element!.ref_id == widget.auth.getUser.ref_id);
+      print("This is the userindex $userIndex");
+      if (userIndex != -1) {
+        widget.state.contactList.users!.removeAt(userIndex);
+      }
+
       return Scaffold(
         body: RefreshIndicator(
           onRefresh: widget.refreshcontactList,
