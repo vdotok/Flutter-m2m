@@ -168,6 +168,19 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     500,
     1000
   ];
+  void playRingingbyD() async {
+    FlutterRingtonePlayer.play(
+      android: AndroidSounds.ringtone,
+      ios: IosSounds.electronic,
+      looping: true,
+      volume: 1.0,
+    );
+  }
+
+  void stopRingingbyD() {
+    FlutterRingtonePlayer.stop();
+    print('Stopping ringing android');
+  }
 
   void _updateTimer() {
     print('inupdate timerrr ${_ttime}');
@@ -280,6 +293,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     };
     // ==================================Codex1to1===================================
     signalingClient.onCallBusy = () {
+      stopRingingbyD();
       Wakelock.toggle(enable: false);
       snackBar = SnackBar(content: Text('User is busy with another call.'));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -301,6 +315,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     };
     // getting streams--------
     signalingClient.onAddRemoteStream = (sessionMap) async {
+      print('onAddRemoteee ${sessionMap}');
+      // stopRingingbyD();
       setState(() {
         sessionList = sessionMap!;
         // onRemoteStream = true;
@@ -323,19 +339,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       print('Remote Description---$_ticker');
       print('Remote Description--2-$_ticker');
     };
-    signalingClient.onCallBusy = () {
-      print("user is busy");
-      Fluttertoast.showToast(
-          msg: "User is busy.",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.TOP_RIGHT,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.black,
-          textColor: Colors.white,
-          fontSize: 14.0);
-    };
     signalingClient.onInComingCall = (res) {
       print('onIncoming Call---$res--');
+      playRingingbyD();
       inCall = true;
       print("here in recerive call $res");
 
@@ -385,6 +391,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           break;
         case CallState.CallStateBye:
           {
+            stopRingingbyD();
             if (SessionMap == null) {
               setState(() {
                 sessionList.clear();
@@ -427,6 +434,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           break;
         case CallState.CallStateConnected:
           {
+            stopRingingbyD();
             print('on call state connected');
             setState(() {
               inCall = true;

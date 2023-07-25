@@ -27,12 +27,12 @@ dependencies:
   shared_preferences: ^2.0.5
   http: ^0.13.4
   json_annotation: ^4.5.0
-  device_info: ^2.0.0
+  # device_info: ^2.0.0
   path_provider: ^2.0.1
   provider: ^6.0.0
   flutter_svg: 
   vdotok_stream:
-   path: ../vdotok_stream 
+   path: ../../vdotok_stream 
   # ^0.0.24
   wakelock: ^0.5.6
   move_to_background: ^1.0.2
