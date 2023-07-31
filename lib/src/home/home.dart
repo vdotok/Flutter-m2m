@@ -315,12 +315,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     };
     // getting streams--------
     signalingClient.onAddRemoteStream = (sessionMap) async {
-      print('onAddRemoteee ${sessionMap}');
+      print('onAddRemoteee ${sessionMap!.values.toList()[0].from}');
       // stopRingingbyD();
       setState(() {
         sessionList = sessionMap!;
         // onRemoteStream = true;
       });
+      print("thsi is sessionList2--${sessionList.values.toList()[0].to}");
       _callProvider.callStart();
       print('SessionAdded');
       setState(() {
