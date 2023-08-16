@@ -1,5 +1,5 @@
-var tenant_url = "https://tenant.vdotok.com/API/v0/";
-var project_id = "8786BUCW";
+var tenant_url = "https://q-tenant.vdotok.dev/API/v0/";
+var project_id = "114ALUJ5";
 
 class CAllType {
   static const String one2one = "one_to_one";

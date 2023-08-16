@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:device_info_plus/device_info_plus.dart';
+// import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:vdotok_stream_example/src/core/config/config.dart';
 // import 'package:flutterm2m/src/core/config/config.dart';
@@ -68,16 +68,16 @@ class AuthProvider with ChangeNotifier {
       model = "web";
     } else {
       if (Platform.isAndroid) {
-        var androidInfo = await DeviceInfoPlugin().androidInfo;
-        version = androidInfo.version.release;
-        model = androidInfo.model;
+        // var androidInfo = await DeviceInfoPlugin().androidInfo;
+        // version = androidInfo.version.release;
+        // model = androidInfo.model;
         // Android 9 (SDK 28), Xiaomi Redmi Note 7
       }
 
       if (Platform.isIOS) {
-        var iosInfo = await DeviceInfoPlugin().iosInfo;
-        version = iosInfo.systemName;
-        model = iosInfo.model;
+        // var iosInfo = await DeviceInfoPlugin().iosInfo;
+        // version = iosInfo.systemName;
+        // model = iosInfo.model;
         // iOS 13.1, iPhone 11 Pro Max iPhone
       }
     }
