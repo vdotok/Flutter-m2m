@@ -83,9 +83,9 @@ class _CallSttartScreenState extends State<CallSttartScreen> {
     // TODO: implement initState
 
     callProvider = Provider.of<CallProvider>(context, listen: false);
-    print('-----localState----${localAudioVideoStates}');
-    print('((((( ${widget.onRemotestream}');
-    print('((((( session List ${sessionList!.values.toList()}');
+    // print('-----localState----${localAudioVideoStates}');
+    // print('((((( ${widget.onRemotestream}');
+    // print('((((( session List ${sessionList!.values.toList()}');
     // print('')
     // widget.switchCam.initialize();
     // print(
@@ -98,19 +98,24 @@ class _CallSttartScreenState extends State<CallSttartScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // print("this is lengthhhhhhhhh ${sessionList.values.toList().length} ");
+    // print("this is lengthhhhhhhhh ${sessionList[0].values.toList().length} ");
+    // print("this is lengthhhhhhhhh@ ${sessionList} ");
     return WillPopScope(
         onWillPop: _onWillPop,
         child: Scaffold(
           body: Consumer<CallProvider>(
             builder: (context, callprovider, child) {
               return OrientationBuilder(builder: (context, orientation) {
+                // return Container(
+                //   child: Text(
+                //       '!!!!!!${sessionList[0].values.toList()}+++++${sessionList[1].values.toList()} '),
+                // );
                 return Container(
                   child: Stack(children: <Widget>[
                     widget.onRemotestream
-                        ? sessionList!.values.toList().isEmpty
+                        ? sessionList.isEmpty
                             ? Container()
-                            : sessionList!.values.toList().length == 0
+                            : sessionList![0].values.toList().length == 0
                                 ? Container(
                                     // child: RemoteStream(
                                     //   remoteRenderer: sessionList.values
@@ -141,10 +146,11 @@ class _CallSttartScreenState extends State<CallSttartScreen> {
                                     //   ),
                                     // ),
                                     )
-                                : sessionList!.values.toList().length == 1
+                                : sessionList.length == 1
                                     ? Container(
                                         child: RemoteStream(
-                                          remoteRenderer: sessionList!.values
+                                          remoteRenderer: sessionList![0]
+                                              .values
                                               .toList()[0]
                                               .remoteRenderer,
                                         ),
@@ -179,7 +185,7 @@ class _CallSttartScreenState extends State<CallSttartScreen> {
                                     //         widget.rendererListWithRefid[1]
                                     //             ["rtcVideoRenderer"],
                                     //   )
-                                    : sessionList!.values.toList().length == 2
+                                    : sessionList.length == 2
                                         ? Column(
                                             children: [
                                               Expanded(
@@ -192,7 +198,8 @@ class _CallSttartScreenState extends State<CallSttartScreen> {
                                                     child: // if video is off then show white screen
                                                         RemoteStream(
                                                       remoteRenderer:
-                                                          sessionList!.values
+                                                          sessionList[0]
+                                                              .values
                                                               .toList()[0]
                                                               .remoteRenderer,
                                                     )
@@ -248,8 +255,9 @@ class _CallSttartScreenState extends State<CallSttartScreen> {
                                                       child: // if video is off then show white screen
                                                           RemoteStream(
                                                         remoteRenderer:
-                                                            sessionList!.values
-                                                                .toList()[1]
+                                                            sessionList![1]
+                                                                .values
+                                                                .toList()[0]
                                                                 .remoteRenderer,
                                                       )
                                                       // widget.rendererListWithRefid[
@@ -295,8 +303,7 @@ class _CallSttartScreenState extends State<CallSttartScreen> {
                                                       ))
                                             ],
                                           )
-                                        : sessionList!.values.toList().length ==
-                                                3
+                                        : sessionList.length == 3
                                             ? Column(
                                                 children: [
                                                   Expanded(
@@ -317,7 +324,8 @@ class _CallSttartScreenState extends State<CallSttartScreen> {
                                                             child: // if video is off then show white screen
                                                                 RemoteStream(
                                                               remoteRenderer:
-                                                                  sessionList!
+                                                                  sessionList![
+                                                                          0]
                                                                       .values
                                                                       .toList()[
                                                                           0]
@@ -374,10 +382,11 @@ class _CallSttartScreenState extends State<CallSttartScreen> {
                                                             child: // if video is off then show white screen
                                                                 RemoteStream(
                                                               remoteRenderer:
-                                                                  sessionList!
+                                                                  sessionList![
+                                                                          1]
                                                                       .values
                                                                       .toList()[
-                                                                          1]
+                                                                          0]
                                                                       .remoteRenderer,
                                                             )
                                                             // widget.rendererListWithRefid[
@@ -432,9 +441,9 @@ class _CallSttartScreenState extends State<CallSttartScreen> {
                                                         child: // if video is off then show white screen
                                                             RemoteStream(
                                                           remoteRenderer:
-                                                              sessionList!
+                                                              sessionList![2]
                                                                   .values
-                                                                  .toList()[2]
+                                                                  .toList()[0]
                                                                   .remoteRenderer,
                                                         )
                                                         // widget.rendererListWithRefid[
@@ -514,7 +523,8 @@ class _CallSttartScreenState extends State<CallSttartScreen> {
                                                             child: // if video is off then show white screen
                                                                 RemoteStream(
                                                               remoteRenderer:
-                                                                  sessionList!
+                                                                  sessionList![
+                                                                          0]
                                                                       .values
                                                                       .toList()[
                                                                           0]
@@ -586,10 +596,11 @@ class _CallSttartScreenState extends State<CallSttartScreen> {
                                                               child: // if video is off then show white screen
                                                                   RemoteStream(
                                                                 remoteRenderer:
-                                                                    sessionList!
+                                                                    sessionList![
+                                                                            1]
                                                                         .values
                                                                         .toList()[
-                                                                            1]
+                                                                            0]
                                                                         .remoteRenderer,
                                                               ),
                                                             )
@@ -666,10 +677,11 @@ class _CallSttartScreenState extends State<CallSttartScreen> {
                                                             child: // if video is off then show white screen
                                                                 RemoteStream(
                                                               remoteRenderer:
-                                                                  sessionList!
+                                                                  sessionList![
+                                                                          2]
                                                                       .values
                                                                       .toList()[
-                                                                          2]
+                                                                          0]
                                                                       .remoteRenderer,
                                                             ),
                                                           ),
@@ -737,10 +749,11 @@ class _CallSttartScreenState extends State<CallSttartScreen> {
                                                             child: // if video is off then show white screen
                                                                 RemoteStream(
                                                               remoteRenderer:
-                                                                  sessionList!
+                                                                  sessionList![
+                                                                          3]
                                                                       .values
                                                                       .toList()[
-                                                                          3]
+                                                                          0]
                                                                       .remoteRenderer,
                                                             ),
                                                           ),

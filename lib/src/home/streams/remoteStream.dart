@@ -11,7 +11,6 @@ class RemoteStream extends StatefulWidget {
 }
 
 class _RemoteStreamState extends State<RemoteStream> {
-
   @override
   Widget build(BuildContext context) {
     return ClipRRect(

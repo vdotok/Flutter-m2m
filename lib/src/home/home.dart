@@ -41,7 +41,7 @@ Map<String, bool> localAudioVideoStates = {
   "ScreenShareState": false,
   "isBackCamera": false
 };
-Map<String, Session> sessionList = {};
+List<Map<String, Session>> sessionList = [];
 RTCVideoRenderer? localRenderer;
 // ==================================================================
 Timer? callTimer;
@@ -301,6 +301,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     };
     // getting streams--------
     signalingClient.onAddRemoteStream = (sessionMap) async {
+      print('onADD REmote Streammm===== ${sessionMap}');
       setState(() {
         sessionList = sessionMap!;
         // onRemoteStream = true;
@@ -369,7 +370,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           {
             print('this is session ${SessionMap}');
             setState(() {
-              sessionList = SessionMap!;
+              // sessionList = SessionMap;
             });
             print('after call session---');
           }
