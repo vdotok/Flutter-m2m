@@ -83,9 +83,15 @@ class _CallSttartScreenState extends State<CallSttartScreen> {
     // TODO: implement initState
 
     callProvider = Provider.of<CallProvider>(context, listen: false);
-    // print('-----localState----${localAudioVideoStates}');
+    print('-----localState----${localAudioVideoStates}');
     // print('((((( ${widget.onRemotestream}');
-    // print('((((( session List ${sessionList!.values.toList()}');
+    // print('((((( session List ${sessionList.values.toList().length}');
+    // print('((((( session List2 ${sessionList.values.toList()[0].to}');
+    // print(
+    // 'thi is refID--${widget.contactprovider!.contactList.users!.indexWhere((element) => element!.ref_id == "114ALUJ5ef077b3581c20700b18d483a8b274faa")}');
+    // print('thi is refID--2${sessionList.values.toList()[0].to}');
+    // ref_id: 114ALUJ5208a594e7cab1be19d0a334d2c76b648
+
     // print('')
     // widget.switchCam.initialize();
     // print(
@@ -98,24 +104,20 @@ class _CallSttartScreenState extends State<CallSttartScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // print("this is lengthhhhhhhhh ${sessionList[0].values.toList().length} ");
-    // print("this is lengthhhhhhhhh@ ${sessionList} ");
+    print("this is lengthhhhhhhhh ${sessionList} ");
+    print('this is presdu ${widget.pressduration}');
     return WillPopScope(
         onWillPop: _onWillPop,
         child: Scaffold(
           body: Consumer<CallProvider>(
             builder: (context, callprovider, child) {
               return OrientationBuilder(builder: (context, orientation) {
-                // return Container(
-                //   child: Text(
-                //       '!!!!!!${sessionList[0].values.toList()}+++++${sessionList[1].values.toList()} '),
-                // );
                 return Container(
                   child: Stack(children: <Widget>[
                     widget.onRemotestream
-                        ? sessionList.isEmpty
+                        ? sessionList!.isEmpty
                             ? Container()
-                            : sessionList![0].values.toList().length == 0
+                            : sessionList!.length == 0
                                 ? Container(
                                     // child: RemoteStream(
                                     //   remoteRenderer: sessionList.values
@@ -148,37 +150,62 @@ class _CallSttartScreenState extends State<CallSttartScreen> {
                                     )
                                 : sessionList.length == 1
                                     ? Container(
-                                        child: RemoteStream(
-                                          remoteRenderer: sessionList![0]
-                                              .values
-                                              .toList()[0]
-                                              .remoteRenderer,
-                                        ),
-                                        // decoration: BoxDecoration(
-                                        //     color: backgroundAudioCallLight),
-                                        // child: Center(
-                                        //   child: Column(
-                                        //     mainAxisAlignment:
-                                        //         MainAxisAlignment.center,
-                                        //     children: [
-                                        //       SvgPicture.asset(
-                                        //         'assets/userIconCall.svg',
-                                        //       ),
-                                        //       Text(widget
-                                        //           .contactprovider!
-                                        //           .contactList
-                                        //           .users![widget
-                                        //               .contactprovider!
-                                        //               .contactList
-                                        //               .users!
-                                        //               .indexWhere((element) =>
-                                        //                   element!.ref_id ==
-                                        //                   widget.rendererListWithRefid[
-                                        //                       1]["refID"])]!
-                                        //           .full_name)
-                                        //     ],
-                                        //   ),
-                                        // ),
+                                        decoration: BoxDecoration(
+                                            color: backgroundAudioCallLight),
+                                        child: sessionList[0]
+                                                        .values
+                                                        .toList()[0]
+                                                        .mediaType !=
+                                                    "audio" &&
+                                                sessionList[0]
+                                                        .values
+                                                        .toList()[0]
+                                                        .remoteRenderer
+                                                        .srcObject !=
+                                                    null
+                                            ? RemoteStream(
+                                                remoteRenderer: sessionList[0]
+                                                    .values
+                                                    .toList()[0]
+                                                    .remoteRenderer,
+                                              )
+                                            : Center(
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    SvgPicture.asset(
+                                                      'assets/userIconCall.svg',
+                                                    ),
+                                                    widget.contactprovider!.contactList.users!.indexWhere((element) =>
+                                                                element!
+                                                                    .ref_id ==
+                                                                sessionList[0]
+                                                                    .values
+                                                                    .toList()[0]
+                                                                    .to[0]) ==
+                                                            -1
+                                                        ? Text(
+                                                            '${sessionList[0].values.toList()[0].to[0]}')
+                                                        : Text(widget
+                                                            .contactprovider!
+                                                            .contactList
+                                                            .users![widget
+                                                                .contactprovider!
+                                                                .contactList
+                                                                .users!
+                                                                .indexWhere((element) =>
+                                                                    element!
+                                                                        .ref_id ==
+                                                                    sessionList[0]
+                                                                        .values
+                                                                        .toList()[
+                                                                            0]
+                                                                        .to[0])]!
+                                                            .full_name)
+                                                  ],
+                                                ),
+                                              ),
                                       )
                                     // : RemoteStream(
                                     //     remoteRenderer:
@@ -190,117 +217,120 @@ class _CallSttartScreenState extends State<CallSttartScreen> {
                                             children: [
                                               Expanded(
                                                 child: Container(
-                                                    // color: Colors.yellow,
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                            .size
-                                                            .width,
-                                                    child: // if video is off then show white screen
-                                                        RemoteStream(
-                                                      remoteRenderer:
-                                                          sessionList[0]
-                                                              .values
-                                                              .toList()[0]
-                                                              .remoteRenderer,
-                                                    )
-                                                    // widget.rendererListWithRefid[
-                                                    //                 1][
-                                                    //             "remoteVideoFlag"] ==
-                                                    //         0
-                                                    //     ? Container(
-                                                    //         decoration:
-                                                    //             BoxDecoration(
-                                                    //                 color:
-                                                    //                     backgroundAudioCallLight),
-                                                    //         child: Center(
-                                                    //           child: Column(
-                                                    //             mainAxisAlignment:
-                                                    //                 MainAxisAlignment
-                                                    //                     .center,
-                                                    //             children: [
-                                                    //               SvgPicture
-                                                    //                   .asset(
-                                                    //                 'assets/userIconCall.svg',
-                                                    //               ),
-                                                    //               Text(widget
-                                                    //                   .contactprovider!
-                                                    //                   .contactList
-                                                    //                   .users![widget
-                                                    //                       .contactprovider!
-                                                    //                       .contactList
-                                                    //                       .users!
-                                                    //                       .indexWhere((element) =>
-                                                    //                           element!.ref_id ==
-                                                    //                           widget.rendererListWithRefid[1]["refID"])]!
-                                                    //                   .full_name)
-                                                    //             ],
-                                                    //           ),
-                                                    //         ),
-                                                    //       )
-                                                    //     : RemoteStream(
-                                                    //         remoteRenderer: widget
-                                                    //                 .rendererListWithRefid[1]
-                                                    //             [
-                                                    //             "rtcVideoRenderer"],
-                                                    //       )
-                                                    ),
+                                                  // color: Colors.yellow,
+                                                  width: MediaQuery.of(context)
+                                                      .size
+                                                      .width,
+                                                  child: // if video is off then show white screen
+                                                      sessionList[0]
+                                                                      .values
+                                                                      .toList()[
+                                                                          0]
+                                                                      .mediaType !=
+                                                                  "audio" &&
+                                                              sessionList[0]
+                                                                      .values
+                                                                      .toList()[
+                                                                          0]
+                                                                      .remoteRenderer
+                                                                      .srcObject !=
+                                                                  null
+                                                          ? RemoteStream(
+                                                              remoteRenderer:
+                                                                  sessionList[0]
+                                                                      .values
+                                                                      .toList()[
+                                                                          0]
+                                                                      .remoteRenderer,
+                                                            )
+                                                          : Center(
+                                                              child: Column(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  SvgPicture
+                                                                      .asset(
+                                                                    'assets/userIconCall.svg',
+                                                                  ),
+                                                                  widget.contactprovider!.contactList.users!.indexWhere((element) =>
+                                                                              element!.ref_id ==
+                                                                              sessionList[0].values.toList()[0].to[
+                                                                                  0]) ==
+                                                                          -1
+                                                                      ? Text(
+                                                                          '${sessionList[0].values.toList()[0].to[0]}')
+                                                                      : Text(widget
+                                                                          .contactprovider!
+                                                                          .contactList
+                                                                          .users![widget
+                                                                              .contactprovider!
+                                                                              .contactList
+                                                                              .users!
+                                                                              .indexWhere((element) => element!.ref_id == sessionList[0].values.toList()[0].to[0])]!
+                                                                          .full_name)
+                                                                ],
+                                                              ),
+                                                            ),
+                                                ),
                                               ),
                                               Expanded(
                                                   child: Container(
-                                                      // color: Colors.green,
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                              .size
-                                                              .width,
-                                                      child: // if video is off then show white screen
-                                                          RemoteStream(
-                                                        remoteRenderer:
-                                                            sessionList![1]
-                                                                .values
-                                                                .toList()[0]
-                                                                .remoteRenderer,
-                                                      )
-                                                      // widget.rendererListWithRefid[
-                                                      //                 2][
-                                                      //             "remoteVideoFlag"] ==
-                                                      //         0
-                                                      //     ? Container(
-                                                      //         decoration:
-                                                      //             BoxDecoration(
-                                                      //                 color:
-                                                      //                     backgroundAudioCallLight),
-                                                      //         child: Center(
-                                                      //           child: Column(
-                                                      //             mainAxisAlignment:
-                                                      //                 MainAxisAlignment
-                                                      //                     .center,
-                                                      //             children: [
-                                                      //               SvgPicture
-                                                      //                   .asset(
-                                                      //                 'assets/userIconCall.svg',
-                                                      //               ),
-                                                      //               Text(widget
-                                                      //                   .contactprovider!
-                                                      //                   .contactList
-                                                      //                   .users![widget
-                                                      //                       .contactprovider!
-                                                      //                       .contactList
-                                                      //                       .users!
-                                                      //                       .indexWhere((element) =>
-                                                      //                           element!.ref_id ==
-                                                      //                           widget.rendererListWithRefid[2]["refID"])]!
-                                                      //                   .full_name)
-                                                      //             ],
-                                                      //           ),
-                                                      //         ),
-                                                      //       )
-                                                      //     : RemoteStream(
-                                                      //         remoteRenderer: widget
-                                                      //                 .rendererListWithRefid[2]
-                                                      //             [
-                                                      //             "rtcVideoRenderer"],
-                                                      //       )
-                                                      ))
+                                                // color: Colors.green,
+                                                width: MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                child: // if video is off then show white screen
+                                                    sessionList[1]
+                                                                    .values
+                                                                    .toList()[0]
+                                                                    .mediaType !=
+                                                                "audio" &&
+                                                            sessionList[1]
+                                                                    .values
+                                                                    .toList()[0]
+                                                                    .remoteRenderer
+                                                                    .srcObject !=
+                                                                null
+                                                        ? RemoteStream(
+                                                            remoteRenderer:
+                                                                sessionList[1]
+                                                                    .values
+                                                                    .toList()[0]
+                                                                    .remoteRenderer,
+                                                          )
+                                                        : Center(
+                                                            child: Column(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                SvgPicture
+                                                                    .asset(
+                                                                  'assets/userIconCall.svg',
+                                                                ),
+                                                                widget.contactprovider!.contactList.users!.indexWhere((element) =>
+                                                                            element!.ref_id ==
+                                                                            sessionList[1].values.toList()[0].to[
+                                                                                0]) ==
+                                                                        -1
+                                                                    ? Text(
+                                                                        '${sessionList[1].values.toList()[0].to[0]}')
+                                                                    : Text(widget
+                                                                        .contactprovider!
+                                                                        .contactList
+                                                                        .users![widget
+                                                                            .contactprovider!
+                                                                            .contactList
+                                                                            .users!
+                                                                            .indexWhere((element) =>
+                                                                                element!.ref_id ==
+                                                                                sessionList[1].values.toList()[0].to[0])]!
+                                                                        .full_name)
+                                                              ],
+                                                            ),
+                                                          ),
+                                              ))
                                             ],
                                           )
                                         : sessionList.length == 3
@@ -310,183 +340,153 @@ class _CallSttartScreenState extends State<CallSttartScreen> {
                                                     child: Row(
                                                       children: [
                                                         Container(
-                                                            // color: Colors.yellow,
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width /
-                                                                2,
-                                                            height: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .height /
-                                                                2,
-                                                            child: // if video is off then show white screen
-                                                                RemoteStream(
-                                                              remoteRenderer:
-                                                                  sessionList![
-                                                                          0]
-                                                                      .values
-                                                                      .toList()[
-                                                                          0]
-                                                                      .remoteRenderer,
-                                                            )
-                                                            // widget.rendererListWithRefid[
-                                                            //                 1][
-                                                            //             "remoteVideoFlag"] ==
-                                                            //         0
-                                                            //     ? Container(
-                                                            //         decoration:
-                                                            //             BoxDecoration(
-                                                            //                 color:
-                                                            //                     backgroundAudioCallLight),
-                                                            //         child:
-                                                            //             Center(
-                                                            //           child:
-                                                            //               Column(
-                                                            //             mainAxisAlignment:
-                                                            //                 MainAxisAlignment.center,
-                                                            //             children: [
-                                                            //               SvgPicture
-                                                            //                   .asset(
-                                                            //                 'assets/userIconCall.svg',
-                                                            //               ),
-                                                            //               Text(widget
-                                                            //                   .contactprovider!
-                                                            //                   .contactList
-                                                            //                   .users![widget.contactprovider!.contactList.users!.indexWhere((element) => element!.ref_id == widget.rendererListWithRefid[1]["refID"])]!
-                                                            //                   .full_name)
-                                                            //             ],
-                                                            //           ),
-                                                            //         ),
-                                                            //       )
-                                                            //     : RemoteStream(
-                                                            //         remoteRenderer:
-                                                            //             widget.rendererListWithRefid[1]
-                                                            //                 [
-                                                            //                 "rtcVideoRenderer"],
-                                                            //       )
-                                                            ),
+                                                          // color: Colors.yellow,
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width /
+                                                              2,
+                                                          height: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .height /
+                                                              2,
+                                                          child: // if video is off then show white screen
+                                                              sessionList[0].values.toList()[0].mediaType !=
+                                                                          "audio" &&
+                                                                      sessionList[0]
+                                                                              .values
+                                                                              .toList()[0]
+                                                                              .remoteRenderer
+                                                                              .srcObject !=
+                                                                          null
+                                                                  ? RemoteStream(
+                                                                      remoteRenderer: sessionList[
+                                                                              0]
+                                                                          .values
+                                                                          .toList()[
+                                                                              0]
+                                                                          .remoteRenderer,
+                                                                    )
+                                                                  : Center(
+                                                                      child:
+                                                                          Column(
+                                                                        mainAxisAlignment:
+                                                                            MainAxisAlignment.center,
+                                                                        children: [
+                                                                          SvgPicture
+                                                                              .asset(
+                                                                            'assets/userIconCall.svg',
+                                                                          ),
+                                                                          widget.contactprovider!.contactList.users!.indexWhere((element) => element!.ref_id == sessionList[0].values.toList()[0].to[0]) == -1
+                                                                              ? Text('${sessionList[0].values.toList()[0].to[0]}')
+                                                                              : Text(widget.contactprovider!.contactList.users![widget.contactprovider!.contactList.users!.indexWhere((element) => element!.ref_id == sessionList[0].values.toList()[0].to[0])]!.full_name)
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                        ),
                                                         Container(
-                                                            // color: Colors.yellow,
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width /
-                                                                2,
-                                                            height: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .height /
-                                                                2,
-                                                            child: // if video is off then show white screen
-                                                                RemoteStream(
-                                                              remoteRenderer:
-                                                                  sessionList![
-                                                                          1]
-                                                                      .values
-                                                                      .toList()[
-                                                                          0]
-                                                                      .remoteRenderer,
-                                                            )
-                                                            // widget.rendererListWithRefid[
-                                                            //                 2][
-                                                            //             "remoteVideoFlag"] ==
-                                                            //         0
-                                                            //     ? Container(
-                                                            //         decoration:
-                                                            //             BoxDecoration(
-                                                            //                 color:
-                                                            //                     backgroundAudioCallLight),
-                                                            //         child: Center(
-                                                            //           child:
-                                                            //               Column(
-                                                            //             mainAxisAlignment:
-                                                            //                 MainAxisAlignment
-                                                            //                     .center,
-                                                            //             children: [
-                                                            //               SvgPicture
-                                                            //                   .asset(
-                                                            //                 'assets/userIconCall.svg',
-                                                            //               ),
-                                                            //               Text(widget
-                                                            //                   .contactprovider!
-                                                            //                   .contactList
-                                                            //                   .users![widget.contactprovider!.contactList.users!.indexWhere((element) =>
-                                                            //                       element!.ref_id ==
-                                                            //                       widget.rendererListWithRefid[2]["refID"])]!
-                                                            //                   .full_name)
-                                                            //             ],
-                                                            //           ),
-                                                            //         ),
-                                                            //       )
-                                                            //     : RemoteStream(
-                                                            //         remoteRenderer:
-                                                            //             widget.rendererListWithRefid[
-                                                            //                     2]
-                                                            //                 [
-                                                            //                 "rtcVideoRenderer"],
-                                                            //       ),
-                                                            ),
+                                                          // color: Colors.yellow,
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width /
+                                                              2,
+                                                          height: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .height /
+                                                              2,
+                                                          child: // if video is off then show white screen
+                                                              sessionList[1].values.toList()[0].mediaType !=
+                                                                          "audio" &&
+                                                                      sessionList[1]
+                                                                              .values
+                                                                              .toList()[0]
+                                                                              .remoteRenderer
+                                                                              .srcObject !=
+                                                                          null
+                                                                  ? RemoteStream(
+                                                                      remoteRenderer: sessionList[
+                                                                              1]
+                                                                          .values
+                                                                          .toList()[
+                                                                              0]
+                                                                          .remoteRenderer,
+                                                                    )
+                                                                  : Center(
+                                                                      child:
+                                                                          Column(
+                                                                        mainAxisAlignment:
+                                                                            MainAxisAlignment.center,
+                                                                        children: [
+                                                                          SvgPicture
+                                                                              .asset(
+                                                                            'assets/userIconCall.svg',
+                                                                          ),
+                                                                          widget.contactprovider!.contactList.users!.indexWhere((element) => element!.ref_id == sessionList[1].values.toList()[0].to[0]) == -1
+                                                                              ? Text('${sessionList[1].values.toList()[0].to[0]}')
+                                                                              : Text(widget.contactprovider!.contactList.users![widget.contactprovider!.contactList.users!.indexWhere((element) => element!.ref_id == sessionList[1].values.toList()[0].to[0])]!.full_name)
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                        ),
                                                       ],
                                                     ),
                                                   ),
                                                   Expanded(
                                                     child: Container(
-                                                        // color: Colors.green,
-                                                        width: MediaQuery.of(
-                                                                context)
-                                                            .size
-                                                            .width,
-                                                        child: // if video is off then show white screen
-                                                            RemoteStream(
-                                                          remoteRenderer:
-                                                              sessionList![2]
-                                                                  .values
-                                                                  .toList()[0]
-                                                                  .remoteRenderer,
-                                                        )
-                                                        // widget.rendererListWithRefid[
-                                                        //                 3][
-                                                        //             "remoteVideoFlag"] ==
-                                                        //         0
-                                                        //     ? Container(
-                                                        //         decoration:
-                                                        //             BoxDecoration(
-                                                        //                 color:
-                                                        //                     backgroundAudioCallLight),
-                                                        //         child: Center(
-                                                        //           child: Column(
-                                                        //             mainAxisAlignment:
-                                                        //                 MainAxisAlignment
-                                                        //                     .center,
-                                                        //             children: [
-                                                        //               SvgPicture
-                                                        //                   .asset(
-                                                        //                 'assets/userIconCall.svg',
-                                                        //               ),
-                                                        //               Text(widget
-                                                        //                   .contactprovider!
-                                                        //                   .contactList
-                                                        //                   .users![widget
-                                                        //                       .contactprovider!
-                                                        //                       .contactList
-                                                        //                       .users!
-                                                        //                       .indexWhere((element) =>
-                                                        //                           element!.ref_id ==
-                                                        //                           widget.rendererListWithRefid[3]["refID"])]!
-                                                        //                   .full_name)
-                                                        //             ],
-                                                        //           ),
-                                                        //         ),
-                                                        //       )
-                                                        //     : RemoteStream(
-                                                        //         remoteRenderer: widget
-                                                        //                 .rendererListWithRefid[3]
-                                                        //             [
-                                                        //             "rtcVideoRenderer"],
-                                                        //       ),
-                                                        ),
+                                                      // color: Colors.green,
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                              .size
+                                                              .width,
+                                                      child: // if video is off then show white screen
+                                                          sessionList[2]
+                                                                          .values
+                                                                          .toList()[
+                                                                              0]
+                                                                          .mediaType !=
+                                                                      "audio" &&
+                                                                  sessionList[2]
+                                                                          .values
+                                                                          .toList()[
+                                                                              0]
+                                                                          .remoteRenderer
+                                                                          .srcObject !=
+                                                                      null
+                                                              ? RemoteStream(
+                                                                  remoteRenderer:
+                                                                      sessionList[
+                                                                              2]
+                                                                          .values
+                                                                          .toList()[
+                                                                              0]
+                                                                          .remoteRenderer,
+                                                                )
+                                                              : Center(
+                                                                  child: Column(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .center,
+                                                                    children: [
+                                                                      SvgPicture
+                                                                          .asset(
+                                                                        'assets/userIconCall.svg',
+                                                                      ),
+                                                                      widget.contactprovider!.contactList.users!.indexWhere((element) => element!.ref_id == sessionList[2].values.toList()[0].to[0]) ==
+                                                                              -1
+                                                                          ? Text(
+                                                                              '${sessionList[2].values.toList()[0].to[0]}')
+                                                                          : Text(widget
+                                                                              .contactprovider!
+                                                                              .contactList
+                                                                              .users![widget.contactprovider!.contactList.users!.indexWhere((element) => element!.ref_id == sessionList[2].values.toList()[0].to[0])]!
+                                                                              .full_name)
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                    ),
                                                   )
                                                 ],
                                               )
@@ -521,15 +521,31 @@ class _CallSttartScreenState extends State<CallSttartScreen> {
                                                                     .height /
                                                                 2,
                                                             child: // if video is off then show white screen
-                                                                RemoteStream(
-                                                              remoteRenderer:
-                                                                  sessionList![
-                                                                          0]
-                                                                      .values
-                                                                      .toList()[
-                                                                          0]
-                                                                      .remoteRenderer,
-                                                            ),
+                                                                sessionList[0].values.toList()[0].mediaType !=
+                                                                            "audio" &&
+                                                                        sessionList[0].values.toList()[0].remoteRenderer.srcObject !=
+                                                                            null
+                                                                    ? RemoteStream(
+                                                                        remoteRenderer: sessionList[0]
+                                                                            .values
+                                                                            .toList()[0]
+                                                                            .remoteRenderer,
+                                                                      )
+                                                                    : Center(
+                                                                        child:
+                                                                            Column(
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.center,
+                                                                          children: [
+                                                                            SvgPicture.asset(
+                                                                              'assets/userIconCall.svg',
+                                                                            ),
+                                                                            widget.contactprovider!.contactList.users!.indexWhere((element) => element!.ref_id == sessionList[0].values.toList()[0].to[0]) == -1
+                                                                                ? Text('${sessionList[0].values.toList()[0].to[0]}')
+                                                                                : Text(widget.contactprovider!.contactList.users![widget.contactprovider!.contactList.users!.indexWhere((element) => element!.ref_id == sessionList[0].values.toList()[0].to[0])]!.full_name)
+                                                                          ],
+                                                                        ),
+                                                                      ),
                                                           ),
                                                         ),
                                                         // widget.rendererListWithRefid[
@@ -594,15 +610,29 @@ class _CallSttartScreenState extends State<CallSttartScreen> {
                                                                       .height /
                                                                   2,
                                                               child: // if video is off then show white screen
-                                                                  RemoteStream(
-                                                                remoteRenderer:
-                                                                    sessionList![
-                                                                            1]
-                                                                        .values
-                                                                        .toList()[
-                                                                            0]
-                                                                        .remoteRenderer,
-                                                              ),
+                                                                  sessionList[1].values.toList()[0].mediaType !=
+                                                                              "audio" &&
+                                                                          sessionList[1].values.toList()[0].remoteRenderer.srcObject !=
+                                                                              null
+                                                                      ? RemoteStream(
+                                                                          remoteRenderer: sessionList[1]
+                                                                              .values
+                                                                              .toList()[0]
+                                                                              .remoteRenderer,
+                                                                        )
+                                                                      : Center(
+                                                                          child:
+                                                                              Column(
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.center,
+                                                                            children: [
+                                                                              SvgPicture.asset(
+                                                                                'assets/userIconCall.svg',
+                                                                              ),
+                                                                              widget.contactprovider!.contactList.users!.indexWhere((element) => element!.ref_id == sessionList[1].values.toList()[0].to[0]) == -1 ? Text('${sessionList[1].values.toList()[0].to[0]}') : Text(widget.contactprovider!.contactList.users![widget.contactprovider!.contactList.users!.indexWhere((element) => element!.ref_id == sessionList[1].values.toList()[0].to[0])]!.full_name)
+                                                                            ],
+                                                                          ),
+                                                                        ),
                                                             )
                                                             // widget.rendererListWithRefid[
                                                             //                 2][
@@ -675,15 +705,31 @@ class _CallSttartScreenState extends State<CallSttartScreen> {
                                                                     .height /
                                                                 2,
                                                             child: // if video is off then show white screen
-                                                                RemoteStream(
-                                                              remoteRenderer:
-                                                                  sessionList![
-                                                                          2]
-                                                                      .values
-                                                                      .toList()[
-                                                                          0]
-                                                                      .remoteRenderer,
-                                                            ),
+                                                                sessionList[2].values.toList()[0].mediaType !=
+                                                                            "audio" &&
+                                                                        sessionList[2].values.toList()[0].remoteRenderer.srcObject !=
+                                                                            null
+                                                                    ? RemoteStream(
+                                                                        remoteRenderer: sessionList[2]
+                                                                            .values
+                                                                            .toList()[0]
+                                                                            .remoteRenderer,
+                                                                      )
+                                                                    : Center(
+                                                                        child:
+                                                                            Column(
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.center,
+                                                                          children: [
+                                                                            SvgPicture.asset(
+                                                                              'assets/userIconCall.svg',
+                                                                            ),
+                                                                            widget.contactprovider!.contactList.users!.indexWhere((element) => element!.ref_id == sessionList[2].values.toList()[0].to[0]) == -1
+                                                                                ? Text('${sessionList[2].values.toList()[0].to[0]}')
+                                                                                : Text(widget.contactprovider!.contactList.users![widget.contactprovider!.contactList.users!.indexWhere((element) => element!.ref_id == sessionList[2].values.toList()[0].to[0])]!.full_name)
+                                                                          ],
+                                                                        ),
+                                                                      ),
                                                           ),
                                                           // widget.rendererListWithRefid[
                                                           //                 3][
@@ -747,15 +793,31 @@ class _CallSttartScreenState extends State<CallSttartScreen> {
                                                                     .height /
                                                                 2,
                                                             child: // if video is off then show white screen
-                                                                RemoteStream(
-                                                              remoteRenderer:
-                                                                  sessionList![
-                                                                          3]
-                                                                      .values
-                                                                      .toList()[
-                                                                          0]
-                                                                      .remoteRenderer,
-                                                            ),
+                                                                sessionList[3].values.toList()[0].mediaType !=
+                                                                            "audio" &&
+                                                                        sessionList[3].values.toList()[0].remoteRenderer.srcObject !=
+                                                                            null
+                                                                    ? RemoteStream(
+                                                                        remoteRenderer: sessionList[3]
+                                                                            .values
+                                                                            .toList()[0]
+                                                                            .remoteRenderer,
+                                                                      )
+                                                                    : Center(
+                                                                        child:
+                                                                            Column(
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.center,
+                                                                          children: [
+                                                                            SvgPicture.asset(
+                                                                              'assets/userIconCall.svg',
+                                                                            ),
+                                                                            widget.contactprovider!.contactList.users!.indexWhere((element) => element!.ref_id == sessionList[3].values.toList()[0].to[0]) == -1
+                                                                                ? Text('${sessionList[3].values.toList()[0].to[0]}')
+                                                                                : Text(widget.contactprovider!.contactList.users![widget.contactprovider!.contactList.users!.indexWhere((element) => element!.ref_id == sessionList[3].values.toList()[0].to[0])]!.full_name)
+                                                                          ],
+                                                                        ),
+                                                                      ),
                                                           ),
                                                           // widget.rendererListWithRefid[
                                                           //                 4][
@@ -864,7 +926,9 @@ class _CallSttartScreenState extends State<CallSttartScreen> {
                                 ),
                                 SizedBox(width: 20),
                                 Text(
-                                  widget.pressduration,
+                                  widget.pressduration == null
+                                      ? ''
+                                      : widget.pressduration,
                                   style: TextStyle(
                                       decoration: TextDecoration.none,
                                       fontSize: 14,

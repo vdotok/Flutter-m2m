@@ -115,7 +115,7 @@ class GroupListProvider with ChangeNotifier {
   }
 
   addGroup(dynamic groupModel) {
-    print("this is add group");
+    print("this is add group $groupModel");
     _groupList.groups!.insert(0, GroupModel.fromJson(groupModel));
     notifyListeners();
   }

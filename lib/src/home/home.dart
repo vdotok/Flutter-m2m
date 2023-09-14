@@ -168,11 +168,24 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     500,
     1000
   ];
+  void playRingingbyD() async {
+    FlutterRingtonePlayer.play(
+      android: AndroidSounds.ringtone,
+      ios: IosSounds.electronic,
+      looping: true,
+      volume: 1.0,
+    );
+  }
+
+  void stopRingingbyD() {
+    FlutterRingtonePlayer.stop();
+    print('Stopping ringing android');
+  }
 
   void _updateTimer() {
     print('inupdate timerrr ${_ttime}');
-
     var duration = _ttime != null ? DateTime.now().difference(_ttime!) : null;
+    // print('Duration-2-- ${duration}');
     var newDuration = duration != null ? _formatDuration(duration) : null;
     print('Duration---- ${newDuration}');
     setState(() {
@@ -280,6 +293,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     };
     // ==================================Codex1to1===================================
     signalingClient.onCallBusy = () {
+      stopRingingbyD();
       Wakelock.toggle(enable: false);
       snackBar = SnackBar(content: Text('User is busy with another call.'));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -301,42 +315,29 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     };
     // getting streams--------
     signalingClient.onAddRemoteStream = (sessionMap) async {
-      print('onADD REmote Streammm===== ${sessionMap}');
+      // print('onAddRemoteee ${sessionMap!.values.toList()[0].from}');
+      // stopRingingbyD();
       setState(() {
         sessionList = sessionMap!;
         // onRemoteStream = true;
       });
-      _callProvider.callStart();
+      // print("thsi is sessionList2--${sessionList.values.toList()[0].to}");
+
       print('SessionAdded');
       setState(() {
         onRemoteStream = true;
       });
 
-      if (_ticker == null) {
-        if (_ttime != null) {
-          _ttime = DateTime.now();
-          _ticker = Timer.periodic(Duration(seconds: 1), (_) => _updateTimer());
-        }
-      }
+      _callProvider.callStart();
 
       // _updateTimer();
 
       print('Remote Description---$_ticker');
       print('Remote Description--2-$_ticker');
     };
-    signalingClient.onCallBusy = () {
-      print("user is busy");
-      Fluttertoast.showToast(
-          msg: "User is busy.",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.TOP_RIGHT,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.black,
-          textColor: Colors.white,
-          fontSize: 14.0);
-    };
     signalingClient.onInComingCall = (res) {
       print('onIncoming Call---$res--');
+      playRingingbyD();
       inCall = true;
       print("here in recerive call $res");
 
@@ -370,7 +371,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           {
             print('this is session ${SessionMap}');
             setState(() {
-              // sessionList = SessionMap;
+              // sessionList = SessionMap!;
             });
             print('after call session---');
           }
@@ -386,6 +387,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           break;
         case CallState.CallStateBye:
           {
+            stopRingingbyD();
             if (SessionMap == null) {
               setState(() {
                 sessionList.clear();
@@ -428,16 +430,29 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           break;
         case CallState.CallStateConnected:
           {
+            stopRingingbyD();
             print('on call state connected');
             setState(() {
               inCall = true;
               iscallAcceptedbyuser = true;
             });
-
-            // if (localRenderer != null) {
-            //   _callProvider.callStart();
-            //   print('onPeriodic');
+            // if (_ticker == null) {
+            // if (_ttime != null) {
+            // _ttime = DateTime.now();
+            // _ticker =
+            //     Timer.periodic(Duration(seconds: 1), (_) => _updateTimer());
+            // // }
             // }
+            _ttime = DateTime.now();
+            print(
+                "this is current time......... $_ttime......this is calll start time");
+            _ticker =
+                Timer.periodic(Duration(seconds: 1), (_) => _updateTimer());
+            print("ticker is $_ticker");
+            if (localRenderer != null) {
+              _callProvider.callStart();
+              print('onPeriodic');
+            }
             print('onInvite after call initiating==');
           }
         case CallState.ParticipantLeft:
@@ -457,7 +472,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   showSnackbar(text, Color color, Color backgroundColor, bool check) {
     print("Hi!!! i am here in snackbar $check");
 // if(isResumed)
-//    {
+    //    {
     // if (check == false) {
     //   rootScaffoldMessengerKey!.currentState!
     //     ..hideCurrentSnackBar()
