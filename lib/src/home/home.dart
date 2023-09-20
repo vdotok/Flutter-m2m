@@ -387,6 +387,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           break;
         case CallState.CallStateBye:
           {
+            print('onCAllStatebye');
             stopRingingbyD();
             if (SessionMap == null) {
               setState(() {
