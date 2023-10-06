@@ -35,10 +35,11 @@ import '../core/providers/contact_provider.dart';
 SignalingClient signalingClient = SignalingClient.instance;
 String callTo = "";
 Map<String, bool> localAudioVideoStates = {
-  "UnMuteState": false,
+  "MuteState": false,
   "SpeakerState": false,
   "CameraState": false,
   "ScreenShareState": false,
+  "MuteAppAudioState": false,
   "isBackCamera": false
 };
 List<Map<String, Session>> sessionList = [];
@@ -184,13 +185,14 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
   void _updateTimer() {
     print('inupdate timerrr ${_ttime}');
-    var duration = _ttime != null ? DateTime.now().difference(_ttime!) : null;
+    final duration = DateTime.now().difference(_ttime!);
     // print('Duration-2-- ${duration}');
-    var newDuration = duration != null ? _formatDuration(duration) : null;
+    final newDuration = _formatDuration(duration);
     print('Duration---- ${newDuration}');
     setState(() {
       pressDuration = newDuration.toString();
     });
+    print('+++press2duration ${pressDuration}');
   }
 
   switchCamera() {
@@ -204,7 +206,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
   muteMic() {
     print('inmuteMiccc');
-    signalingClient.muteMic(!localAudioVideoStates["UnMuteState"]!);
+    signalingClient.muteMic();
   }
 
   switchSpeaker() {
@@ -419,6 +421,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
               }
               _ticker = null;
             });
+            print('+++pressduration ${pressDuration}');
           }
           break;
         // maybe when ringing
@@ -444,12 +447,15 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             //     Timer.periodic(Duration(seconds: 1), (_) => _updateTimer());
             // // }
             // }
-            _ttime = DateTime.now();
-            print(
-                "this is current time......... $_ttime......this is calll start time");
-            _ticker =
-                Timer.periodic(Duration(seconds: 1), (_) => _updateTimer());
-            print("ticker is $_ticker");
+            print("this is presdu2 ${pressDuration}");
+            if (pressDuration == "" || pressDuration.isEmpty) {
+              _ttime = DateTime.now();
+              print(
+                  "this is current time......... $_ttime......this is calll start time");
+              _ticker =
+                  Timer.periodic(Duration(seconds: 1), (_) => _updateTimer());
+              print("ticker is $_ticker");
+            } else {}
             if (localRenderer != null) {
               _callProvider.callStart();
               print('onPeriodic');
@@ -717,8 +723,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       } else {
         buildShowDialog(context, "Maximum limit is 4!!!");
       }
-    } else
-      handleGroupState();
+    } else {}
+    // handleGroupState();
   }
 
   Future buildShowDialog(BuildContext context, String errorMessage) {
@@ -817,6 +823,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                   appBar: CustomAppBar(
                     isConnect: isConnected,
                     handlePress: handleCreateGroup,
+                    handlegroupstate: handleGroupState,
                   ),
                   body: Consumer2<ContactProvider, GroupListProvider>(
                     builder: (context, contact, groupProvider, child) {

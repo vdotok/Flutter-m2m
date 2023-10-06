@@ -4,6 +4,7 @@ import 'package:vdotok_stream_example/constant.dart';
 import 'package:vdotok_stream_example/src/core/models/contact.dart';
 import 'package:vdotok_stream_example/src/core/providers/auth.dart';
 import 'package:vdotok_stream_example/src/core/providers/contact_provider.dart';
+import 'package:vdotok_stream_example/src/home/home.dart';
 // import 'package:flutterm2m/constant.dart';
 // import 'package:flutterm2m/src/core/models/contact.dart';
 // import 'package:flutterm2m/src/core/providers/auth.dart';
@@ -54,6 +55,7 @@ class _ContactListScreenState extends State<ContactListScreen> {
     });
   }
 
+  @override
   @override
   Widget build(BuildContext context) {
     if (widget.state.contactState == ContactStates.Loading)

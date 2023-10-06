@@ -11,11 +11,15 @@ import '../../src/core/providers/auth.dart';
 import '../../constant.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const CustomAppBar({Key? key, this.handlePress, this.isConnect})
+  const CustomAppBar(
+      {Key? key,
+      this.handlePress,
+      this.isConnect,
+      required this.handlegroupstate})
       : super(key: key);
   final handlePress;
   final isConnect;
-
+  final handlegroupstate;
   @override
   Size get preferredSize {
     return new Size.fromHeight(kToolbarHeight);
@@ -90,7 +94,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: IconButton(
                       onPressed: () {
-                        handlePress(groupProvider.groupListStatus);
+                        handlegroupstate();
+                        // handlePress(groupProvider.groupListStatus);
                         // Navigator.pushNamed(context, "/contactList");
                       },
                       icon: SvgPicture.asset(

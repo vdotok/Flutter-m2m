@@ -926,9 +926,7 @@ class _CallSttartScreenState extends State<CallSttartScreen> {
                                 ),
                                 SizedBox(width: 20),
                                 Text(
-                                  widget.pressduration == null
-                                      ? ''
-                                      : widget.pressduration,
+                                  widget.pressduration,
                                   style: TextStyle(
                                       decoration: TextDecoration.none,
                                       fontSize: 14,
@@ -1114,7 +1112,7 @@ class _CallSttartScreenState extends State<CallSttartScreen> {
                           ),
                           SizedBox(width: 20),
                           GestureDetector(
-                            child: localAudioVideoStates["UnMuteState"]!
+                            child: localAudioVideoStates["MuteState"]!
                                 ? SvgPicture.asset('assets/microphone.svg')
                                 : SvgPicture.asset(
                                     'assets/mute_microphone.svg'),
